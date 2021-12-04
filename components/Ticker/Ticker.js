@@ -2,7 +2,6 @@ import React from "react"
 import styles from "styles/Ticker.module.scss"
 
 const Ticker = () => {
-    console.log(styles)
     return (
         <div className={styles["ticker-wrap"]}>
             <div className={styles["ticker"]}>
