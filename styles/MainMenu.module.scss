@@ -1,0 +1,39 @@
+.main-menu {
+    font-weight: 200;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    z-index: 1000;
+    h1 {
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-left: 30px;
+        margin-right: 30px;
+        margin: 0px;
+        padding: 10px;
+        span {
+            margin-left: 20px;
+            font-weight: 300;
+            @media screen and (max-width: 768px) {
+                display: none;
+            }
+        }
+    }
+
+    .ticker-container {
+        border-top:  1px solid rgba(0,0,0,0.05);
+    }
+}
+
+
+.links-section {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    @media screen and (max-width: 768px) {
+        display: none;
+    }
+      
+}

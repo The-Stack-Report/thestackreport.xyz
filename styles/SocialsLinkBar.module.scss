@@ -1,0 +1,13 @@
+.socials-link-bar {
+    padding: 10px;
+    a {
+        padding: 5px;
+        &:hover {
+            opacity: 0.8;
+        }
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+}
