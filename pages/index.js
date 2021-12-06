@@ -10,7 +10,7 @@ import { Container,
 } from "@chakra-ui/react"
 import Link from "next/link"
 import Footer from 'components/Footer'
-import styles from '../styles/Home.module.css'
+import styles from '../styles/Home.module.scss'
 
 const buttonProps = {
   background: "black",
@@ -33,6 +33,7 @@ export default function Home() {
       </Head>
       <MainMenu />
       <main>
+      <div className={styles["responsive-video-bump"]}></div>
       <div style={{
         width: "100vw",
         height: "56.25vw"

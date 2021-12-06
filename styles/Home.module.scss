@@ -1,0 +1,13 @@
+.home {
+
+}
+
+.responsive-video-bump {
+    @media screen and (max-width: 992px) {
+        min-height: 48px;
+    }
+    @media screen and (max-width: 768px) {
+        min-height: 75px;
+    }
+    
+}
