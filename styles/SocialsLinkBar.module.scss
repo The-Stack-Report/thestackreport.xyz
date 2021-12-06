@@ -1,7 +1,11 @@
 .socials-link-bar {
     padding: 10px;
+    display: flex;
     a {
         padding: 5px;
+        padding-top: 3px;
+        padding-left: 8px;
+        padding-right: 8px;
         &:hover {
             opacity: 0.8;
         }
