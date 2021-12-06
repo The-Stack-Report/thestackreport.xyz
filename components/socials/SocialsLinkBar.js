@@ -18,7 +18,7 @@ const SocialsLinkBar = () => {
             <a href="https://www.instagram.com/stackreport/">
                 <InstagramIcon />
             </a>
-            <a href="https://www.aedin.com/company/the-stack-report/">
+            <a href="https://www.linkedin.com/company/the-stack-report/">
                 <LinkedInIcon />
             </a>
         </div>
