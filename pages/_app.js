@@ -1,6 +1,7 @@
 import '../styles/globals.css'
 import { ChakraProvider } from '@chakra-ui/react'
 import { extendTheme } from '@chakra-ui/react'
+import PlausibleProvider from 'next-plausible'
 
 const colors = {
 
@@ -47,9 +48,11 @@ const theme = extendTheme({
 
 function MyApp({ Component, pageProps }) {
   return (
+    <PlausibleProvider domain="thestackreport.xyz">
     <ChakraProvider theme={theme}>
       <Component {...pageProps} />
     </ChakraProvider>
+    </PlausibleProvider>
   )
 }
 

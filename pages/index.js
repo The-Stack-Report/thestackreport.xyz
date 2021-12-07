@@ -44,7 +44,7 @@ export default function Home() {
         height="100%"
         frameBorder="0"
         allow="autoplay; fullscreen"
-        allowFullScreen={true}>
+        >
 
       </iframe>
       </div>
