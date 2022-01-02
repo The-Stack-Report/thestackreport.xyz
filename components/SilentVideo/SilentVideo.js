@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import _ from "lodash"
 var silentVideoRenderedCounter = 0
 // First count nr of videos rendered on page
-const margin = -20
+const margin = -100
 
 function vidWindowOverlap(vidRef, scrollTop) {
     return (
