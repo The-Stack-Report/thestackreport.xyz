@@ -51,7 +51,9 @@ const DataBlocksCatalogPage = ({ blocks }) => {
                                         width="100%"
                                         autoPlay="true"
                                         muted="true"
-                                        loop="true">
+                                        loop="true"
+                                        playsInline={true}
+                                        >
                                         <source src={spaces_url} type="video/mp4" />
                                     </video>
                                 )}
