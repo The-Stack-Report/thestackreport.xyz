@@ -12,6 +12,7 @@ import {
 import { connectToDatabase } from "utils/mongo_db"
 import _ from "lodash"
 import Footer from "components/Footer"
+import SilentVideo from "components/SilentVideo"
 
 
 const DataBlocksCatalogPage = ({ blocks }) => {
@@ -47,15 +48,7 @@ const DataBlocksCatalogPage = ({ blocks }) => {
                                     {block.merged_frames_at}
                                 </Text>
                                 {spaces_url && (
-                                    <video
-                                        width="100%"
-                                        autoPlay="true"
-                                        muted="true"
-                                        loop="true"
-                                        playsInline={true}
-                                        >
-                                        <source src={spaces_url} type="video/mp4" />
-                                    </video>
+                                    <SilentVideo src={spaces_url} />
                                 )}
                                 
                             </Box>
@@ -72,7 +65,8 @@ var blocksCache = false
 
 export async function getServerSideProps(context) {
     if(blocksCache) {
-        return { props: {blocks: []}}
+        console.log("using blocks cache in catalog page.")
+        return { props: {blocks: blocksCache}}
     } else {
         const { db } = await connectToDatabase()
         var blocks = await db.collection("data_blocks")
@@ -86,6 +80,7 @@ export async function getServerSideProps(context) {
             }
         })
         blocks = _.sortBy(blocks, "vid_key")
+        blocksCache = blocks
         return { props: {blocks: blocks}}
     }
 }
