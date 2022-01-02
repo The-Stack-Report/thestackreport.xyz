@@ -42,7 +42,7 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
                         {block.title}
                     </Heading>
                     {spaces_url && (
-                        <SilentVideo src={spaces_url} />
+                        <SilentVideo src={spaces_url}  resolution={block.video_meta} />
                     )}
                     {parent_vid_key && (
                         <Text

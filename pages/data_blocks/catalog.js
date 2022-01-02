@@ -48,7 +48,7 @@ const DataBlocksCatalogPage = ({ blocks }) => {
                                     {block.merged_frames_at}
                                 </Text>
                                 {spaces_url && (
-                                    <SilentVideo src={spaces_url} />
+                                    <SilentVideo src={spaces_url} resolution={block.video_meta} />
                                 )}
                                 
                             </Box>

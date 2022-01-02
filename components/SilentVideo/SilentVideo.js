@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react"
+import _ from "lodash"
 var silentVideoRenderedCounter = 0
 // First count nr of videos rendered on page
-const margin = 20
+const margin = -20
 
 function vidWindowOverlap(vidRef, scrollTop) {
     return (
@@ -15,7 +16,8 @@ const SilentVideo = ({
         type="video/mp4",
         autoplay=true,
         play_on_hover=true,
-        play_when_in_page=true
+        play_when_in_page=true,
+        resolution=false
     }) => {
     const vidRef = useRef(null)
     const [initialized, setInitialized] = useState(false)
@@ -50,35 +52,37 @@ const SilentVideo = ({
     if(delayedLoad && onScreen){
         state_src = src
     }
-
-    var vidStyle = {
-        // border: "1px solid blue",
-        minHeight: "81%" // TODO: Make dynamic based on video aspect ratio
-    }
-    if(onScreen) {
-        // vidStyle.border = "1px solid rgb(255,155,0)"
+    var height = "50%"
+    if(resolution) {
+        height = _.get(vidRef, "current.clientWidth", 100) * resolution.height/resolution.width
     }
     return (
-        <video
-            ref={vidRef}
-            width={"100%"}
-            controls={false}
-            muted={true}
-            autoPlay={true}
-            loop={true}
-            playsInline={true}
-            style={vidStyle}
-            onPointerEnter={() => {
-                if(play_on_hover) {
-                    setDelayedLoad(true)
-                }
-            }}
-            >
-                {state_src && (
-                    <source src={state_src} type={type} />
-                )}
-            
-        </video>
+        <div style={{
+            width: "100%",
+            height: height,
+            overflow: "hidden"
+        }}>
+            <video
+                ref={vidRef}
+                width={"100%"}
+                height={height}
+                controls={false}
+                muted={true}
+                autoPlay={true}
+                loop={true}
+                playsInline={true}
+                onPointerEnter={() => {
+                    if(play_on_hover) {
+                        setDelayedLoad(true)
+                    }
+                }}
+                >
+                    {state_src && (
+                        <source src={state_src} type={type} />
+                    )}
+                
+            </video>
+        </div>
     )
 }
 
