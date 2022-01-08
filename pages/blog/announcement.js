@@ -97,7 +97,7 @@ const PressReleasePage = () => {
                     An example of previous reporting done on HicEtNunc NFT activity:
                 </Text>
                 <br />
-                <Text fontWeight="bold" as="a" href="https://twitter.com/hoogerwoord/status/1429914919403720709?s=20">
+                <Text as="a" href="https://twitter.com/hoogerwoord/status/1429914919403720709?s=20">
                 https://twitter.com/hoogerwoord/status/1429914919403720709?s=20
                 </Text>
                 <br />

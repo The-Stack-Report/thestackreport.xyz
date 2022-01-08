@@ -29,20 +29,68 @@ const textStyles = {
     fontSize: ['48px', '72px'],
     fontWeight: 'bold',
     lineHeight: '110%',
-    letterSpacing: '-2%',
+    letterSpacing: '-2%'
   },
   h2: {
     fontSize: ['36px', '48px'],
     fontWeight: 'semibold',
     lineHeight: '110%',
     letterSpacing: '-1%',
+  }
+}
+
+const Link = {
+  baseStyle: {
+    color: "green.600",
+    textDecoration: "underline",
+    _hover: {
+      color: "white",
+      background: "green.600"
+    }
   },
+  
+}
+
+const Button = {
+  baseStyle: {
+    background: "green.900",
+    color: "black"
+  }
+}
+
+const Divider = {
+  baseStyle: {
+    marginTop: "1rem",
+    marginBottom: "1rem"
+  }
+}
+
+const components = {
+  Link,
+  Button,
+  Divider
+}
+
+const styles = {
+  global: {
+    // a: {
+    //   color: "green.600",
+    //   textDecoration: 'underline',
+    //   fontWeight: "light",
+    //   _hover: {
+    //     background: "green.600",
+    //     color: "white"
+    //   }
+    // }
+  }
 }
 
 const theme = extendTheme({
   colors,
   fonts,
-  textStyles
+  textStyles,
+  styles,
+  components
 })
 
 

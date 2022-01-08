@@ -12,10 +12,13 @@ import {
 import { connectToDatabase } from "utils/mongo_db"
 import _ from "lodash"
 import Footer from "components/Footer"
+import DataBlock from "components/DataBlock"
 import SilentVideo from "components/SilentVideo"
+import Link from "next/link"
 
 
 const DataBlocksCatalogPage = ({ blocks }) => {
+    console.log(blocks)
     return (
         <div>
             <Head>
@@ -25,33 +28,17 @@ const DataBlocksCatalogPage = ({ blocks }) => {
             </Head>
             <MainMenu />
             <Container maxW="container.xl" style={{paddingTop: 100}}>
-                <Heading as="h1" fontWeight="thin">
+                <Heading as="h1" fontWeight="thin" marginBottom="2rem">
                     Data blocks - Catalog
                 </Heading>
                 <SimpleGrid columns={{sm: 1, md: 2, lg: 3}} spacing="20px">
                     {blocks.map(block => {
                         const spaces_url = _.get(block, "spaces_url", false)
                         return (
-                            <Box
-                                key={block._id}
-                                border="1px solid rgb(220,220,220)"
-                                as="a"
-                                href={`/data_blocks/block?block=${block.vid_key}`}
-                                >
-                                <Text>
-                                    {block.title}
-                                </Text>
-                                <Text>
-                                    {block.name}
-                                </Text>
-                                <Text>
-                                    {block.merged_frames_at}
-                                </Text>
-                                {spaces_url && (
-                                    <SilentVideo src={spaces_url} resolution={block.video_meta} />
-                                )}
-                                
-                            </Box>
+                                <DataBlock
+                                    key={block._id}
+                                    block={block}
+                                    />
                         )
                     })}
                 </SimpleGrid>

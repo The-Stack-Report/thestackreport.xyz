@@ -36,7 +36,7 @@ const SilentVideo = ({
             }, silentVideoRenderedCounter * 100)
             silentVideoRenderedCounter += 1
         }
-    })
+    }, [initialized])
     useEffect(() => {
         const onScroll = e => {
           setScrollTop(e.target.documentElement.scrollTop);

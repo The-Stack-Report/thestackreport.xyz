@@ -1,17 +1,15 @@
 import Head from 'next/head'
 import MainMenu from 'components/MainMenu'
 
-import { Container, Divider, UnorderedList, ListItem } from '@chakra-ui/layout'
+import { Container } from '@chakra-ui/layout'
 import {
-    Button,
     Text,
     Heading,
-    SimpleGrid,
-    Box
+    Divider
 } from "@chakra-ui/react"
 import _ from "lodash"
 import { connectToDatabase } from "utils/mongo_db"
-import SilentVideo from "components/SilentVideo"
+import DataBlock from "components/DataBlock"
 
 import Footer from "components/Footer"
 const BlockPage = ({block, error, errorMessage="Error"}) => {
@@ -22,10 +20,9 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
             <Head>
                 <title>Data block</title>
                 <meta name="description" content="Data block animation." />
-
             </Head>
             <MainMenu />
-            <Container maxW="container.lg" style={{paddingTop: 100, paddingBottom: 100}}>
+            <Container maxW="container.md" style={{paddingTop: "8rem", paddingBottom: "8rem"}}>
                 {error ? (
                     <div>
                     <Text>{errorMessage}</Text>
@@ -35,15 +32,16 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
                     </div>
                 ) : (
                     <div>
-                    <Heading as="h4" fontWeight="bold">
+                        <Divider />
+                    <Heading as="h4" fontWeight="bold" size="md" marginBottom="1rem">
                         Data block
                     </Heading>
-                    <Heading as="h1" fontWeight="light">
-                        {block.title}
+                    <Heading as="h1" fontWeight="light" size="md">
+                        {block.name}|{block.title}
                     </Heading>
-                    {spaces_url && (
-                        <SilentVideo src={spaces_url}  resolution={block.video_meta} />
-                    )}
+                    <div style={{marginTop: "2rem", marginBottom: "2rem"}}>
+                        <DataBlock block={block} />
+                    </div>
                     {parent_vid_key && (
                         <Text
                             as="a"

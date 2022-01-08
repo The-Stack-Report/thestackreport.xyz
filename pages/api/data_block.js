@@ -4,7 +4,6 @@ import _ from "lodash"
 
 export default function handler(req, res) {
     const vid_key = _.get(req, "query.vid_key", false)
-    console.log(vid_key)
     connectToDatabase().then(async ({
         db, client
     }) => {

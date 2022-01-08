@@ -1,0 +1,1 @@
+export const CMS_URL = "https://the-stack-report-cms-y5pxm.ondigitalocean.app/api"
