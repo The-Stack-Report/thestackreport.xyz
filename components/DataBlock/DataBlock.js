@@ -13,9 +13,11 @@ const fetcher = (url) => fetch(url).then((res) => res.json())
 
 
 const DataBlock = ({
-    block = false
+    block = false,
+    z_i = false
 }) => {
     const [showControls, setShowControls] = useState(false)
+    const [tapToggle, setTapToggle] = useState(false)
     const [loaded, setLoaded] = useState(false)
     const containerRef = useRef(null)
 
@@ -47,25 +49,35 @@ const DataBlock = ({
     const dynamicHeight = containerWidth * aspectRatio
     const bottomPanelHeight = 36
 
+    var showing = _.some([showControls, tapToggle])
 
+    var containerStyle = {
+        position: "relative",
+        width: "100%",
+        cursor: "crosshair"
+    }
+    if(z_i) {
+        containerStyle.zIndex = z_i
+    }
     return (
         <div className='data-block'
-            style={{
-                position: "relative",
-                width: "100%",
-                cursor: "crosshair"
-            }}
+            style={containerStyle}
             ref={containerRef}
             onPointerEnter={() => { setShowControls(true)}}
-            onPointerLeave={() => { setShowControls(false)}}
-            
+            onPointerLeave={() => {
+                setShowControls(false)
+            }}
+            onPointerDown={(e) => {
+                console.log("pointer down event: ", showControls)
+                setTapToggle(!tapToggle)
+            }}
             >
                 <Box
                     style={{
                         position: "relative",
                         padding: 2
                     }}
-                    onPointerDown={() => { setShowControls(!showControls)}}
+                    
                     >
                     <SilentVideo
                         src={block.spaces_url}
@@ -77,8 +89,8 @@ const DataBlock = ({
                         top: 5,
                         right: 5,
                         textAlign: "right",
-                        zIndex: showControls ? 111 : 100,
-                        opacity: showControls ? 1 : 0
+                        zIndex: showing ? 111 : 100,
+                        opacity: showing ? 1 : 0
                     }}
                     href={`/data_blocks/block?block=${block.vid_key}`}
                     color="black"
@@ -87,6 +99,9 @@ const DataBlock = ({
                         color: "white"
                     }}
                     fontSize="xs"
+                    onPointerDown={(e) => {
+                        e.stopPropagation();
+                    }}
                     >
                         {block.title}
                         <br />
@@ -97,23 +112,23 @@ const DataBlock = ({
                 </Link>
                 <div style={{
                     position: "absolute",
-                    border: showControls ? "1px solid rgba(0,0,0,1)" : "1px solid rgba(0,0,0,0.2)",
+                    border: showing ? "1px solid rgba(0,0,0,1)" : "1px solid rgba(0,0,0,0.2)",
                     borderRadius: 2,
                     top: 0,
                     left: 0,
                     right: 0,
                     transition: "border 0.1s",
-                    zIndex: showControls ? 109 : 100,
+                    zIndex: showing ? 109 : 100,
                     pointerEvents: "none"
                 }}>
                     <div style={{
-                        height: showControls ? dynamicHeight : dynamicHeight - bottomPanelHeight,
+                        height: showing ? dynamicHeight : dynamicHeight - bottomPanelHeight,
                         transition: "height 0.1s",
                         pointerEvents: "none"
                     }} />
                     <div style={{
-                        opacity: showControls ? 1 : 0,
-                        pointerEvents: showControls ? "auto" : "none",
+                        opacity: showing ? 1 : 0,
+                        pointerEvents: showing ? "auto" : "none",
                         left: 0,
                         right: 0,
                         padding: 5,
@@ -134,6 +149,9 @@ const DataBlock = ({
                         color="black"
                         border="1px solid black"
                         borderRadius="0"
+                        onPointerDown={(e) => {
+                            e.stopPropagation();
+                        }}
                         pointerEvents="initial"
                         _hover={{
                             background: "black",

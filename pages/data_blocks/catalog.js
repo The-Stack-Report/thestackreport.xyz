@@ -31,12 +31,13 @@ const DataBlocksCatalogPage = ({ blocks }) => {
                     Data blocks - Catalog
                 </Heading>
                 <SimpleGrid columns={{sm: 1, md: 2, lg: 3}} spacing="20px">
-                    {blocks.map(block => {
+                    {blocks.map((block, block_i) => {
                         const spaces_url = _.get(block, "spaces_url", false)
                         return (
                                 <DataBlock
                                     key={block._id}
                                     block={block}
+                                    z_i={blocks.length + 10 - block_i}
                                     />
                         )
                     })}

@@ -6,10 +6,10 @@ const margin = -100
 
 function vidWindowOverlap(vidRef, scrollTop) {
     const bounds = vidRef.current.getBoundingClientRect()
-    return (
-        _.inRange(bounds.top, margin, window.innerHeight - margin) ||
-        _.inRange((bounds.top + bounds.height) - scrollTop, margin, window.innerHeight - margin)
-        ) 
+    return _.some([
+        _.inRange(bounds.top, margin, window.innerHeight - margin),
+        _.inRange((bounds.top + bounds.height), margin, window.innerHeight - margin)
+    ])
 }
 
 const SilentVideo = ({
@@ -27,6 +27,8 @@ const SilentVideo = ({
     const [scrollTop, setScrollTop] = useState(-1)
     const [scrolling, setScrolling] = useState(false)
     const [onScreen, setOnScreen] = useState(false)
+    const [playing, setPlaying] = useState(false)
+    const [loadCheckCounter, setLoadCheckCounter] = useState(0)
     
     useEffect(() => {
         if(initialized === false) {
@@ -39,6 +41,7 @@ const SilentVideo = ({
             silentVideoRenderedCounter += 1
         }
     }, [initialized])
+
     useEffect(() => {
         const onScroll = e => {
           setScrollTop(e.target.documentElement.scrollTop);
@@ -49,6 +52,28 @@ const SilentVideo = ({
     
         return () => window.removeEventListener("scroll", onScroll);
       }, [scrollTop]);
+    
+    useEffect(() => {
+        if(_.isNull(vidRef.current) && vidWindowOverlap(containerRef, scrollTop)) {
+            setTimeout(() => {
+                setLoadCheckCounter(loadCheckCounter + 1)
+            }, 100 + Math.random() * 500)
+        } else if(!_.isNull(vidRef.current) && playing === false) {
+            var player = vidRef.current
+            player.controls = false
+            player.playsinline = true
+            player.muted = true
+            player.setAttribute("muted", "")
+            player.autoplay = true
+            player.load()
+            setTimeout(() => {
+                const promise = player.play()
+            }, 10 + Math.random() * 10)
+            setPlaying(true)
+            
+            // vidRef.current.play()
+        }
+    }, [vidRef, playing, scrollTop, loadCheckCounter])
 
     var state_src = false
     if(delayedLoad && onScreen){
@@ -83,10 +108,7 @@ const SilentVideo = ({
                 playsInline={true}
                 
                 >
-                    
-                        <source src={state_src} type={type} />
-                    
-                
+                <source src={state_src} type={type} />
             </video>
             )}
         </div>
