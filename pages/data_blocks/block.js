@@ -20,7 +20,7 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
             <Head>
                 <title>Data block</title>
                 <meta name="description" content="Data block animation." />
-                <meta name="twitter:card" content={`${block.name} | ${block.title}`} />
+                <meta name="twitter:card" content="player" />
                 <meta name="twitter:site" content="@thestackreport" />
                 <meta name="twitter:title" content={block.name} />
                 <meta name="twitter:description" content={block.title} />
