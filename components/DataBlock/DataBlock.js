@@ -40,6 +40,15 @@ const DataBlock = ({
         }
     }, [showControls]);
 
+    useEffect(() => {
+        const onScroll = e => {
+            setTapToggle(false)
+        };
+        window.addEventListener("scroll", onScroll);
+    
+        return () => window.removeEventListener("scroll", onScroll);
+      }, []);
+
     const resolution = {
         width: _.get(block, "video_meta.width", 100),
         height: _.get(block, "video_meta.height", 100)
@@ -112,7 +121,7 @@ const DataBlock = ({
                 </Link>
                 <div style={{
                     position: "absolute",
-                    border: showing ? "1px solid rgba(0,0,0,1)" : "1px solid rgba(0,0,0,0.2)",
+                    border: showing ? "1px solid rgba(0,0,0,1)" : "1px solid rgba(0,0,0,0.025)",
                     borderRadius: 2,
                     top: 0,
                     left: 0,

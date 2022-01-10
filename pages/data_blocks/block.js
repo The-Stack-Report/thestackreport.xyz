@@ -20,6 +20,7 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
             <Head>
                 <title>Data block</title>
                 <meta name="description" content="Data block animation." />
+                <meta name="twitter:player:stream" content={spaces_url} />
             </Head>
             <MainMenu />
             <Container maxW="container.md" style={{paddingTop: "8rem", paddingBottom: "8rem"}}>
