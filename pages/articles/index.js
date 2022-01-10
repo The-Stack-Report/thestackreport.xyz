@@ -40,7 +40,7 @@ const ArticlesPage = ({ articles }) => {
                     ) )
 
                     elements.push( (
-                        <Image src='https://bit.ly/dan-abramov' alt='Dan Abramov' />
+                        <Image src={_.get(article, "banner_image_url", "")} alt={_.get(article, "title", "not-found")} />
                     ) )
 
                     if(direction) {

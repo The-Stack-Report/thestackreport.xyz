@@ -18,7 +18,6 @@ import Link from "next/link"
 
 
 const DataBlocksCatalogPage = ({ blocks }) => {
-    console.log(blocks)
     return (
         <div>
             <Head>
@@ -57,7 +56,7 @@ export async function getServerSideProps(context) {
     } else {
         const { db } = await connectToDatabase()
         var blocks = await db.collection("data_blocks")
-            .find()
+            .find().limit(100)
             .toArray()
         
         blocks = blocks.map(block => {

@@ -58,14 +58,14 @@ const DataBlock = ({
             ref={containerRef}
             onPointerEnter={() => { setShowControls(true)}}
             onPointerLeave={() => { setShowControls(false)}}
-            onPointerDown={() => { setShowControls(true)}}
-            onPointerUp={() => { setShowControls(false)}}
+            
             >
                 <Box
                     style={{
                         position: "relative",
                         padding: 2
                     }}
+                    onPointerDown={() => { setShowControls(!showControls)}}
                     >
                     <SilentVideo
                         src={block.spaces_url}
@@ -103,11 +103,13 @@ const DataBlock = ({
                     left: 0,
                     right: 0,
                     transition: "border 0.1s",
-                    zIndex: showControls ? 109 : 100
+                    zIndex: showControls ? 109 : 100,
+                    pointerEvents: "none"
                 }}>
                     <div style={{
                         height: showControls ? dynamicHeight : dynamicHeight - bottomPanelHeight,
-                        transition: "height 0.1s"
+                        transition: "height 0.1s",
+                        pointerEvents: "none"
                     }} />
                     <div style={{
                         opacity: showControls ? 1 : 0,
@@ -117,7 +119,8 @@ const DataBlock = ({
                         padding: 5,
                         paddingTop: 4,
                         transition: "opacity 0.1s",
-                        background: "white"
+                        background: "white",
+                        pointerEvents: "none"
                     }}>
                     <Button
                         width="100%"
@@ -131,6 +134,7 @@ const DataBlock = ({
                         color="black"
                         border="1px solid black"
                         borderRadius="0"
+                        pointerEvents="initial"
                         _hover={{
                             background: "black",
                             color: "white"
