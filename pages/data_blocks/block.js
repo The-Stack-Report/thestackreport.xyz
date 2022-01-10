@@ -24,7 +24,7 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
                 <meta name="twitter:site" content="@thestackreport" />
                 <meta name="twitter:title" content={block.name} />
                 <meta name="twitter:description" content={block.title} />
-                <meta name="twitter:player:stream" content={spaces_url} />
+                <meta name="twitter:player" content={`https://thestackreport.xyz/data_blocks/iframe?block=${block.vid_key}`} />
             </Head>
             <MainMenu />
             <Container maxW="container.md" style={{paddingTop: "8rem", paddingBottom: "8rem"}}>
