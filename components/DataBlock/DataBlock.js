@@ -68,6 +68,8 @@ const DataBlock = ({
     if(z_i) {
         containerStyle.zIndex = z_i
     }
+    const tweetTextPreview = `${block.name} data visual:`
+    const tweetUrl = `https://thestackreport.xyz/data_blocks/block?block=${block.vid_key.replace(/\s/g, "%2520")}`
     return (
         <div className='data-block'
             style={containerStyle}
@@ -144,14 +146,12 @@ const DataBlock = ({
                         paddingTop: 4,
                         transition: "opacity 0.1s",
                         background: "white",
-                        pointerEvents: "none"
+                        pointerEvents: "initial"
                     }}>
                     <Button
                         width="100%"
                         fullwidth="true"
                         as="a"
-                        href={block.spaces_url}
-                        download={block.vid_key}
                         target="_blank"
                         size="xs"
                         colorScheme="white"
@@ -166,9 +166,35 @@ const DataBlock = ({
                             background: "black",
                             color: "white"
                         }}
+
+                        href={block.spaces_url}
+                        download={block.vid_key}
                         >
                         Download as video (mp4)
                     </Button>
+                    <Button
+                        width="100%"
+                        fullwidth="true"
+                        as="a"
+                        target="_blank"
+                        size="xs"
+                        colorScheme="white"
+                        color="black"
+                        border="1px solid black"
+                        borderRadius="0"
+                        marginTop="0.25rem"
+                        onPointerDown={(e) => {
+                            e.stopPropagation();
+                        }}
+                        pointerEvents="initial"
+                        _hover={{
+                            background: "black",
+                            color: "white"
+                        }}
+                        href={`https://twitter.com/intent/tweet?text=${tweetTextPreview}&url=${tweetUrl}&via=thestackreport`}
+                        >
+                        Tweet
+                        </Button>
                     </div>
                 </div>
         </div>

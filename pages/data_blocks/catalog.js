@@ -67,7 +67,7 @@ export async function getServerSideProps(context) {
             }
         })
         blocks = _.sortBy(blocks, "vid_key")
-        blocksCache = blocks
+        // blocksCache = blocks
         return { props: {blocks: blocks}}
     }
 }
