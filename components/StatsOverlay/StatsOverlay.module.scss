@@ -1,0 +1,11 @@
+.stats-overlay {
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    pointer-events: none;
+    user-select: none;
+    .connection-speed {
+        font-size: 0.5rem;
+        margin: 10px;
+    }
+}

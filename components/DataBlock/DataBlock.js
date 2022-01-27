@@ -8,23 +8,31 @@ import {
     Link
 } from "@chakra-ui/react"
 import _ from "lodash"
+import Controls from "./Controls"
+import Image from "next/image"
+import getStillFrame from "./blockUtils/getStillFrame"
 
 const fetcher = (url) => fetch(url).then((res) => res.json())
 
-
 const DataBlock = ({
     block = false,
-    z_i = false
+    z_i = false,
+    loadVidDirectly = false
 }) => {
     const [showControls, setShowControls] = useState(false)
     const [tapToggle, setTapToggle] = useState(false)
     const [loaded, setLoaded] = useState(false)
+    const [showStillFramePreview, setShowStillFramePreview] = useState(true)
+    const [showVideo, setShowVideo] = useState(false)
+    const [vidLoaded, setVidLoaded] = useState(false)
+    const [resizeCounter, setResizeCounter] = useState(0)
     const containerRef = useRef(null)
 
 
     useEffect(() => {
         if(loaded === false) {
             setLoaded(true)
+            setShowVideo(true)
         }
     },[loaded])
 
@@ -33,6 +41,7 @@ const DataBlock = ({
             if(showControls) {
                 setShowControls(false)
             }
+            setResizeCounter(resizeCounter + 1)
         }
         window.addEventListener("resize", onResize);
         return () => {
@@ -63,18 +72,21 @@ const DataBlock = ({
     var containerStyle = {
         position: "relative",
         width: "100%",
-        cursor: "crosshair"
+        cursor: "crosshair",
     }
+
     if(z_i) {
         containerStyle.zIndex = z_i
     }
-    const tweetTextPreview = `${block.name} data visual:`
-    const tweetUrl = `https://thestackreport.xyz/data_blocks/block?block=${block.vid_key.replace(/\s/g, "%2520")}`
+    var stillUrl = getStillFrame(block)
+    var boxPadding = 2
     return (
         <div className='data-block'
             style={containerStyle}
             ref={containerRef}
-            onPointerEnter={() => { setShowControls(true)}}
+            onPointerEnter={() => {
+                setShowControls(true)
+            }}
             onPointerLeave={() => {
                 setShowControls(false)
             }}
@@ -86,14 +98,21 @@ const DataBlock = ({
                 <Box
                     style={{
                         position: "relative",
-                        padding: 2
+                        padding: boxPadding,
+                        width: containerWidth - boxPadding * 2,
+                        height: (containerWidth - boxPadding * 2) * aspectRatio
                     }}
-                    
                     >
-                    <SilentVideo
-                        src={block.spaces_url}
-                        resolution={resolution}
-                        />
+                    {stillUrl && showStillFramePreview && !vidLoaded && (
+                        <Image src={stillUrl} alt="Data block chart" layout="fill" />
+                    )}
+                    {showVideo && (
+                        <SilentVideo
+                            src={block.spaces_url}
+                            resolution={resolution}
+                            hasLoaded={setVidLoaded}
+                            />
+                    )}
                 </Box>
                 <Link style={{
                         position: "absolute",
@@ -105,6 +124,7 @@ const DataBlock = ({
                     }}
                     href={`/data_blocks/block?block=${block.vid_key}`}
                     color="black"
+                    background="white"
                     _hover={{
                         background: "black",
                         color: "white"
@@ -123,7 +143,7 @@ const DataBlock = ({
                 </Link>
                 <div style={{
                     position: "absolute",
-                    border: showing ? "1px solid rgba(0,0,0,1)" : "1px solid rgba(0,0,0,0.025)",
+                    border: showing ? "1px solid rgba(0,0,0,1)" : "1px solid rgba(0,0,0,0.0)",
                     borderRadius: 2,
                     top: 0,
                     left: 0,
@@ -148,53 +168,9 @@ const DataBlock = ({
                         background: "white",
                         pointerEvents: "initial"
                     }}>
-                    <Button
-                        width="100%"
-                        fullwidth="true"
-                        as="a"
-                        target="_blank"
-                        size="xs"
-                        colorScheme="white"
-                        color="black"
-                        border="1px solid black"
-                        borderRadius="0"
-                        onPointerDown={(e) => {
-                            e.stopPropagation();
-                        }}
-                        pointerEvents="initial"
-                        _hover={{
-                            background: "black",
-                            color: "white"
-                        }}
-
-                        href={block.spaces_url}
-                        download={block.vid_key}
-                        >
-                        Download as video (mp4)
-                    </Button>
-                    <Button
-                        width="100%"
-                        fullwidth="true"
-                        as="a"
-                        target="_blank"
-                        size="xs"
-                        colorScheme="white"
-                        color="black"
-                        border="1px solid black"
-                        borderRadius="0"
-                        marginTop="0.25rem"
-                        onPointerDown={(e) => {
-                            e.stopPropagation();
-                        }}
-                        pointerEvents="initial"
-                        _hover={{
-                            background: "black",
-                            color: "white"
-                        }}
-                        href={`https://twitter.com/intent/tweet?text=${tweetTextPreview}&url=${tweetUrl}&via=thestackreport`}
-                        >
-                        Tweet
-                        </Button>
+                    <Controls
+                        block={block}
+                        />
                     </div>
                 </div>
         </div>

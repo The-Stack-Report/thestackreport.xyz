@@ -23,7 +23,6 @@ const MainMenu = () => {
                     as="a" href="/">
                     The Stack Report
                 </Text>
-                <span>Data-driven reporting from within the Tezos ecosystem.</span>
             </h1>
             <div className={styles["links-section"]}>
                 <SocialsLinkBar />

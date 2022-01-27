@@ -5,11 +5,17 @@ var silentVideoRenderedCounter = 0
 const margin = -100
 
 function vidWindowOverlap(vidRef, scrollTop) {
-    const bounds = vidRef.current.getBoundingClientRect()
-    return _.some([
-        _.inRange(bounds.top, margin, window.innerHeight - margin),
-        _.inRange((bounds.top + bounds.height), margin, window.innerHeight - margin)
-    ])
+    var bounds = false
+    if(vidRef.current !== null) {
+        bounds = vidRef.current.getBoundingClientRect()
+        return _.some([
+            _.inRange(bounds.top, margin, window.innerHeight - margin),
+            _.inRange((bounds.top + bounds.height), margin, window.innerHeight - margin)
+        ])
+    } else {
+        return false
+    }
+    
 }
 
 const SilentVideo = ({
@@ -18,7 +24,8 @@ const SilentVideo = ({
         autoplay=true,
         play_on_hover=true,
         play_when_in_page=true,
-        resolution=false
+        resolution=false,
+        hasLoaded = () => {}
     }) => {
     const containerRef = useRef(null)
     const vidRef = useRef(null)
@@ -37,7 +44,7 @@ const SilentVideo = ({
                 setDelayedLoad(true)
                 setScrollTop(document.documentElement.scrollTop)
                 setOnScreen(vidWindowOverlap(containerRef, document.documentElement.scrollTop))
-            }, silentVideoRenderedCounter * 100)
+            }, silentVideoRenderedCounter * 200)
             silentVideoRenderedCounter += 1
         }
     }, [initialized])
@@ -106,6 +113,9 @@ const SilentVideo = ({
                 autoPlay={true}
                 loop={true}
                 playsInline={true}
+                onLoadedData={() => {
+                    hasLoaded(true)
+                }}
                 
                 >
                 <source src={state_src} type={type} />

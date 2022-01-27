@@ -1,0 +1,175 @@
+import React from "react"
+import Link from 'next/link'
+import Image from "next/image"
+import {
+    Box,
+    Text
+} from "@chakra-ui/react"
+import _ from "lodash"
+import dayjs from "dayjs"
+
+const ArticleCard = ({
+    article
+}) => {
+    const attrs = article.attributes
+    const authors = _.get(attrs, "authors.data", false)
+    const categories = _.get(attrs, "categories.data", false)
+    return (
+        <Link
+            href={`/articles/article?id=${article.id}`}
+            >
+            <Box key={article.id}
+                border={"1px solid black"}
+                marginBottom="0.5rem"
+                cursor={"pointer"}
+                _hover={{
+                    top: 0
+                }}
+                height={"14rem"}
+                position="relative"
+                role="group"
+                >
+                <Box
+                    position="absolute"
+                    width="100%"
+                    height="100%"
+                    zIndex={20}
+                    _groupHover={{
+                        border: "6px solid black"
+                    }}
+                    />
+                <div style={{position: "relative", width: "100%", height: "100%", overflow: "hidden"}}>
+                <Image
+                    src={attrs.banner_image_url}
+                    layout="fill"
+                    objectFit="cover"
+                    />
+                </div>
+                <div
+                    style={{
+                        position: "absolute",
+                        bottom: 5,
+                        right: 5,
+                        zIndex: 10,
+                    }}>
+                    <div style={{display: "flex", alignItems: "end", textAlign: "right"}}>
+                        <Box
+                            width="fluid"
+                            background="white"
+                            border="1px solid black"
+                            opacity={0.9}
+                            paddingLeft="0.35rem"
+                            paddingRight="0.35rem"
+                            marginLeft="auto"
+                            marginBottom="0.35rem"
+                            >
+                            <Text
+                                fontSize="0.7rem"
+                                color="black"
+                                >
+                                {dayjs(_.get(article, "attributes.Published", false)).format("MMMM D, YYYY h:mm A")}
+                            </Text>
+                        </Box>
+                    </div>
+                    {(authors && false) && (
+                        <div style={{display: "flex", alignItems: "end", textAlign: "right"}}>
+                            <Box
+                                width="fluid"
+                                opacity={0.9}
+                                paddingLeft="0.35rem"
+                                paddingRight="0.35rem"
+                                marginLeft="auto">
+                                <Text
+                                    fontSize="0.7rem"
+                                    >
+                                    By: 
+                                </Text>
+                            </Box>
+                            {authors.map((author, author_i, author_a) => {
+                                return (
+                                    <Box
+                                        width="fluid"
+                                        key={author.id}
+                                        >
+                                        <Text
+                                            fontSize="0.7rem"
+                                            fontWeight="bold"
+                                            textTransform="uppercase"
+                                            >
+                                            {_.get(author, "attributes.first_name", false)}
+                                        </Text>
+                                        {(author_i < author_a.length - 1 && (
+                                            <Text
+                                            fontSize="0.7rem"
+                                            >
+                                            {','}
+                                        </Text>
+                                        ))}
+                                    </Box>
+                                )
+                            })}
+                        </div>
+                    )}
+                    <div style={{display: "flex", alignItems: "end", textAlign: "right"}}>
+                    <Text
+                        textDecoration="underline"
+                        _groupHover={{
+                            bg: "black",
+                            color: "white"
+                        }}
+                        width="fluid"
+                        textAlign="right"
+                        paddingLeft="0.35rem"
+                        paddingRight="0.35rem"
+                        marginLeft="auto"
+                        background="white"
+                        >
+                        {attrs.Title}
+                    </Text>
+                    </div>
+                    <div style={{display: "flex", alignItems: "end", textAlign: "right"}}>
+                    <Text
+                        fontSize="0.7rem"
+                        marginTop="0.35rem"
+                        textAlign="right"
+                        marginLeft="auto"
+                        paddingLeft="0.35rem"
+                        paddingRight="0.35rem"
+                        width="fluid"
+                        color="gray400"
+                        background="white"
+                        >
+                        {attrs.Snippet}
+                    </Text>
+                    </div>
+                    {categories && (
+                        <div style={{display: "flex", alignItems: "end", textAlign: "right", marginTop: "0.35rem"}}>
+                            {categories.map((category, c_i) => {
+                                return (
+                                    <Box
+                                        width="fluid"
+                                        background="black"
+                                        paddingLeft="0.35rem"
+                                        paddingRight="0.35rem"
+                                        marginLeft="auto"
+                                        border="1px solid black"
+                                        key={c_i}
+                                        >
+                                        <Text
+                                            fontSize="0.7rem"
+                                            color="white"
+                                            >
+                                            {_.get(category, "attributes.Category", false)}
+                                        </Text>
+                                    </Box>
+                                )
+                            })}
+                        </div>
+                    )}
+                </div>
+            </Box>
+        </Link>
+    )
+}
+
+export default ArticleCard

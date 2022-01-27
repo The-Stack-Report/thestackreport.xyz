@@ -41,11 +41,11 @@ const textStyles = {
 
 const Link = {
   baseStyle: {
-    color: "green.600",
+    color: "black",
     textDecoration: "underline",
     _hover: {
       color: "white",
-      background: "green.600"
+      background: "black"
     }
   },
   

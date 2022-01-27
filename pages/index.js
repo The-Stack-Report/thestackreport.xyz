@@ -6,19 +6,24 @@ import { Container,
   Heading,
   Center,
   Divider,
-  Button
+  Button,
+  Box
 } from "@chakra-ui/react"
 import Link from "next/link"
 import Footer from 'components/Footer'
 import styles from '../styles/Home.module.scss'
+import PageLayout from "components/PageLayout"
 
 const buttonProps = {
-  background: "black",
-  color: "white",
-  marginBottom: 25,
   width: "100%",
-  as:"a",
-  _hover: {bg: "rgb(0,0,0,0.8)"}
+  marginBottom: "0.35rem",
+  borderRadius: 0,
+  // background: "black",
+  // color: "white",
+  // marginBottom: 25,
+  // width: "100%",
+  // as:"a",
+  // _hover: {bg: "rgb(0,0,0,0.8)"}
 }
 
 
@@ -65,16 +70,19 @@ export default function Home() {
             Launching early 2022.
           </Text>
           <br />
+          <Box>
           <Button
             {...buttonProps}
-            _hover={{bg: "blue"}}
+            _hover={{bg: "rgb(0,20,150)", color: "white"}}
             href="/blog/announcement"
             >
             Read the announcement
           </Button>
+          </Box>
           <Divider marginTop={25} marginBottom={25} />
           <p>{`Don't miss out by following the`} <i>The Stack Report</i> on:</p>
           <br />
+          <Box>
           <Button
             {...buttonProps}
             _hover={{bg: "twitter.700"}}
@@ -82,6 +90,8 @@ export default function Home() {
             >
             Twitter
           </Button>
+          </Box>
+          <Box>
           <Button
             {...buttonProps}
             _hover={{bg: "#e1306c"}}
@@ -89,6 +99,8 @@ export default function Home() {
             >
             Instagram
           </Button>
+          </Box>
+          <Box>
           <Button
             {...buttonProps}
             _hover={{bg: "linkedin.300"}}
@@ -96,6 +108,7 @@ export default function Home() {
             >
             LinkedIn
           </Button>
+          </Box>
           <Divider
                     marginBottom={25}
                     />

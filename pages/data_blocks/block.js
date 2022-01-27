@@ -87,11 +87,9 @@ export async function getServerSideProps(context) {
             if (!_.has(block, "_id")) {
                 return { props: {errorMessage: "Incorrect block key.", error: true} }
             } else {
-                block._id = block._id.toString()
-                // blocksCache[data_key] = block
                 return {
                     props: {
-                        block: block,
+                        block: JSON.parse(JSON.stringify(block)),
                         error: false
                     }
                 }
