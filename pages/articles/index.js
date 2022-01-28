@@ -1,19 +1,13 @@
 import Head from "next/head"
-import MainMenu from "components/MainMenu"
 
 import { Container } from "@chakra-ui/layout"
 import {
-    Text,
     Heading,
-    Grid,
     GridItem,
-    Image,
     SimpleGrid,
-    Box
 } from "@chakra-ui/react"
 import ArticleList from "components/ArticleList"
 import _ from "lodash"
-import Footer from "components/Footer"
 import { CMS_URL } from 'constants/cms'
 import PageLayout from 'components/PageLayout'
 
