@@ -47,7 +47,7 @@ const DataBlock = ({
         return () => {
             window.removeEventListener("resize", onResize)
         }
-    }, [showControls]);
+    }, [showControls, resizeCounter]);
 
     useEffect(() => {
         const onScroll = e => {

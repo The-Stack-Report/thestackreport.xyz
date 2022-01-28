@@ -17,6 +17,7 @@ const ArticleCard = ({
     return (
         <Link
             href={`/articles/article?id=${article.id}`}
+            passHref={true}
             >
             <Box key={article.id}
                 border={"1px solid black"}
@@ -41,6 +42,7 @@ const ArticleCard = ({
                 <div style={{position: "relative", width: "100%", height: "100%", overflow: "hidden"}}>
                 <Image
                     src={attrs.banner_image_url}
+                    alt={attrs.Title}
                     layout="fill"
                     objectFit="cover"
                     />
