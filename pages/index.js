@@ -18,6 +18,7 @@ const buttonProps = {
   width: "100%",
   marginBottom: "0.35rem",
   borderRadius: 0,
+  as: "a"
   // background: "black",
   // color: "white",
   // marginBottom: 25,
