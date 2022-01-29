@@ -38,7 +38,7 @@ const CategoryPage = ({category, error, errorMessage}) => {
                             {errorMessage}
                         </Text>
                         <WrappedLink href="/categories">
-                            Back to overview.
+                            Back to overview
                         </WrappedLink>
                     </Container>
                 ) : (
@@ -47,13 +47,18 @@ const CategoryPage = ({category, error, errorMessage}) => {
                         maxW="container.md"
                         >
                             <WrappedLink href="/categories">
-                            Back to categories.
+                            Back to categories
                         </WrappedLink>
                             <Heading
                                 marginTop="2rem"
                                 marginBottom="2rem"
+                                fontWeight="thin"
                                 >
-                                {_.get(attrs, "Category", "-")}
+                                Category:
+                                <br />
+                                <Text as="span" fontWeight="bold" textTransform="uppercase">
+                                    {_.get(attrs, "Category", "-")}
+                                </Text>
                             </Heading>
                             {articles.length > 0 ? (
                                 <ArticleList articles={articles} />

@@ -7,11 +7,10 @@ import {
     UnorderedList,
     Button,
     Text,
-    SimpleGrid,
     Box,
-    Grid,
-    GridItem
+    Divider
 } from "@chakra-ui/react"
+import _ from "lodash"
 
 
 const ULMarkdown = (props) => {
@@ -74,6 +73,13 @@ var markdownComponents = {
                     {`"`}
                 </Text>
             </Box>
+        )
+    },
+    "hr": ({children, ...props}) => {
+        return (
+            <Divider
+                borderBottom="1px solid rgb(220,220,220)"
+                />
         )
     }
 }
