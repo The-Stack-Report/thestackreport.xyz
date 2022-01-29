@@ -8,6 +8,7 @@ import {
 } from "@chakra-ui/react"
 import _ from "lodash"
 import dayjs from "dayjs"
+import { basicImgLoader } from "utils/basicImgLoader"
 
 
 const FeaturedArticleBanner = ({ article }) => {
@@ -22,6 +23,7 @@ const FeaturedArticleBanner = ({ article }) => {
                 minHeight: 400
             }}>
             <Image
+                loader={basicImgLoader}
                 src={bannerImgSrc}
                 alt={`Image for featured article: ${title}`}
                 layout="fill"

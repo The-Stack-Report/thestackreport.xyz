@@ -7,6 +7,7 @@ import {
 } from "@chakra-ui/react"
 import _ from "lodash"
 import dayjs from "dayjs"
+import { basicImgLoader } from "utils/basicImgLoader"
 
 const ArticleCard = ({
     article
@@ -41,6 +42,7 @@ const ArticleCard = ({
                     />
                 <div style={{position: "relative", width: "100%", height: "100%", overflow: "hidden"}}>
                 <Image
+                    loader={basicImgLoader}
                     src={attrs.banner_image_url}
                     alt={attrs.Title}
                     layout="fill"
