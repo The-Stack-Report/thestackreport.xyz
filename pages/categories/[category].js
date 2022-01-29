@@ -46,7 +46,7 @@ const CategoryPage = ({category, error, errorMessage}) => {
                         paddingTop="8rem"
                         maxW="container.md"
                         >
-                            <WrappedLink href="/categories">
+                            <WrappedLink href="/categories" fontSize="0.7rem">
                             Back to categories
                         </WrappedLink>
                             <Heading
@@ -71,7 +71,7 @@ const CategoryPage = ({category, error, errorMessage}) => {
                             <Box height="2rem" />
                             <Box style={{textAlign: "right"}}>
                             <WrappedLink
-                                href="/articles">
+                                href="/articles" fontSize="0.7rem">
                                 To latest articles
                             </WrappedLink>
                             </Box>
