@@ -48,10 +48,15 @@ const CategoriesPage = ({ categories }) => {
                                     textTransform="uppercase"
                                     fontSize="1rem"
                                     fontWeight="bold"
-                                    marginBottom="1rem"
+                                    marginBottom="0.5rem"
                                     >
                                     {attrs.Category}
                                 </Heading>
+                                <Box
+                                    paddingLeft="1rem"
+                                    borderLeft="1px solid rgb(150,150,150)"
+                                    minHeight="8rem"
+                                    >
                                 {articles.length > 0 ? (
                                     <div>
                                     {articles.map(article => {
@@ -81,6 +86,7 @@ const CategoriesPage = ({ categories }) => {
                                         No articles (yet) for this category.
                                     </Text>
                                 )}
+                                </Box>
                             </Box>
                         )
                     })}
