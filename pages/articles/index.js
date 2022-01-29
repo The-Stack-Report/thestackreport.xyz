@@ -27,7 +27,10 @@ const ArticlesPage = ({ articles, categories }) => {
                 <SimpleGrid
                     minChildWidth="300px"
                     columns={[4]}
-                    gap="4rem"
+                    gap={{
+                        base: "1rem",
+                        md: "4rem"
+                    }}
                     >
                     <GridItem
                         colSpan={2}
@@ -35,7 +38,10 @@ const ArticlesPage = ({ articles, categories }) => {
                         <Heading
                             as="h1"
                             fontWeight="thin"
-                            marginTop="4rem"
+                            marginTop={{
+                                base: "2rem",
+                                md: "4rem"
+                            }}
                             marginBottom="2rem"
                             >
                             Latest articles
@@ -47,13 +53,19 @@ const ArticlesPage = ({ articles, categories }) => {
                                 No current articles.
                             </Text>
                         )}
-                        <Box height="4rem" />
+                        <Box height={{
+                                base: "2rem",
+                                md: "4rem"
+                            }} />
                     </GridItem>
                         <GridItem>
                         <Heading
                             as="h2"
                             fontWeight="thin"
-                            marginTop="4rem"
+                            marginTop={{
+                                base: "2rem",
+                                md: "4rem"
+                            }}
                             marginBottom="2rem"
                             >
                             Categories
