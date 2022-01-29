@@ -155,7 +155,7 @@ const DataBlock = ({
                     <div style={{
                         height: showing ? dynamicHeight : dynamicHeight - bottomPanelHeight,
                         transition: "height 0.1s",
-                        pointerEvents: "none"
+                        pointerEvents: showing ? "auto" : "none"
                     }} />
                     <div style={{
                         opacity: showing ? 1 : 0,
@@ -163,10 +163,9 @@ const DataBlock = ({
                         left: 0,
                         right: 0,
                         padding: 5,
-                        paddingTop: 4,
+                        paddingBottom: 0,
                         transition: "opacity 0.1s",
                         background: "white",
-                        pointerEvents: "initial"
                     }}>
                     <Controls
                         block={block}

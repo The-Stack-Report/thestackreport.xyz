@@ -55,7 +55,10 @@ const Link = {
 const Button = {
   baseStyle: {
     background: "green.900",
-    color: "black"
+    color: "black",
+    width: "100%",
+    marginBottom: "0.35rem",
+    borderRadius: 0
   }
 }
 

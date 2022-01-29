@@ -1,143 +1,163 @@
-import Head from 'next/head'
-import MainMenu from 'components/MainMenu'
-import SilentVideo from 'components/SilentVideo'
-import { Container,
-  Text,
-  Heading,
-  Center,
-  Divider,
-  Button,
-  Box
+import Head from "next/head"
+import {
+    Container,
+    SimpleGrid,
+    Box,
+    Text,
+    Heading
 } from "@chakra-ui/react"
-import Link from "next/link"
-import Footer from 'components/Footer'
-import styles from '../styles/Home.module.scss'
-import PageLayout from "components/PageLayout"
+import PageLayout from 'components/PageLayout'
+import FeaturedArticleBanner from "components/FeaturedArticleBanner"
+import ArticleList from "components/ArticleList"
+import DataBlock from "components/DataBlock"
+import { CMS_URL } from 'constants/cms'
+import _ from "lodash"
+import { connectToDatabase } from "utils/mongo_db"
+import WrappedLink from "components/WrappedLink"
+import MarkdownWrapper from "components/MarkdownWrapper"
 
-const buttonProps = {
-  width: "100%",
-  marginBottom: "0.35rem",
-  borderRadius: 0,
-  as: "a"
-  // background: "black",
-  // color: "white",
-  // marginBottom: 25,
-  // width: "100%",
-  // as:"a",
-  // _hover: {bg: "rgb(0,0,0,0.8)"}
+
+const LandingPage = ({ landing, latestArticles, topContracts4x1 }) => {
+    const featured = _.get(landing, "attributes.featured.data", false)
+    const aboutText = _.get(landing, "attributes.about_tsr", "")
+    return (
+        <PageLayout>
+            <Head>
+                <title>The Stack Report</title>
+                <meta name="description" content="Data driven reporting and visualisations from within the Tezos ecosystem." />
+            </Head>
+            <FeaturedArticleBanner
+                article={featured}
+                />
+            <Container maxW="container.xl" marginTop="4rem">
+            <SimpleGrid columns={[1, 1, 2]} spacing={8}>
+                <Box>
+                    <Text
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        fontSize="0.7rem"
+                        >
+                        Recent articles
+                    </Text>
+                    <ArticleList
+                        articles={latestArticles.filter(article => article.id !== featured.id).slice(0, 5)}
+                        />
+                    <Text>{">> "}
+                    <WrappedLink
+                        href="/articles">
+                            All articles
+                        </WrappedLink>
+                    </Text>
+                    
+                </Box>
+                <Box>
+                    <Text
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        fontSize="0.7rem"
+                        >
+                        Top tezos contracts <Text as="span" fontWeight="light">by nr of</Text> contract calls 
+                        <Text as="span" fontWeight="light">
+                            {" "}past 60 days.
+                        </Text>
+                    </Text>
+                    {topContracts4x1.map(block => {
+                        return (
+                            <Box
+                                maxW="500"
+                                marginBottom="2rem"
+                                key={block._id}
+                                border="0px solid transparent"
+                                >
+                            <DataBlock block={block} />
+                            </Box>
+                        )
+                    })}
+                </Box>
+            </SimpleGrid>
+            </Container>
+            <Box
+                borderTop="1px solid rgb(200,200,200)"
+                marginTop="4rem"
+                >
+                <Container maxW="container.xl">
+                <Box
+                    borderLeft="1px solid rgb(200,200,200)"
+                    borderRight="1px solid rgb(200,200,200)"
+                    marginLeft="-1px"
+                    marginRight="-1px"
+                    padding="0.5rem"
+                    paddingTop="2rem"
+                    paddingRight="1rem"
+                    >
+                    <Box maxW="60rem">
+                    <Heading
+                        fontWeight="thin"
+                        marginBottom="1rem"
+                        >
+                        About The Stack Report
+                    </Heading>
+                    <MarkdownWrapper
+                        markdownText={aboutText}
+                        />
+                    <br />
+                    <WrappedLink
+                        href="/about"
+                        >
+                        Read more
+                    </WrappedLink>
+                    <br />
+                    </Box>
+                </Box>
+                </Container>
+            </Box>
+        </PageLayout>
+    )
 }
 
+const landingPageContent = "/landing-page?populate=*"
+const recentArticlesApi = "/articles?sort=Published:desc&populate=%2A"
+const topContractsBlocks = ""
 
-export default function Home() {
-  return (
-    <div>
-      <Head>
-        <title>The Stack Report</title>
-        <meta name="description" content="Data driven reporting and visualisations from within the Tezos ecosystem." />
-        
-        
-      </Head>
-      <MainMenu />
-      <main>
-      <div className={styles["responsive-video-bump"]}></div>
-      <div style={{
-        width: "100vw",
-        height: "56.25vw"
-      }}>
-      <iframe
-        src="https://player.vimeo.com/video/653495414?title=0&byline=0&portrait=0&muted=1&autoplay=1&autopause=0&controls=0&loop=1"
-        width="100%"
-        height="100%"
-        frameBorder="0"
-        allow="autoplay; fullscreen"
-        >
+export async function getServerSideProps(context) {
+    const resp = await fetch(CMS_URL + landingPageContent)
+    const data = await resp.json()
 
-      </iframe>
-      </div>
-        <div style={{borderTop: "1px solid rgb(220,220,220)", margin: 0}}>
-        <Center height='50px'>
-          <Divider orientation='vertical' />
-        </Center>
-        <Divider marginBottom={50} />
-          <Container>
-          <Heading as="h1" fontSize="4xl" fontWeight="light" lineHeight={"4rem"} marginBottom={0}>
-            The Stack Report<br />
-          </Heading>
-          <Text fontSize="xl">
-            Covering stories in the Tezos ecosystem through blockchain data visualisation.
-          </Text>
-          <br />
-          <Text fontSize="xl">
-            Launching early 2022.
-          </Text>
-          <br />
-          <Box>
-          <Button
-            {...buttonProps}
-            _hover={{bg: "rgb(0,20,150)", color: "white"}}
-            href="/blog/announcement"
-            >
-            Read the announcement
-          </Button>
-          </Box>
-          <Divider marginTop={25} marginBottom={25} />
-          <p>{`Don't miss out by following the`} <i>The Stack Report</i> on:</p>
-          <br />
-          <Box>
-          <Button
-            {...buttonProps}
-            _hover={{bg: "twitter.700"}}
-            href="https://twitter.com/thestackreport"
-            >
-            Twitter
-          </Button>
-          </Box>
-          <Box>
-          <Button
-            {...buttonProps}
-            _hover={{bg: "#e1306c"}}
-            href="https://www.instagram.com/stackreport/"
-            >
-            Instagram
-          </Button>
-          </Box>
-          <Box>
-          <Button
-            {...buttonProps}
-            _hover={{bg: "linkedin.300"}}
-            href="https://www.linkedin.com/company/the-stack-report"
-            >
-            LinkedIn
-          </Button>
-          </Box>
-          <Divider
-                    marginBottom={25}
-                    />
-                <Text>
-                  If you are excited about this initiative and want to contribute, feel free to watch and share this video teaser!
-                </Text>
-                <div style={{
-                    padding: "75% 0 0 0",
-                    position:"relative"
-                }}>
-                    <iframe
-                        src="https://player.vimeo.com/video/653497706?h=3935981d26&badge=0&autopause=0&player_id=0&app_id=58479"
-                        frameBorder="0"
-                        allow="autoplay; fullscreen; picture-in-picture"
-                        style={{
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: "100%"
-                        }}
-                        title="The Stack Report - Announcement teaser">
-                    </iframe>
-                </div>
-          </Container>
-        </div>
-        <Footer />
-      </main>
-    </div>
-  )
+    const articles_resp = await fetch(CMS_URL + recentArticlesApi)
+    var recentArticles = await articles_resp.json()
+    recentArticles = _.get(recentArticles, "data", [])
+
+    const { db } = await connectToDatabase()
+
+    var topContracts4x1 = await db.collection("data_blocks")
+        .find(
+            {
+                tags: {$in: ["top-contracts-4x1"]}
+            },
+            {
+                $orderby: {
+                    endDate: -1,
+                }
+            }
+        )
+        .limit(5)
+        .toArray()
+    
+    topContracts4x1 = JSON.parse(JSON.stringify(topContracts4x1))
+
+    topContracts4x1.sort((a, b) => a.attributes.position - b.attributes.position)
+
+    
+    return {
+        props: {
+            landing: data.data,
+            latestArticles: recentArticles,
+            recentWeekly: [],
+            recentMonthly: [],
+            topContracts4x1: topContracts4x1
+            
+        }
+    }
 }
+
+export default LandingPage

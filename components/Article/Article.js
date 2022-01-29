@@ -1,54 +1,81 @@
 import React from "react"
 import {
-    Text,
-    Heading,
     UnorderedList,
-    ListItem,
-    Button
+    Button,
+    Text,
+    SimpleGrid,
+    Box,
+    Grid,
+    GridItem
 } from "@chakra-ui/react"
-import ReactMarkdown from 'react-markdown'
 import _ from "lodash"
-import ChakraUIRenderer from 'chakra-ui-markdown-renderer';
-import rehypeRaw from 'rehype-raw'
-import { DataBlockDynamic } from "components/DataBlock/DataBlock"
+import MarkdownWrapper from "components/MarkdownWrapper"
+import CategoriesTags from "components/CategoriesTags"
+import dayjs from "dayjs"
 
-const ULMarkdown = (props) => {
-    return (
-        <UnorderedList marginBottom={"1rem"}>
-            {props.children}
-        </UnorderedList>
-    )
-}
 
-var markdownComponents = {
-    "ul": ULMarkdown,
-    "data_block": (props) => {
-        var block_key = _.get(props, "children[0]", false)
-        if(block_key === false) {
-            block_key = _.get(props, "node.properties.key", false)
-        }
-        return (
-            <div style={{marginTop: "2rem", marginBottom: "2rem"}}>
-            <DataBlockDynamic block_key={block_key} />
-            </div>
-        )
-    },
-    "button": ({children, ...props}) => {
-        return (
-            <Button {...props}>{children}</Button>
-        )
-    }
-}
+
 
 const Article = ({ article }) => {
+    const categories = _.get(article, "categories.data", false)
     return (
         <div className="tsr-article">
-            <ReactMarkdown
-                components={ChakraUIRenderer(markdownComponents)}
-                rehypePlugins={[rehypeRaw]}
+            <Box height={{base: "2rem", md: "4rem"}}></Box>
+            <Text
+                fontSize="0.7rem"
                 >
-                {_.get(article, "Content", "# content missing")}
-            </ReactMarkdown>
+                {dayjs(_.get(article, "Published", false)).format("MMMM D, YYYY h:mm A")}
+            </Text>
+            {categories && (
+                <CategoriesTags categories={categories} />
+            )}
+            <Text
+                as="h1"
+                fontSize={{
+                    base: "2rem",
+                    sm: "3rem",
+                    md: "4rem"
+                }}
+                maxW="container.md"
+                textTransform="uppercase"
+                fontWeight="thin"
+                marginBottom="2rem"
+                >
+                {article.Title}
+            </Text>
+            <Grid
+                templateColumns='repeat(5, 1fr)'
+                gap={4}
+                >
+                <GridItem
+                    colSpan={1}
+                    display={{
+                        base: "none",
+                        sm: "none",
+                        md: "initial"
+                    }}
+                    >
+                    <Text
+                        fontWeight="light"
+                        color="rgb(200,200,200)"
+                        >
+                    {">>"}
+                    </Text>
+                </GridItem>
+                <GridItem
+                    colSpan={{
+                        base: 5,
+                        sm: 5,
+                        md: 4
+                    }}
+                    >
+                    <Box maxW="container.sm">
+                        <MarkdownWrapper
+                            markdownText={_.get(article, "Content", "# content missing")}
+                            />
+                    </Box>
+                </GridItem>
+            </Grid>
         </div>
     )
 }

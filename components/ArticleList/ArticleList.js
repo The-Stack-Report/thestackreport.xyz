@@ -3,7 +3,6 @@ import ArticleCard from "components/ArticleCard"
 import _ from "lodash"
 
 const ArticleList = ({ articles }) => {
-    console.log(articles)
     return (
         <div>
             {articles.map(article => {

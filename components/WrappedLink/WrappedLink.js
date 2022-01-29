@@ -20,7 +20,9 @@ const WrappedLink = ({
             </Link>
         </NextLink>
         {inline === false && (
+            <>
             <br />
+            </>
         )}
         </>
     )

@@ -8,7 +8,7 @@ import _ from "lodash"
 import getStillFrame from "./blockUtils/getStillFrame"
 
 
-const Controls = ({ block }) => {
+const Controls = ({ block, pointerEvents }) => {
     const tweetTextPreview = `${block.name} data visual:`
     const tweetUrl = `https://thestackreport.xyz/data_blocks/block?block=${block.vid_key.replace(/\s/g, "%2520")}`
     const stills = _.get(block, "stills", false)
@@ -29,7 +29,6 @@ const Controls = ({ block }) => {
                 onPointerDown={(e) => {
                     e.stopPropagation();
                 }}
-                pointerEvents="initial"
                 _hover={{
                     background: "black",
                     color: "white"
@@ -51,11 +50,9 @@ const Controls = ({ block }) => {
                     color="black"
                     border="1px solid black"
                     borderRadius="0"
-                    marginTop="0.25rem"
                     onPointerDown={(e) => {
                         e.stopPropagation();
                     }}
-                    pointerEvents="initial"
                     _hover={{
                         background: "black",
                         color: "white"
@@ -77,11 +74,9 @@ const Controls = ({ block }) => {
                 color="black"
                 border="1px solid black"
                 borderRadius="0"
-                marginTop="0.25rem"
                 onPointerDown={(e) => {
                     e.stopPropagation();
                 }}
-                pointerEvents="initial"
                 _hover={{
                     background: "black",
                     color: "white"

@@ -17,7 +17,7 @@ const ArticleCard = ({
     const categories = _.get(attrs, "categories.data", false)
     return (
         <Link
-            href={`/articles/article?id=${article.id}`}
+            href={`/articles/${_.get(attrs, "slug", "no-slug-set-for-article")}`}
             passHref={true}
             >
             <Box key={article.id}
