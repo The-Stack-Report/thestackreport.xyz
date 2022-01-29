@@ -61,6 +61,7 @@ const ArticlesPage = ({ articles, categories }) => {
                         {categories && (
                             <CategoriesTags categories={categories} />
                         )}
+                        <Box height="4rem"/>
                     </GridItem>
                 </SimpleGrid>
                 
