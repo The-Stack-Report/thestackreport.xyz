@@ -45,7 +45,8 @@ const Link = {
     textDecoration: "underline",
     _hover: {
       color: "white",
-      background: "black"
+      background: "black",
+      fill: "white"
     }
   },
   

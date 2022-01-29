@@ -3,9 +3,9 @@ import {
     Container,
     SimpleGrid,
     Box,
-    Text,
-    Link
+    Text
 } from "@chakra-ui/react"
+import Link from "next/link"
 import PageLayout from 'components/PageLayout'
 import FeaturedArticleBanner from "components/FeaturedArticleBanner"
 import ArticleList from "components/ArticleList"
