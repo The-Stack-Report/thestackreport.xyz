@@ -36,7 +36,7 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                             {errorMessage}
                         </Text>
                         <WrappedLink href="/articles">
-                            Back to overview.
+                            To latest articles
                         </WrappedLink>
                     </Container>
                 ) : (

@@ -38,7 +38,7 @@ const CategoryPage = ({category, error, errorMessage}) => {
                             {errorMessage}
                         </Text>
                         <WrappedLink href="/categories">
-                            Back to overview
+                            To categories overview
                         </WrappedLink>
                     </Container>
                 ) : (
@@ -47,7 +47,7 @@ const CategoryPage = ({category, error, errorMessage}) => {
                         maxW="container.md"
                         >
                             <WrappedLink href="/categories" fontSize="0.7rem">
-                            Back to categories
+                            To categories overview
                         </WrappedLink>
                             <Heading
                                 marginTop="2rem"
