@@ -47,7 +47,11 @@ const Footer = () => {
                         </WrappedLink>
                         <br />
                         <WrappedLink href="/data_blocks" >
-                            Data visuals
+                            {"Charts & Visuals"}
+                        </WrappedLink>
+                        <br />
+                        <WrappedLink href="/datasets" >
+                            {"Datasets"}
                         </WrappedLink>
                         <br />
                         <WrappedLink href="/about" >

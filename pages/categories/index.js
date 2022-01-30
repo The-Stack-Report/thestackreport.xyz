@@ -19,13 +19,17 @@ const CategoriesPage = ({ categories }) => {
                 <title>The Stack Report - Categories</title>
                 <meta name="description" content="Articles by category." />
             </Head>
-            <Container maxW="container.xl" paddingTop="8rem">
+            <Container maxW="container.xl" paddingTop="100px">
                 <Heading
                     as="h1"
                     fontWeight="thin"
+                    marginTop={{
+                        base: "2rem",
+                        md: "4rem"
+                    }}
                     marginBottom="2rem"
                     >
-                    Articles by category.
+                    Articles by category
                 </Heading>
                 <SimpleGrid
                     columns={{

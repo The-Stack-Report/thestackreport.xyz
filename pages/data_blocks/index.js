@@ -68,8 +68,16 @@ const DataBlocksCatalogPage = ({ blocks }) => {
 
             </Head>
             <Container maxW="container.xl" style={{paddingTop: 100}}>
-                <Heading as="h1" fontWeight="thin" marginBottom="2rem">
-                    Data blocks - Catalog
+                <Heading
+                    as="h1"
+                    fontWeight="thin"
+                    marginBottom="2rem"
+                    marginTop={{
+                        base: "2rem",
+                        md: "4rem"
+                    }}
+                    >
+                    Data blocks
                 </Heading>
                 <Input
                     placeholder="search visuals"

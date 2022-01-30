@@ -92,7 +92,7 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                                 <WrappedLink href="/articles"
                                     fontSize="0.7rem"
                                     >
-                                    Back to article list
+                                    To latest articles
                                 </WrappedLink>
                             <Article
                                 article={attrs}

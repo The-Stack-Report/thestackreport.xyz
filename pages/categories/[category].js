@@ -42,24 +42,37 @@ const CategoryPage = ({category, error, errorMessage}) => {
                         </WrappedLink>
                     </Container>
                 ) : (
+                    <>
                     <Container
-                        paddingTop="8rem"
-                        maxW="container.md"
+                        paddingTop="100px"
+                        maxW="container.xl"
                         >
-                            <WrappedLink href="/categories" fontSize="0.7rem">
+                        <Box
+                            position="absolute"
+                            paddingTop={{
+                                base: "0rem",
+                                md: "1rem"
+                            }}
+                            >
+                        <WrappedLink href="/categories" fontSize="0.7rem">
                             To categories overview
                         </WrappedLink>
-                            <Heading
-                                marginTop="2rem"
-                                marginBottom="2rem"
-                                fontWeight="thin"
-                                >
-                                Category:
-                                <br />
-                                <Text as="span" fontWeight="bold" textTransform="uppercase">
-                                    {_.get(attrs, "Category", "-")}
-                                </Text>
-                            </Heading>
+                        </Box>
+                        <Heading
+                            marginTop={{
+                                base: "2rem",
+                                md: "4rem"
+                            }}
+                            marginBottom="2rem"
+                            fontWeight="thin"
+                            >
+                            {"Category - "}
+                            <Text as="span" fontWeight="bold" textTransform="uppercase">
+                                {_.get(attrs, "Category", "-")}
+                            </Text>
+                        </Heading>
+                    </Container>
+                    <Container maxW="container.md">
                             {articles.length > 0 ? (
                                 <ArticleList articles={articles} />
                             ) : (
@@ -67,7 +80,8 @@ const CategoryPage = ({category, error, errorMessage}) => {
                                     No articles for category yet.
                                 </Text>
                             )}
-                            
+                            </Container>
+                    <Container maxW="container.xl">
                             <Box height="2rem" />
                             <Box style={{textAlign: "right"}}>
                             <WrappedLink
@@ -77,6 +91,7 @@ const CategoryPage = ({category, error, errorMessage}) => {
                             </Box>
                             <Box height="4rem" />
                     </Container>
+                    </>
                 )}
         </PageLayout>
     )

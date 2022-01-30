@@ -1,7 +1,4 @@
 import Head from "next/head"
-
-import MainMenu from "components/MainMenu"
-
 import { 
     Container
 } from "@chakra-ui/layout"
@@ -14,12 +11,13 @@ import {
     Tr,
     Th,
     Td,
+    Box
 } from "@chakra-ui/react"
 import { connectToDatabase } from "utils/mongo_db"
 import _ from "lodash"
-import Footer from "components/Footer"
 import Link from 'next/link'
-
+import dayjs from "dayjs"
+import PageLayout from "components/PageLayout"
 
 const tableCols = [
     "key",
@@ -29,15 +27,22 @@ const tableCols = [
 
 const DatasetsCatalogPage = ({ datasets }) => {
     return (
-        <div>
+        <PageLayout>
             <Head>
                 <title>Datasets</title>
                 <meta name="description" content="Datasets catalog used for The Stack Report graphs." />
             </Head>
-            <MainMenu />
             <Container maxW="container.xl" style={{paddingTop:100}}>
-                <Heading as="h1" fontWeight="thin">
-                    Datasets - catalog
+                <Heading
+                    as="h1"
+                    fontWeight="thin"
+                    marginTop={{
+                        base: "2rem",
+                        md: "4rem"
+                    }}
+                    marginBottom="2rem"
+                    >
+                    Datasets
                 </Heading>
                 <Table>
                     <Thead>
@@ -55,7 +60,7 @@ const DatasetsCatalogPage = ({ datasets }) => {
                     {datasets.map(dataset => {
                         return (
                             <Link
-                                href={`/datasets/dataset?key=${dataset.key}`}
+                                href={`/datasets/${dataset.key}`}
                                 key={dataset._id}
                                 passHref={true}
                                 >
@@ -66,14 +71,18 @@ const DatasetsCatalogPage = ({ datasets }) => {
                                     color: "teal.500"
                                 }}
                                 >
-                                {tableCols.map(col => {
+                                {tableCols.map((col, col_i) => {
                                     var colVal = _.get(dataset, col, "")
                                     colVal = colVal.replace("https://the-stack-report.ams3.cdn.digitaloceanspaces.com", "...")
+                                    if(col === "upload_date") {
+                                        colVal = dayjs(colVal).format("MMMM D, YYYY h:mm A")
+                                    }
                                     return (
                                         <Th
                                             key={col}
                                             style={{
                                                 maxWidth: 0,
+                                                width: col_i === 0 ? "40%" : "30%",
                                                 overflow: "hidden",
                                                 textOverflow: "ellipsis",
                                                 whiteSpace: "nowrap"
@@ -90,9 +99,9 @@ const DatasetsCatalogPage = ({ datasets }) => {
                     })}
                     </Tbody>
                 </Table>
+                <Box height={{base: "2rem", md: "4rem"}} />
             </Container>
-            <Footer />
-        </div>
+        </PageLayout>
     )
 }
 

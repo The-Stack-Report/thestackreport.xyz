@@ -1,5 +1,5 @@
+import React from "react"
 import Head from "next/head"
-import MainMenu from "components/MainMenu"
 import {
     Container
 } from "@chakra-ui/layout"
@@ -9,28 +9,29 @@ import {
     Input,
     InputGroup,
     InputRightElement,
-    Button
+    Button,
+    Box
 } from "@chakra-ui/react"
 import { connectToDatabase } from "utils/mongo_db"
 import _ from "lodash"
 import Link from 'next/link'
-import React from "react"
+import PageLayout from "components/PageLayout"
+import WrappedLink from "components/WrappedLink"
 
 const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
     const spaces_url = _.get(dataset, "spaces_url", false)
     return (
-        <div>
+        <PageLayout>
             <Head>
                 <title>Dataset</title>
                 <meta name="description" content="Dataset page." />
 
             </Head>
-            <MainMenu />
-            <Container maxW="container.lg" style={{paddingTop: 100}}>
+            <Container maxW="container.xl" style={{paddingTop: 100}}>
                 {error ? (
                     <React.Fragment>
                         <Text>{errorMessage}</Text>
-                        <Link href="/datasets/catalog" passHref={true}>
+                        <Link href="/datasets" passHref={true}>
                             <Text as="a">
                                 Back to catalog.
                             </Text>
@@ -38,10 +39,37 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                     </React.Fragment>
                 ) : (
                     <React.Fragment>
-                        <Heading as="h1" fontWeight="thin">
+                        <Box
+                            position="absolute"
+                            paddingTop={{
+                                base: "0rem",
+                                md: "1rem"
+                            }}
+                            >
+                        <WrappedLink
+                            href="/datasets"
+                            fontSize="0.7rem"
+                            >
+                            To datasets overview
+                        </WrappedLink>
+                        </Box>
+                        <Heading
+                            as="h1"
+                            fontWeight="thin"
+                            marginTop={{
+                                base: "2rem",
+                                md: "4rem"
+                            }}
+                            marginBottom="2rem"
+                            >
                             Dataset: <Text as="span" fontWeight="bold">{_.get(dataset, "key")}</Text>
                         </Heading>
-                        <Text>Uploaded: {_.get(dataset, "upload_date", false)}</Text>
+                        <Box maxW="container.md">
+                        <Text
+                            marginBottom="1rem"
+                            >
+                            Uploaded: {_.get(dataset, "upload_date", false)}
+                        </Text>
                         <InputGroup size="md">
                             <Input
                                 fontSize="small"
@@ -49,7 +77,16 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                                 readOnly={true}
                                 />
                             <InputRightElement width="6rem">
-                                <Button h="1.75rem" size="sm" marginRight="0.5rem"
+                                <Button
+                                    h="2rem"
+                                    marginTop="0.35rem"
+                                    size="sm"
+                                    marginRight="0.2rem"
+                                    borderRadius="0.2rem"
+                                    _hover={{
+                                        bg: "black",
+                                        color: "white"
+                                    }}
                                     onPointerDown={() => {
                                         navigator.clipboard.writeText(spaces_url).then(function() {
                                             /* clipboard successfully set */
@@ -64,18 +101,19 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                                 </Button>
                             </InputRightElement>
                         </InputGroup>
+                        </Box>
                     </React.Fragment>
                 )}
                 
             </Container>
-        </div>
+        </PageLayout>
     )
 }
 
 var datasetsCache = {}
 
 export async function getServerSideProps(context) {
-    const key = _.get(context, "query.key", false)
+    const key = _.get(context, "query.dataset", false)
     if(key) {
         if(_.has(datasetsCache, key)) {
             console.log("using blocks cache for: ", key)
@@ -96,7 +134,7 @@ export async function getServerSideProps(context) {
                 dataset._id = dataset._id.toString()
                 dataset.upload_date = dataset.upload_date.toString()
 
-                datasetsCache[key] = dataset
+                // datasetsCache[key] = dataset
                 return { props: {
                     dataset: dataset,
                     error: false
