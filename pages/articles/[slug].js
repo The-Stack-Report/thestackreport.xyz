@@ -89,14 +89,15 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                             paddingTop="4rem"
                             paddingBottom="4rem"
                             >
-                                <WrappedLink href="/articles"
-                                    fontSize="0.7rem"
-                                    >
-                                    To latest articles
-                                </WrappedLink>
+                            <WrappedLink href="/articles"
+                                fontSize="0.7rem"
+                                >
+                                To latest articles
+                            </WrappedLink>
                             <Article
                                 article={attrs}
                                 />
+                            <Box minHeight="4rem" />
                         </Box>
                     </Container>
                     </>
