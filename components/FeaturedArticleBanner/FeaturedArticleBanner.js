@@ -12,9 +12,9 @@ import { basicImgLoader } from "utils/basicImgLoader"
 
 
 const FeaturedArticleBanner = ({ article }) => {
-    console.log(article)
     var articleSet = _.isObject(article)
     const articleId = _.get(article, "id")
+    const articleSlug = _.get(article, "attributes.slug", "not-found")
     const title = _.get(article, "attributes.Title", "Featured article not set.")
     const bannerImgSrc = _.get(article, "attributes.banner_image_url", "https://the-stack-report.ams3.digitaloceanspaces.com/website_assets/Article_missing_img.png")
     return (
@@ -74,7 +74,7 @@ const FeaturedArticleBanner = ({ article }) => {
                             marginBottom="2rem"
                             >
                             <Link
-                                href={`/articles/article?id=${articleId}`}
+                                href={`/articles/${articleSlug}`}
                                 fontSize={{
                                     base: "2rem",
                                     md: "2rem",
