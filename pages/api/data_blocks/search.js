@@ -11,13 +11,17 @@ export default function handler(req, res) {
             const regex = `${search_query}`
             data = await db.collection("data_blocks").find({
                 "$or": [
-                    {name: {"$regex":regex, "$options": "x"}},
+                    {name: {"$regex":regex, "$options": "xi"}},
                     {tags: {"$regex": regex, "$options" : "i"}}
                 ]
-            }).toArray()
+            }).sort({endDate: -1}).toArray()
             
         }
         console.log(`Found ${data.length} docs.`)
+
+        data.forEach(p => {
+            console.log(_.get(p, "endDate", '-'))
+        })
         res.status(200).json({ 
             requestedSearchQuery: search_query,
             docs: data,

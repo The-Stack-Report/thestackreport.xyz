@@ -5,11 +5,12 @@ import { Container } from '@chakra-ui/layout'
 import {
     Text,
     Heading,
-    Divider
+    Box
 } from "@chakra-ui/react"
 import _ from "lodash"
 import { connectToDatabase } from "utils/mongo_db"
 import DataBlock from "components/DataBlock"
+import WrappedLink from "components/WrappedLink"
 
 import Footer from "components/Footer"
 const BlockPage = ({block, error, errorMessage="Error"}) => {
@@ -29,7 +30,7 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
                 <meta name="twitter:player:height" content={block.video_meta.height} />
             </Head>
             <MainMenu />
-            <Container maxW="container.md" style={{paddingTop: "8rem", paddingBottom: "8rem"}}>
+            <Container maxW="container.md" style={{paddingBottom: "8rem"}}>
                 {error ? (
                     <div>
                     <Text>{errorMessage}</Text>
@@ -38,27 +39,33 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
                     </Text>
                     </div>
                 ) : (
-                    <div>
-                        <Divider />
-                    <Heading as="h4" fontWeight="bold" size="md" marginBottom="1rem">
-                        Data block
-                    </Heading>
-                    <Heading as="h1" fontWeight="light" size="md">
+                <Container paddingTop="100px">
+                    <Box
+                        position="absolute"
+                        paddingTop={{
+                            base: "0rem",
+                            md: "1rem"
+                        }}
+                        >
+                    <WrappedLink href="/data_blocks" fontSize="0.7rem">
+                        To visuals overview
+                    </WrappedLink>
+                    </Box>
+                    <Heading
+                        marginTop={{
+                            base: "4rem",
+                            md: "6rem"
+                        }}
+                        marginBottom="2rem"
+                        fontWeight="thin"
+                        fontSize="1rem"
+                        >
                         {block.name}|{block.title}
                     </Heading>
                     <div style={{marginTop: "2rem", marginBottom: "2rem"}}>
                         <DataBlock block={block} />
                     </div>
-                    {parent_vid_key && (
-                        <Text
-                            as="a"
-                            href={`/data_blocks/block?block=${parent_vid_key}`}
-                            fontWeight="bold"
-                            >
-                                Part of: {parent_vid_key}
-                        </Text>
-                    )}
-                </div>
+                </Container>
                 )}
                 
             </Container>

@@ -67,7 +67,7 @@ const DataBlocksCatalogPage = ({ blocks }) => {
                 <meta name="description" content="Catalog of all The Stack Report animated data visualisations." />
 
             </Head>
-            <Container maxW="container.xl" style={{paddingTop: 100}}>
+            <Container maxW="container.xl" style={{paddingTop: 100, paddingBottom: 200}}>
                 <Heading
                     as="h1"
                     fontWeight="thin"

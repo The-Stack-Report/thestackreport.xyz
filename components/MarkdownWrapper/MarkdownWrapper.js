@@ -29,9 +29,14 @@ var markdownComponents = {
             block_key = _.get(props, "node.properties.key", false)
         }
         return (
-            <div style={{marginTop: "2rem", marginBottom: "2rem"}}>
+            <Box style={{marginTop: "3rem", marginBottom: "3rem"}}
+                paddingRight={{
+                    base: "0rem",
+                    md: "2rem"
+                }}
+                >
             <DataBlockDynamic block_key={block_key} />
-            </div>
+            </Box>
         )
     },
     "button": ({children, ...props}) => {
@@ -80,6 +85,13 @@ var markdownComponents = {
             <Divider
                 borderBottom="1px solid rgb(220,220,220)"
                 />
+        )
+    },
+    "p": ({children, ...props}) => {
+        return (
+            <Text {...props} marginBottom="1.2rem">
+                {children}
+            </Text>
         )
     }
 }
