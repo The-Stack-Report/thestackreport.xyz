@@ -131,8 +131,7 @@ export async function getServerSideProps(context) {
             if(!_.has(dataset, '_id')) {
                 return { props: { errorMessage: "Incorrect dataset key.", error: true }}
             } else {
-                dataset._id = dataset._id.toString()
-                dataset.upload_date = dataset.upload_date.toString()
+                dataset = JSON.parse(JSON.stringify(dataset))
 
                 // datasetsCache[key] = dataset
                 return { props: {

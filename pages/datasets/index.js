@@ -115,13 +115,7 @@ export async function getServerSideProps(context) {
         var datasets = await db.collection("datasets")
             .find()
             .toArray()
-        datasets = datasets.map(dataset => {
-            return {
-                ...dataset,
-                _id: dataset._id.toString(),
-                upload_date: dataset.upload_date.toString()
-            }
-        })
+        datasets = JSON.parse(JSON.stringify(datasets))
 
         return { props: {datasets: datasets} }
     }
