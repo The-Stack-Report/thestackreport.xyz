@@ -99,27 +99,33 @@ const CategoryPage = ({category, error, errorMessage}) => {
 
 export async function getServerSideProps(context) {
     const categoryName = _.get(context, "query.category", false)
-    if(categoryName) {
-        const CMS_QUERY = CMS_URL + `/categories?filters[Category][$eq]=${categoryName}&populate[articles][populate]=*`
-        const resp = await fetch(CMS_QUERY)
-        if(resp.status === 200) {
-            var category = await resp.json()
-            category = _.get(category, "data[0]", false)
-            if(category) {
-                return {
-                    props: {
-                        category: category,
-                        error: false
+    try {
+        if(categoryName) {
+            const CMS_QUERY = CMS_URL + `/categories?filters[Category][$eq]=${categoryName}&populate[articles][populate]=*`
+            const resp = await fetch(CMS_QUERY)
+            if(resp.status === 200) {
+                var category = await resp.json()
+                category = _.get(category, "data[0]", false)
+                if(category) {
+                    return {
+                        props: {
+                            category: category,
+                            error: false
+                        }
                     }
+                } else {
+                    return { props: {errorMessage: "Category not found.", error: true} }
                 }
             } else {
-                return { props: {errorMessage: "Category not found.", error: true} }
+                console.log(resp)
+                return { props: {errorMessage: "Undefined category.", error: true} }
             }
-        } else {
-            console.log(resp)
-            return { props: {errorMessage: "Undefined category.", error: true} }
         }
+    } catch(err) {
+        console.log("serverside props error on category page: ", err)
+        return { props: {errorMessage: "Serverside error.", error: true} }
     }
+    
 }
 
 export default CategoryPage

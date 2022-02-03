@@ -110,28 +110,34 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
 
 export async function getServerSideProps(context) {
     const pid = _.get(context, "query.slug", false)
-    if(pid) {
-        const CMS_query = CMS_URL + `/articles?filters[slug][$eq]=${pid}&populate=*`
-        const resp = await fetch(CMS_query)
-        if(resp.status === 200) {
-            const respData = await resp.json()
-            const data = respData.data
-            if(data.length > 0) {
-                return {
-                    props: {
-                        article: JSON.parse(JSON.stringify(_.first(data))),
-                        error: false
+    try {
+        if(pid) {
+            const CMS_query = CMS_URL + `/articles?filters[slug][$eq]=${pid}&populate=*`
+            const resp = await fetch(CMS_query)
+            if(resp.status === 200) {
+                const respData = await resp.json()
+                const data = respData.data
+                if(data.length > 0) {
+                    return {
+                        props: {
+                            article: JSON.parse(JSON.stringify(_.first(data))),
+                            error: false
+                        }
                     }
+                } else {
+                    return { props: {errorMessage: "Article not found.", error: true} }
                 }
             } else {
                 return { props: {errorMessage: "Article not found.", error: true} }
             }
         } else {
-            return { props: {errorMessage: "Article not found.", error: true} }
+            return { props: {errorMessage: "Undefined article.", error: true} }
         }
-    } else {
-        return { props: {errorMessage: "Undefined article.", error: true} }
+    } catch(err) {
+        console.log("server side article fetch error: ", pid, error)
+        return { props: {errorMessage: "Db error.", error: true} }
     }
+    
 }
 
 export default ArticlePage

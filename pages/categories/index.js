@@ -101,13 +101,21 @@ const CategoriesPage = ({ categories }) => {
 }
 
 export async function getServerSideProps(context) {
-    const categoriesResp = await fetch(CMS_URL + "/categories?populate=*")
-    const categories = await categoriesResp.json()
-    return {
-        props: {
-            categories: _.get(categories, "data", [])
+    try {
+        const categoriesResp = await fetch(CMS_URL + "/categories?populate=*")
+        const categories = await categoriesResp.json()
+        return {
+            props: {
+                categories: _.get(categories, "data", [])
+            }
+        }
+    } catch(err) {
+        console.log("serverside error on categories page: ", err)
+        return {
+            props: { categories: [] }
         }
     }
+    
 }
 
 

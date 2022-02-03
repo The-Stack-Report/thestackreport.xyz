@@ -85,22 +85,30 @@ const ArticlesPage = ({ articles, categories }) => {
 var articlesCache = false
 
 export async function getServerSideProps(context) {
-    if(articlesCache) {
+    try {
+        if(articlesCache) {
 
-    } else {
-        const articlesResp = await fetch(CMS_URL + "/articles?sort=Published:desc&populate=%2A")
-        const articles = await articlesResp.json()
-
-        const categoriesResp = await fetch(CMS_URL + "/categories")
-        const categories = await categoriesResp.json()
-
-        return {
-            props: {
-                articles: _.get(articles, "data", []),
-                categories: _.get(categories, "data", [])
+        } else {
+            const articlesResp = await fetch(CMS_URL + "/articles?sort=Published:desc&populate=%2A")
+            const articles = await articlesResp.json()
+    
+            const categoriesResp = await fetch(CMS_URL + "/categories")
+            const categories = await categoriesResp.json()
+    
+            return {
+                props: {
+                    articles: _.get(articles, "data", []),
+                    categories: _.get(categories, "data", [])
+                }
             }
         }
+    } catch(err) {
+        console.error("server side error fetching article page content: ", err)
+        return {
+            props: {articles: [], categories: []}
+        }
     }
+    
 }
 
 export default ArticlesPage

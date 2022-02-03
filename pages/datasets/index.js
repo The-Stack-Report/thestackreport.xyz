@@ -116,6 +116,7 @@ export async function getServerSideProps(context) {
             .find()
             .toArray()
         datasets = JSON.parse(JSON.stringify(datasets))
+        cache = datasets
 
         return { props: {datasets: datasets} }
     }
