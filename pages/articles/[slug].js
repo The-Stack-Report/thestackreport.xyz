@@ -56,6 +56,7 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                             alt={attrs.Title}
                             layout="fill"
                             objectFit="cover"
+                            unoptimized={true}
                             />
                     </div>
                     <Container
@@ -112,7 +113,6 @@ export async function getServerSideProps(context) {
     if(pid) {
         const CMS_query = CMS_URL + `/articles?filters[slug][$eq]=${pid}&populate=*`
         const resp = await fetch(CMS_query)
-        console.log(resp)
         if(resp.status === 200) {
             const respData = await resp.json()
             const data = respData.data

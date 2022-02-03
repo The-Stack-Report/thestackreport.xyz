@@ -122,7 +122,7 @@ const DataBlock = ({
                         zIndex: showing ? 111 : 100,
                         opacity: showing ? 1 : 0
                     }}
-                    href={`/data_blocks/block?block=${block.vid_key}`}
+                    href={`/data_blocks/${encodeURIComponent(block.vid_key)}`}
                     color="black"
                     background="white"
                     _hover={{
@@ -176,16 +176,24 @@ const DataBlock = ({
     )
 }
 
+const expectedBlockProperties = [
+    "vid_key",
+    "spaces_url"
+]
+
 export const DataBlockDynamic = ({
     block_key,
 }) => {
     const { data, error } = useSWR(`/api/data_block?vid_key=${block_key}`, fetcher)
     if (error) return <div>Failed to load block: {block_key}</div>
     if (!data) return <div>loading...</div>
-    if (data.docs.length === 0) return <div>No block found with key: {block_key}</div>
+    var dataDocs = _.get(data, "docs", [])
+    if (dataDocs.length === 0) return <div>No block found with key: {block_key}</div>
+    var block = _.first(dataDocs)
 
+    console.log(block)
     return (
-        <DataBlock block={_.first(data.docs)} />
+        <DataBlock block={block} />
     )
 }
 

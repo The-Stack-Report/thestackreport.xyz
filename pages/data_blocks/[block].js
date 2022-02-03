@@ -16,6 +16,11 @@ import Footer from "components/Footer"
 const BlockPage = ({block, error, errorMessage="Error"}) => {
     const spaces_url = _.get(block, "spaces_url", false)
     const parent_vid_key = _.get(block ,"parent_vid_key", false)
+    var pageError = false
+    if(error) pageError = true
+    if(!_.isObject(block)) pageError = true
+
+    console.log(pageError)
     return (
         <div>
             <Head>
@@ -23,21 +28,32 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
                 <meta name="description" content="Data block animation." />
                 <meta name="twitter:card" content="player" />
                 <meta name="twitter:site" content="@thestackreport" />
-                <meta name="twitter:title" content={block.name} />
-                <meta name="twitter:description" content={block.title} />
-                <meta name="twitter:player" content={`https://thestackreport.xyz/data_blocks/iframe?block=${block.vid_key}`} />
-                <meta name="twitter:player:width" content={block.video_meta.width} />
-                <meta name="twitter:player:height" content={block.video_meta.height} />
+                <meta name="twitter:title" content={_.get(block, "name", "Unknown visual")} />
+                <meta name="twitter:description" content={_.get(block, "title", "Unknown visual")} />
+                <meta name="twitter:player" content={`https://thestackreport.xyz/data_blocks/iframe?block=${_.get(block, "vid_key", "unknown-visual")}`} />
+                <meta name="twitter:player:width" content={_.get(block, "video_meta.width", 300)} />
+                <meta name="twitter:player:height" content={_.get(block, "video_meta.height", 300)} />
             </Head>
             <MainMenu />
             <Container maxW="container.md" style={{paddingBottom: "8rem"}}>
-                {error ? (
-                    <div>
+                {pageError ? (
+                    <Container paddingTop="100px">
+                    <Heading
+                        marginTop={{
+                            base: "4rem",
+                            md: "6rem"
+                        }}
+                        marginBottom="2rem"
+                        fontWeight="bold"
+                        fontSize="1rem"
+                        >
+                        Error loading block.
+                    </Heading>
                     <Text>{errorMessage}</Text>
-                    <Text as="a" href="/data_blocks/catalog">
-                        Back to catalog.
-                    </Text>
-                    </div>
+                    <WrappedLink href="/data_blocks" fontSize="0.7rem">
+                        To visuals overview
+                    </WrappedLink>
+                    </Container>
                 ) : (
                 <Container paddingTop="100px">
                     <Box
@@ -77,6 +93,7 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
 var blocksCache = {}
 
 export async function getServerSideProps(context) {
+
     const data_key = _.get(context, "query.block", false)
     if(data_key) {
         if(_.has(blocksCache, data_key)) {

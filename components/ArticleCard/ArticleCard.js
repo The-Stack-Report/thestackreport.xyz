@@ -47,6 +47,7 @@ const ArticleCard = ({
                     alt={attrs.Title}
                     layout="fill"
                     objectFit="cover"
+                    unoptimized={true}
                     />
                 </div>
                 <div

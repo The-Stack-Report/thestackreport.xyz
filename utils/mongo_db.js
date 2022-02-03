@@ -17,6 +17,8 @@ if (!MONGODB_DB) {
 let cachedClient = null;
 let cachedDb = null;
 
+var clientCounter = 0
+
 export async function connectToDatabase() {
 
     
@@ -31,7 +33,8 @@ export async function connectToDatabase() {
         useNewUrlParser: true,
         useUnifiedTopology: true
     }
-    console.log("Creating new mongoClient.")
+    clientCounter += 1
+    console.log(`Creating new mongoClient. Current count: ${clientCounter}`)
     let client = new MongoClient(MONGODB_URI, opts)
     await client.connect()
     let db = client.db(MONGODB_DB)

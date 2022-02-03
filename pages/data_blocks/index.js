@@ -37,29 +37,25 @@ const DataBlocksCatalogPage = ({ blocks }) => {
     const debouncedSearchTerm = useDebounce(searchTerm, 500)
     
     useEffect(() => {
-        console.log(debouncedSearchTerm)
-        if(debouncedSearchTerm) {
+        if(debouncedSearchTerm === "") {
+            setQuery(false)
+            setSearchResults(false)
+        } else {
             setIsSearching(true)
             searchBlocksApi(debouncedSearchTerm).then((results) => {
                 console.log(results)
-                if(_.isArray(results) && results.length > 0) {
-                    if(results.length > 0) {
-                        setSearchResults(results)
-                        setSearchErrorMessage(false)
-                    } else {
-                        setSearchErrorMessage("0 results found.")
-                    }
-                    
+                if(_.isArray(results)) {
+                    setSearchResults(results)
                 }
-                
             })
-
         }
     }, [debouncedSearchTerm])
+    
     var blocksForGrid = blocks
-    if(searchResults) {
+    if(_.isArray(searchResults)) {
         blocksForGrid = searchResults
     }
+
     return (
         <PageLayout>
             <Head>
@@ -89,7 +85,17 @@ const DataBlocksCatalogPage = ({ blocks }) => {
                 <Text>
                     {}
                 </Text>
-                <BlocksGrid blocks={blocksForGrid} />
+                {blocksForGrid.length > 0 ? (
+                    <BlocksGrid blocks={blocksForGrid} />
+                ) : (
+                    <Text>
+                        No entries found for search:
+                        <Text as="span" fontStyle="italic">
+                        {searchTerm}
+                        </Text>
+                    </Text>
+                )}
+                
             </Container>
         </PageLayout>
     )

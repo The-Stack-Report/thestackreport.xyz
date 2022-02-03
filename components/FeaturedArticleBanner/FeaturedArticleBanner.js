@@ -28,6 +28,7 @@ const FeaturedArticleBanner = ({ article }) => {
                 alt={`Image for featured article: ${title}`}
                 layout="fill"
                 objectFit="cover"
+                unoptimized={true}
                 />
             </div>
             <div style={{position: "absolute", bottom: 20, left: 0, right: 0}}>
