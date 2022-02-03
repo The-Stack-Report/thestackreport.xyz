@@ -100,6 +100,7 @@ const theme = extendTheme({
 
 
 function MyApp({ Component, pageProps }) {
+  console.log("app render Component: ", _.get(Component, "name"))
   return (
     <PlausibleProvider
       domain="thestackreport.xyz"

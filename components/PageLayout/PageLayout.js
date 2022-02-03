@@ -4,6 +4,7 @@ import Footer from "components/Footer"
 import StatsOverlay from "components/StatsOverlay"
 import styles from "./PageLayout.module.scss"
 
+
 const PageLayout = ({ children }) => {
     return (
         <div className={styles["page-layout"]}>

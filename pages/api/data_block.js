@@ -8,19 +8,28 @@ export default async function handler(req, res) {
     const { db } = await connectToDatabase()
 
     var data = []
-    if(vid_key) {
-        data = await db.collection("data_blocks").find({
-            vid_key: vid_key
-        }).toArray()
-    } else {
-        data = await db.collection("data_blocks").find({
-            vid_key: vid_key
-        }).sort({endDate: -1}).toArray()
-    }
+    console.log("try catch data block api: ", vid_key)
+    try {
+        if(vid_key) {
+            data = await db.collection("data_blocks").find({
+                vid_key: vid_key
+            }).toArray()
+        } else {
+            data = await db.collection("data_blocks").find({
+                vid_key: vid_key
+            }).sort({endDate: -1}).toArray()
+        }
+    
+        res.status(200).json({
+            requestedKey: vid_key,
+            docs: data,
+            ts: new Date()
+        })
 
-    res.status(200).json({
-        requestedKey: vid_key,
-        docs: data,
-        ts: new Date()
-    })
+    } catch (err) {
+        res.status(400).json({
+            error: "error"
+        })
+    }
+    
 }

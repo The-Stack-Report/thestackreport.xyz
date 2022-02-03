@@ -93,35 +93,41 @@ var blocksCache = {}
 export async function getServerSideProps(context) {
 
     const data_key = _.get(context, "query.block", false)
-    if(data_key) {
-        if(_.has(blocksCache, data_key)) {
-            console.log("using blocks cache for: ", data_key)
-            return {
-                props: {
-                    block: blocksCache[data_key],
-                    error: false
-                }
-            }
-        } else {
-            const { db } = await connectToDatabase()
-            var block = await db.collection("data_blocks")
-                .findOne({"vid_key": data_key})
-            if (!_.has(block, "_id")) {
-                return { props: {errorMessage: "Incorrect block key.", error: true} }
-            } else {
+    try {
+        if(data_key) {
+            if(_.has(blocksCache, data_key)) {
+                console.log("using blocks cache for: ", data_key)
                 return {
                     props: {
-                        block: JSON.parse(JSON.stringify(block)),
+                        block: blocksCache[data_key],
                         error: false
                     }
                 }
+            } else {
+                const { db } = await connectToDatabase()
+                var block = await db.collection("data_blocks")
+                    .findOne({"vid_key": data_key})
+                if (!_.has(block, "_id")) {
+                    return { props: {errorMessage: "Incorrect block key.", error: true} }
+                } else {
+                    return {
+                        props: {
+                            block: JSON.parse(JSON.stringify(block)),
+                            error: false
+                        }
+                    }
+                }
             }
-        }
-        
-        
-    } else {
-        return { props: {errorMessage: "Missing block key.", error: true} }
-    }   
+            
+            
+        } else {
+            return { props: {errorMessage: "Missing block key.", error: true} }
+        }   
+    } catch(err) {
+        console.log("error in data block server side: ", err)
+        return { props: {errorMessage: "Serverside render error.", error: true} }
+    }
+    
     
 }
 

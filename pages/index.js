@@ -120,43 +120,56 @@ const recentArticlesApi = "/articles?sort=Published:desc&populate=%2A"
 const topContractsBlocks = ""
 
 export async function getServerSideProps(context) {
-    const resp = await fetch(CMS_URL + landingPageContent)
-    const data = await resp.json()
 
-    const articles_resp = await fetch(CMS_URL + recentArticlesApi)
-    var recentArticles = await articles_resp.json()
-    recentArticles = _.get(recentArticles, "data", [])
+    var returnProps = {
+        landing: {},
+        latestArticles: [],
+        recentWeekly: [],
+        recentMonthly: [],
+        topContracts4x1: []
+        
+    }
+    console.log("Landing page serverside props.")
+    try {
+        const resp = await fetch(CMS_URL + landingPageContent)
+        const data = await resp.json()
 
-    const { db } = await connectToDatabase()
+        returnProps.landing = data.data
 
-    var topContracts4x1 = await db.collection("data_blocks")
-        .find(
-            {
-                tags: {$in: ["top-contracts-4x1"]}
-            },
-            {
-                $orderby: {
-                    endDate: -1,
+        const articles_resp = await fetch(CMS_URL + recentArticlesApi)
+        var recentArticles = await articles_resp.json()
+        returnProps.latestArticles = _.get(recentArticles, "data", [])
+
+        const { db } = await connectToDatabase()
+
+        var topContracts4x1 = await db.collection("data_blocks")
+            .find(
+                {
+                    tags: {$in: ["top-contracts-4x1"]}
+                },
+                {
+                    $orderby: {
+                        endDate: -1,
+                    }
                 }
-            }
-        )
-        .limit(5)
-        .toArray()
-    
-    topContracts4x1 = JSON.parse(JSON.stringify(topContracts4x1))
+            )
+            .limit(5)
+            .toArray()
+        
+        topContracts4x1 = JSON.parse(JSON.stringify(topContracts4x1))
 
-    topContracts4x1.sort((a, b) => a.attributes.position - b.attributes.position)
+        topContracts4x1.sort((a, b) => a.attributes.position - b.attributes.position)
 
+
+        returnProps.topContracts4x1 = topContracts4x1
+
+        
+    } catch (err) {
+        console.log("error in landing page server side props: ", err)
+    }
     
     return {
-        props: {
-            landing: data.data,
-            latestArticles: recentArticles,
-            recentWeekly: [],
-            recentMonthly: [],
-            topContracts4x1: topContracts4x1
-            
-        }
+        props: returnProps
     }
 }
 

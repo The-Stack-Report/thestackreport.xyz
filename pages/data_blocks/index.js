@@ -104,24 +104,30 @@ const DataBlocksCatalogPage = ({ blocks }) => {
 var blocksCache = false
 
 export async function getServerSideProps(context) {
-    if(blocksCache) {
-        console.log("using blocks cache in catalog page.")
-        return { props: {blocks: blocksCache}}
-    } else {
-        const { db } = await connectToDatabase()
-        var blocks = await db.collection("data_blocks")
-            .find().limit(50)
-            .toArray()
-        
-        blocks = blocks.map(block => {
-            return JSON.parse(JSON.stringify(block))
-        })
-        blocks = _.sortBy(blocks, "vid_key")
-
-        // blocksCache = blocks
-
-        return { props: {blocks: blocks}}
+    try {
+        if(blocksCache) {
+            console.log("using blocks cache in catalog page.")
+            return { props: {blocks: blocksCache}}
+        } else {
+            const { db } = await connectToDatabase()
+            var blocks = await db.collection("data_blocks")
+                .find().limit(20)
+                .toArray()
+            
+            blocks = blocks.map(block => {
+                return JSON.parse(JSON.stringify(block))
+            })
+            blocks = _.sortBy(blocks, "vid_key")
+    
+            blocksCache = blocks
+    
+            return { props: {blocks: blocks}}
+        }
+    } catch(err) {
+        console.log("error in data blocks index page server side render: ", err)
+        return { props: {blocks: []}}
     }
+    
 }
 
 export default DataBlocksCatalogPage
