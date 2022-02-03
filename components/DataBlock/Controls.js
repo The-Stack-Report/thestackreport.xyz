@@ -10,7 +10,7 @@ import getStillFrame from "./blockUtils/getStillFrame"
 
 const Controls = ({ block, pointerEvents }) => {
     const tweetTextPreview = `${block.name} data visual:`
-    const tweetUrl = `https://thestackreport.xyz/data_blocks/block?block=${block.vid_key.replace(/\s/g, "%2520")}`
+    const tweetUrl = `https://thestackreport.xyz/data_blocks/${block.vid_key.replace(/\s/g, "%2520")}`
     const stills = _.get(block, "stills", false)
 
     var firstStill = getStillFrame(block)

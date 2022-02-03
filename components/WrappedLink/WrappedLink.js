@@ -9,16 +9,12 @@ const WrappedLink = ({
         ...props }) => {
     return (
         <>
-        <NextLink
-            href={href}
-            passHref={true}
-            >
             <Link
+                href={href}
                 {...props}
                 >
             {children}
             </Link>
-        </NextLink>
         {inline === false && (
             <>
             <br />
