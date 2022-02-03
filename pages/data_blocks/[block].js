@@ -19,8 +19,6 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
     var pageError = false
     if(error) pageError = true
     if(!_.isObject(block)) pageError = true
-
-    console.log(pageError)
     return (
         <div>
             <Head>

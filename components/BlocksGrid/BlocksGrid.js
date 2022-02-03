@@ -10,18 +10,17 @@ const BlocksGrid = React.memo(({
     pagination_query = false
 }) => {
     const [pagesLoaded, setPagesLoaded] = useState(false)
-    console.log("blocks grid render")
     return (
         <div>
             <SimpleGrid columns={{sm: 1, md: 2, lg: 3}} spacing="20px">
                 {blocks.map((block, block_i) => {
                     const spaces_url = _.get(block, "spaces_url", false)
                     return (
-                            <DataBlock
-                                key={block._id}
-                                block={block}
-                                z_i={blocks.length + 10 - block_i}
-                                />
+                        <DataBlock
+                            key={block._id}
+                            block={block}
+                            z_i={blocks.length + 10 - block_i}
+                            />
                     )
                 })}
             </SimpleGrid>
