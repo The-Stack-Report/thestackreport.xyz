@@ -130,18 +130,26 @@ const DataBlock = ({
                     >
                     <div style={{
                         opacity: (stillUrl && showStillFramePreview && !vidPlaying) ? 1 : 0,
+                        transition: "opacity 0.1s",
                         position: "relative",
                         width: containerWidth - 4,
                         left: -2,
                         top: -2,
-                        height: dynamicHeight - 4,
+                        height: dynamicHeight,
                         overflow: "hidden",
                         zIndex: 2
                         }}>
                         <Image src={stillUrl.replace("the-stack-report.ams3.digitaloceanspaces.com", "the-stack-report.ams3.cdn.digitaloceanspaces.com")} alt="Data block chart" layout="fill"
                             />
                     </div>
-                    <div style={{position: "absolute", top: 0, left: 0, right: 0}}>
+                    <div style={{
+                        position: "absolute", 
+                        top: 0, 
+                        left: 0, 
+                        right: 0,
+                        opacity: (stillUrl && showStillFramePreview && !vidPlaying) ? 0 : 1,
+                        transition: "opacity 0.1s",
+                    }}>
                     {showVideo && (
                         <SilentVideo
                             src={block.spaces_url}
