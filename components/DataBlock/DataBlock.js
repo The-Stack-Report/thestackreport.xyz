@@ -138,7 +138,7 @@ const DataBlock = ({
                         overflow: "hidden",
                         zIndex: 2
                         }}>
-                        <Image src={stillUrl} alt="Data block chart" layout="fill"
+                        <Image src={stillUrl.replace("the-stack-report.ams3.digitaloceanspaces.com", "the-stack-report.ams3.cdn.digitaloceanspaces.com")} alt="Data block chart" layout="fill"
                             />
                     </div>
                     <div style={{position: "absolute", top: 0, left: 0, right: 0}}>
@@ -172,6 +172,7 @@ const DataBlock = ({
                         color: "white"
                     }}
                     fontSize="xs"
+                    pointerEvents={showing ? "initial" : "none"}
                     onPointerDown={(e) => {
                         e.stopPropagation();
                     }}
