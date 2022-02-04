@@ -35,7 +35,7 @@ var markdownComponents = {
                     md: "2rem"
                 }}
                 >
-            <DataBlockDynamic block_key={block_key} />
+            <DataBlockDynamic block_key={block_key} autoPlayOnLoad={true} />
             </Box>
         )
     },

@@ -17,24 +17,40 @@ const fetcher = (url) => fetch(url).then((res) => res.json())
 const DataBlock = ({
     block = false,
     z_i = false,
-    loadVidDirectly = false
+    autoPlayOnLoad = false
 }) => {
     const [showControls, setShowControls] = useState(false)
     const [tapToggle, setTapToggle] = useState(false)
     const [loaded, setLoaded] = useState(false)
     const [showStillFramePreview, setShowStillFramePreview] = useState(true)
     const [showVideo, setShowVideo] = useState(false)
-    const [vidLoaded, setVidLoaded] = useState(false)
+    const [initiatedAutoPlay, setInitiatedAutoplay] = useState(false)
+    const [vidLoaded, setVidLoaded] = useState(false) // Callback from video element
+    const [vidPlaying, setVidPlaying] = useState(false)
     const [resizeCounter, setResizeCounter] = useState(0)
+    const [initialSizing, setInitialSizing] = useState(0)
+    const [pausedByUser, setPausedByUser] = useState(false)
+    const [hoveredFirstTime, setHoveredFirstTime] = useState(false)
     const containerRef = useRef(null)
 
-
     useEffect(() => {
-        if(loaded === false) {
+        if(initialSizing === 0) {
+            setInitialSizing(1)
+        }
+    }, [initialSizing])
+    useEffect(() => {
+        if(loaded === false && autoPlayOnLoad) {
             setLoaded(true)
             setShowVideo(true)
         }
-    },[loaded])
+    },[loaded, autoPlayOnLoad])
+
+    useEffect(() => {
+        if(vidLoaded && autoPlayOnLoad && !initiatedAutoPlay) {
+            setInitiatedAutoplay(true)
+            setVidPlaying(true)
+        }
+    }, [vidLoaded, autoPlayOnLoad, initiatedAutoPlay])
 
     useEffect(() => {
         const onResize = () => {
@@ -86,6 +102,15 @@ const DataBlock = ({
             ref={containerRef}
             onPointerEnter={() => {
                 setShowControls(true)
+                setHoveredFirstTime(true)
+                if(vidLoaded === false) {
+                    setLoaded(true)
+                    setShowVideo(true)
+                } else {
+                    if(pausedByUser === false) {
+                        setVidPlaying(true)
+                    }
+                }
             }}
             onPointerLeave={() => {
                 setShowControls(false)
@@ -103,16 +128,33 @@ const DataBlock = ({
                         height: (containerWidth - boxPadding * 2) * aspectRatio
                     }}
                     >
-                    {stillUrl && showStillFramePreview && !vidLoaded && (
-                        <Image src={stillUrl} alt="Data block chart" layout="fill" />
-                    )}
+                    <div style={{
+                        opacity: (stillUrl && showStillFramePreview && !vidPlaying) ? 1 : 0,
+                        position: "relative",
+                        width: containerWidth - 4,
+                        left: -2,
+                        top: -2,
+                        height: dynamicHeight - 4,
+                        overflow: "hidden",
+                        zIndex: 2
+                        }}>
+                        <Image src={stillUrl} alt="Data block chart" layout="fill"
+                            />
+                    </div>
+                    <div style={{position: "absolute", top: 0, left: 0, right: 0}}>
                     {showVideo && (
                         <SilentVideo
                             src={block.spaces_url}
                             resolution={resolution}
-                            hasLoaded={setVidLoaded}
+                            hasLoaded={() => {
+                                setVidLoaded(true)
+                                if(hoveredFirstTime && pausedByUser === false) {
+                                    setVidPlaying(true)
+                                }
+                            }}
                             />
                     )}
+                    </div>
                 </Box>
                 <Link style={{
                         position: "absolute",
@@ -145,6 +187,7 @@ const DataBlock = ({
                     position: "absolute",
                     border: showing ? "1px solid rgba(0,0,0,1)" : "1px solid rgba(0,0,0,0.0)",
                     borderRadius: 2,
+                    boxShadow: tapToggle ? "4px 4px 0px 0px rgba(0, 0, 0, .8)" : "none",
                     top: 0,
                     left: 0,
                     right: 0,
@@ -167,9 +210,44 @@ const DataBlock = ({
                         transition: "opacity 0.1s",
                         background: "white",
                     }}>
+                        <Button
+                            width="100%"
+                            fullwidth="true"
+                            target="_blank"
+                            size="xs"
+                            colorScheme="white"
+                            color="black"
+                            border="1px solid black"
+                            borderRadius="30px"
+                            onPointerDown={(e) => {
+                                if(vidPlaying) {
+                                    setPausedByUser(true)
+                                    setVidPlaying(false)
+                                } else {
+                                    setVidPlaying(true)
+                                }
+                                e.stopPropagation();
+                            }}
+                            opacity={0.4}
+                            _hover={{
+                                background: "black",
+                                color: "white",
+                                opacity: 1
+                            }}
+                            >
+                            {vidPlaying ? "Playing" : "Pauzed"}
+                        </Button>
+                    <Text
+                        textTransform="uppercase"
+                        fontWeight="bold"
+                        fontSize="0.7rem"
+                        >
+                        For sharing
+                    </Text>
                     <Controls
                         block={block}
                         />
+                        
                     </div>
                 </div>
         </div>
@@ -183,6 +261,7 @@ const expectedBlockProperties = [
 
 export const DataBlockDynamic = ({
     block_key,
+    autoPlayOnLoad = false
 }) => {
     const { data, error } = useSWR(`/api/data_block?vid_key=${block_key}`, fetcher)
     if (error) return <div>Failed to load block: {block_key}</div>
@@ -193,7 +272,7 @@ export const DataBlockDynamic = ({
 
     console.log(block)
     return (
-        <DataBlock block={block} />
+        <DataBlock block={block} autoPlayOnLoad={autoPlayOnLoad} />
     )
 }
 

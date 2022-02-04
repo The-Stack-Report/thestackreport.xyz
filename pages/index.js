@@ -69,7 +69,7 @@ const LandingPage = ({ landing, latestArticles, topContracts4x1 }) => {
                                 key={block._id}
                                 border="0px solid transparent"
                                 >
-                            <DataBlock block={block} />
+                            <DataBlock block={block} autoPlayOnLoad={true} />
                             </Box>
                         )
                     })}

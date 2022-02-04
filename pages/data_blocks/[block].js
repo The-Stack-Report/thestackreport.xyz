@@ -77,7 +77,7 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
                         {block.name}|{block.title}
                     </Heading>
                     <div style={{marginTop: "2rem", marginBottom: "2rem"}}>
-                        <DataBlock block={block} />
+                        <DataBlock block={block} autoPlayOnLoad={true} />
                     </div>
                 </Container>
                 )}
