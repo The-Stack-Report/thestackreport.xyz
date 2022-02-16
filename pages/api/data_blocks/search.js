@@ -13,7 +13,7 @@ export default async function handler(req, res) {
                     {name: {"$regex":regex, "$options": "xi"}},
                     {tags: {"$regex": regex, "$options" : "i"}}
                 ]
-            }).sort({endDate: -1}).toArray()
+            }).sort({"endDate": -1}).toArray()
             
         }
         console.log(`Found ${data.length} docs.`)

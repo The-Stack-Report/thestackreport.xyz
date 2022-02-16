@@ -95,6 +95,9 @@ const DataBlock = ({
         containerStyle.zIndex = z_i
     }
     var stillUrl = getStillFrame(block)
+    if(_.isString(stillUrl)) {
+        stillUrl = stillUrl.replace("the-stack-report.ams3.digitaloceanspaces.com", "the-stack-report.ams3.cdn.digitaloceanspaces.com")
+    }
     var boxPadding = 2
     return (
         <div className='data-block'
@@ -139,8 +142,11 @@ const DataBlock = ({
                         overflow: "hidden",
                         zIndex: 2
                         }}>
-                        <Image src={stillUrl.replace("the-stack-report.ams3.digitaloceanspaces.com", "the-stack-report.ams3.cdn.digitaloceanspaces.com")} alt="Data block chart" layout="fill"
-                            />
+                        {_.isString(stillUrl) && (
+                            <Image src={stillUrl} alt="Data block chart" layout="fill"
+                                />
+                        )}
+                        
                     </div>
                     <div style={{
                         position: "absolute", 

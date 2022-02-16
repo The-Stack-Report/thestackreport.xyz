@@ -111,13 +111,15 @@ export async function getServerSideProps(context) {
         } else {
             const { db } = await connectToDatabase()
             var blocks = await db.collection("data_blocks")
-                .find().limit(20)
+                .find()
+                .sort({"endDate": -1})
+                .limit(20)
                 .toArray()
             
             blocks = blocks.map(block => {
                 return JSON.parse(JSON.stringify(block))
             })
-            blocks = _.sortBy(blocks, "vid_key")
+            // blocks = _.sortBy(blocks, "endDate")
     
             blocksCache = blocks
     

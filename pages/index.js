@@ -146,13 +146,9 @@ export async function getServerSideProps(context) {
             .find(
                 {
                     tags: {$in: ["top-contracts-4x1"]}
-                },
-                {
-                    $orderby: {
-                        endDate: -1,
-                    }
                 }
             )
+            .sort({endDate: -1})
             .limit(5)
             .toArray()
         
