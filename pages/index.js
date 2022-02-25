@@ -20,11 +20,26 @@ import MarkdownWrapper from "components/MarkdownWrapper"
 const LandingPage = ({ landing, latestArticles, topContracts4x1 }) => {
     const featured = _.get(landing, "attributes.featured.data", false)
     const aboutText = _.get(landing, "attributes.about_tsr", "")
+
+    const googleArticlesCarouselJson = {
+        "@context":"https://schema.org",
+        "@type":"ItemList",
+        "itemListElement": latestArticles.map((article, article_i) => {
+            return {
+                "@type": "ListItem",
+                "position": article_i,
+                "url": `https://thestackreport.xyz/articles/${article.attributes.slug}`
+            }
+        })
+    }
     return (
         <PageLayout>
             <Head>
                 <title>The Stack Report</title>
                 <meta name="description" content="Data driven reporting and visualisations from within the Tezos ecosystem." />
+                <script type="application/ld+json"
+                    dangerouslySetInnerHTML={{__html: JSON.stringify(googleArticlesCarouselJson)}}
+                    />
             </Head>
             <FeaturedArticleBanner
                 article={featured}
