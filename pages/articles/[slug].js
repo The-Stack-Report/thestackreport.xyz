@@ -27,8 +27,8 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
         "author": attrs.authors.data.map(author => {
             return {
                 "@type": "Person",
-                "name": author.attributes.first_name,
-                "url": `https://www.twitter.com/${author.attributes.twitter}`
+                "name": author.attributes.name,
+                "url": `https://www.twitter.com/`
             }
         })
     }
@@ -37,9 +37,9 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
             <Head>
                 <title>{_.get(attrs, "Title", "Not-found")}</title>
                 <meta name="description" content={_.get(attrs, "description", "not-found")} />
-                <script type="application/ld+json">
-                    {JSON.stringify(googleNewsJson)}
-                </script>
+                <script type="application/ld+json"
+                    dangerouslySetInnerHTML={{__html: JSON.stringify(googleNewsJson)}}
+                    />
             </Head>
             
                 {error ? (
