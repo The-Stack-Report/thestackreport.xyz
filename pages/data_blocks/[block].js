@@ -19,6 +19,16 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
     var pageError = false
     if(error) pageError = true
     if(!_.isObject(block)) pageError = true
+    var googleVideoJson = {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        "name": `${block.name} | ${block.title}`,
+        "description": _.get(block, "description", "The Stack Report data visualisation."),
+        "thumbnailUrl": _.get(block, "stills", []).map(still => _.get(still, "spaces_url", false)).filter(p => _.isString(p)),
+        "uploadDate": _.get(block, "updated_at", "2022-01-01"),
+        "contentUrl": spaces_url,
+        "embedUrl": `https://www.thestackreport.xyz/data_blocks/iframe?block=${_.get(block, "vid_key", false)}`
+    }
     return (
         <div>
             <Head>
@@ -31,6 +41,9 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
                 <meta name="twitter:player" content={`https://thestackreport.xyz/data_blocks/iframe?block=${_.get(block, "vid_key", "unknown-visual")}`} />
                 <meta name="twitter:player:width" content={_.get(block, "video_meta.width", 300)} />
                 <meta name="twitter:player:height" content={_.get(block, "video_meta.height", 300)} />
+                <script type="application/ld+json"
+                    dangerouslySetInnerHTML={{__html: JSON.stringify(googleVideoJson)}}
+                    />
             </Head>
             <MainMenu />
             <Container maxW="container.md" style={{paddingBottom: "8rem"}}>
