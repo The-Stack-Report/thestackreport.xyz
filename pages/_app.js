@@ -101,15 +101,25 @@ const theme = extendTheme({
 
 function MyApp({ Component, pageProps }) {
   console.log("app render Component: ", _.get(Component, "name"))
-  return (
-    <PlausibleProvider
-      domain="thestackreport.xyz"
-      >
-    <ChakraProvider theme={theme}>
-      <Component {...pageProps} />
-    </ChakraProvider>
-    </PlausibleProvider>
-  )
+  if(process.env.NEXT_PUBLIC_ANALYTICS == "true") {
+    return (
+      <PlausibleProvider
+        domain="thestackreport.xyz"
+        >
+      <ChakraProvider theme={theme}>
+        <Component {...pageProps} />
+      </ChakraProvider>
+      </PlausibleProvider>
+    )
+  } else {
+    console.log("render without wrapping.")
+    return (
+      <ChakraProvider theme={theme}>
+        <Component {...pageProps} />
+      </ChakraProvider>
+    )
+  }
+  
 }
 
 export default MyApp
