@@ -119,7 +119,6 @@ const DataBlock = ({
                 setShowControls(false)
             }}
             onPointerDown={(e) => {
-                console.log("pointer down event: ", showControls)
                 setTapToggle(!tapToggle)
             }}
             >
@@ -285,7 +284,6 @@ export const DataBlockDynamic = ({
     if (dataDocs.length === 0) return <div>No block found with key: {block_key}</div>
     var block = _.first(dataDocs)
 
-    console.log(block)
     return (
         <DataBlock block={block} autoPlayOnLoad={autoPlayOnLoad} />
     )

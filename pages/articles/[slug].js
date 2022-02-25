@@ -14,11 +14,32 @@ import { basicImgLoader } from "utils/basicImgLoader"
 
 const ArticlePage = ({ article, error, errorMessage="Error" }) => {
     const attrs = _.get(article, "attributes", {})
+    console.log(attrs)
+    var googleNewsJson = {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        "headline": attrs.Title,
+        "image": [
+            attrs.banner_image_url
+        ],
+        "datePublished": attrs.publishedAt,
+        "dateModified": attrs.publishedAt,
+        "author": attrs.authors.data.map(author => {
+            return {
+                "@type": "Person",
+                "name": author.attributes.first_name,
+                "url": `https://www.twitter.com/${author.attributes.twitter}`
+            }
+        })
+    }
     return (
         <PageLayout>
             <Head>
                 <title>{_.get(attrs, "Title", "Not-found")}</title>
                 <meta name="description" content={_.get(attrs, "description", "not-found")} />
+                <script type="application/ld+json">
+                    {JSON.stringify(googleNewsJson)}
+                </script>
             </Head>
             
                 {error ? (
