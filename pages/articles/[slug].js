@@ -14,7 +14,6 @@ import { basicImgLoader } from "utils/basicImgLoader"
 
 const ArticlePage = ({ article, error, errorMessage="Error" }) => {
     const attrs = _.get(article, "attributes", {})
-    console.log(attrs)
     var googleNewsJson = {
         "@context": "https://schema.org",
         "@type": "NewsArticle",
@@ -27,8 +26,8 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
         "author": attrs.authors.data.map(author => {
             return {
                 "@type": "Person",
-                "name": author.attributes.name,
-                "url": `https://www.twitter.com/`
+                "name": author.attributes.first_name,
+                "url": `https://www.twitter.com/${_.get(author, "attributes.twitter", "thestackreport")}`
             }
         })
     }
