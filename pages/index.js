@@ -166,7 +166,7 @@ export async function getServerSideProps(context) {
 
         const { db } = await connectToDatabase()
 
-        var topContracts4x1 = await db.collection("data_blocks")
+        var cursor = await db.collection("data_blocks")
             .find(
                 {
                     tags: {$in: ["top-contracts-4x1"]}
@@ -174,8 +174,9 @@ export async function getServerSideProps(context) {
             )
             .sort({endDate: -1})
             .limit(5)
-            .toArray()
         
+        var topContracts4x1 = await cursor.toArray()
+        await cursor.close()
         topContracts4x1 = JSON.parse(JSON.stringify(topContracts4x1))
 
         topContracts4x1.sort((a, b) => a.attributes.position - b.attributes.position)

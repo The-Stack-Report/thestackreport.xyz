@@ -16,11 +16,6 @@ import { gridScale } from "utils/colorScales"
 import StatsTable from "./StatsTable"
 import Badges from "./Badges"
 
-const badgeColorCodes = {
-    "fa2": "gray.500",
-    "fa12": "purple.500"
-}
-
 
 const ContractCard = React.memo(({
     contract,

@@ -60,7 +60,7 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
     const [query, setQuery] = useState(false)
     const [searchResults, setSearchResults] = useState(false)
     const [searchTermInitialized, setSearchTermInitialized] = useState(false)
-    const router = useRouter()
+    // const router = useRouter()
 
     
     useEffect(() => {
@@ -81,17 +81,17 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
             setQuery(false)
             setSearchResults(false)
             if(getUrlParam("search_term") !== undefined) {
-                removeQueryParamsFromRouter(router, ["search_term"])
+                // removeQueryParamsFromRouter(router, ["search_term"])
 
             }
         } else if(debouncedSearchTerm !== queriedSearchTerm) {
             setIsSearching(true)
             setQueriedSearchTerm(debouncedSearchTerm)
-            router.push(
-                insertUrlParam("search_term", debouncedSearchTerm),
-                undefined,
-                { shallow: true}
-            )
+            // router.push(
+            //     insertUrlParam("search_term", debouncedSearchTerm),
+            //     undefined,
+            //     { shallow: true}
+            // )
             
 
 
@@ -105,7 +105,7 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
     }, [
         debouncedSearchTerm,
         queriedSearchTerm,
-        router
+        // router
     ])
 
     const contractsToShow = _.isArray(searchResults) ? searchResults : top_contracts
@@ -219,14 +219,16 @@ export async function getServerSideProps(context) {
     } else {
         const { db } = await connectToDatabase()
 
-        var top_contracts = await db.collection("contracts_metadata")
+        var cursor = await db.collection("contracts_metadata")
             .find({"sort_positions.by_calls_past_14_days": {$exists: true}})
             .sort([
                 ["sort_positions.by_calls_past_14_days", 1],
                 ["address", -1]
             ])
             .limit(100)
-            .toArray()
+        
+        var top_contracts = await cursor.toArray()
+        await cursor.close()
         
         top_contracts.forEach(contract => {
             contract._preparedDailyStats = prepareContractDailyStats(_.get(contract, "past_14_days", false))
