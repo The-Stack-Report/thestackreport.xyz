@@ -3,6 +3,12 @@ import {
     Stack,
     Badge
 } from "@chakra-ui/react"
+import _ from "lodash"
+
+const badgeColorCodes = {
+    "fa2": "gray.500",
+    "fa12": "purple.500"
+}
 
 
 const Badges = React.memo(({

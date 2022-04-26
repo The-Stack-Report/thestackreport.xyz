@@ -5,7 +5,6 @@ import {
     Text
 } from "@chakra-ui/react"
 import ContractCard from "components/ContractCard"
-import WrappedLink from "components/WrappedLink"
 import _ from "lodash"
 
 
