@@ -30,7 +30,6 @@ function searchBlocksApi(search) {
 const DataBlocksCatalogPage = ({ blocks }) => {
     const [searchTerm, setSearchTerm] = useState("")
     const [isSearching, setIsSearching] = useState(false)
-    const [query, setQuery] = useState(false)
     const [searchResults, setSearchResults] = useState(false)
     const [searchErrorMessage, setSearchErrorMessage] = useState(false)
 
@@ -38,7 +37,6 @@ const DataBlocksCatalogPage = ({ blocks }) => {
     
     useEffect(() => {
         if(debouncedSearchTerm === "") {
-            setQuery(false)
             setSearchResults(false)
         } else {
             setIsSearching(true)

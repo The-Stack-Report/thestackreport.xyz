@@ -6,7 +6,12 @@ const WrappedLink = ({
         href,
         children,
         inline=false,
+        textDecoration = false,
         ...props }) => {
+    var linkProps = {}
+    if(textDecoration !== false) {
+        linkProps["textDecoration"] = textDecoration
+    }
     return (
         <>
         <NextLink
@@ -15,6 +20,7 @@ const WrappedLink = ({
             >
             <Link
                 href={href}
+                {...linkProps}
                 {...props}
                 >
             {children}

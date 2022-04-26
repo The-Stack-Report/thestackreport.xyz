@@ -31,11 +31,12 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                 {error ? (
                     <React.Fragment>
                         <Text>{errorMessage}</Text>
-                        <Link href="/datasets" passHref={true}>
-                            <Text as="a">
-                                Back to catalog.
-                            </Text>
-                        </Link>
+                        <WrappedLink
+                            href="/datasets"
+                            fontSize="0.7rem"
+                            >
+                            Back to datasets overview
+                        </WrappedLink>
                     </React.Fragment>
                 ) : (
                     <React.Fragment>

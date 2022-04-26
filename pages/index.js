@@ -45,6 +45,15 @@ const LandingPage = ({ landing, latestArticles, topContracts4x1 }) => {
                 article={featured}
                 />
             <Container maxW="container.xl" marginTop="4rem">
+                New!
+                <br />
+                <WrappedLink
+                    href="/dashboards/tezos"
+                    >
+                {`Dashboards >>>`}
+                </WrappedLink>
+            </Container>
+            <Container maxW="container.xl" marginTop="4rem">
             <SimpleGrid columns={[1, 1, 2]} spacing={8}>
                 <Box>
                     <Text
