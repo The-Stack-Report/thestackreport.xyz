@@ -8,6 +8,7 @@ import {
     Text,
     Spinner,
     Center,
+    Badge,
     Box
 } from "@chakra-ui/react"
 import { connectToDatabase } from "utils/mongo_db"
@@ -17,18 +18,21 @@ import WrappedLink from "components/WrappedLink"
 import _ from "lodash"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"
 
+
 const ContractPage = ({
     error,
+    errorMessage = "error-message-undefined",
     contract_meta,
     dailyStats = false
 }) => {
     var address = _.get(contract_meta, "address", 'no-address')
     var alias = _.get(contract_meta, "tzkt_account_data.alias", address)
     console.log("rendering contract dashboard page for: ", alias)
+    console.log("alias: ", alias)
     return (
         <PageLayout>
             <Head>
-                <title>Dashboard - {alias}</title>
+                <title>{`Dashboard - ${alias}`}</title>
                 <meta name="description" content="Dashboard page." />
             </Head>
             <Container maxW="container.xl" paddingTop="8rem">
@@ -55,16 +59,24 @@ const ContractPage = ({
                             To Tezos dashboards overview
                         </WrappedLink>
                         </Box>
+                        
                         <Heading
                             marginTop={{
                                 base: "2rem",
                                 md: "4rem"
                             }}
-                            marginBottom="2rem"
                             fontWeight="thin"
                             >
-                                {alias}
-                            </Heading>
+                            {alias}
+                        </Heading>
+                        <Badge
+                            color="gray.500"
+                            variant="outline"
+                            size="small"
+                            fontSize="0.7rem"
+                            >
+                            Tezos contract
+                        </Badge>
                             {(contract_meta && dailyStats) ? (
                                 <TezosContractDashboard
                                     contract={contract_meta}
@@ -86,23 +98,17 @@ const ContractPage = ({
 
 export async function getServerSideProps(context) {
     const address = _.get(context, "query.contract", false)
-    console.log(`getting server side data for ${address} dashboard page.`)
     var returnData = { props: {errorMessage: "Error.", error: true} }
     if(address) {
         try {
-            console.log("connecting to db")
             const { db } = await connectToDatabase()
             var contract_meta = await db.collection("contracts_metadata")
                 .findOne({"address": address})
             contract_meta = JSON.parse(JSON.stringify(contract_meta))
 
-            console.log("got contract meta from mongodb")
-            console.log("getting digitalocean stats")
-
             const resp = await fetch(`https://the-stack-report.ams3.digitaloceanspaces.com/datasets/tezos/contracts_daily_stats/${address}-daily-stats.json`)
             const full_daily_data = await resp.json()
             var dailyStats = JSON.parse(JSON.stringify(prepareContractDailyStats(full_daily_data)))
-            console.log("got and processed daily stats from digitalocean")
 
             
             returnData =  {
@@ -118,7 +124,6 @@ export async function getServerSideProps(context) {
             console.error(err)
             returnData = { props: {errorMessage: "Request error.", error: true} }
         }
-        console.log("try catch complete")
         return returnData
     } else {
         return { props: {errorMessage: "Missing contract address.", error: true} }

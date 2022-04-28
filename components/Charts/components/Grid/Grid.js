@@ -30,8 +30,7 @@ const Grid = ({
 				)
 			})}
 			{yScale.ticks(yTickCount).map((t, t_i) => {
-				const t_pos = yScale(t)
-				console.log(t_pos)
+				const t_pos = chart.height - yScale(t)
 				return (
 					<line
 						key={`y-${t_i}`}

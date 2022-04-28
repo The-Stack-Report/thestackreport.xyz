@@ -225,7 +225,7 @@ export async function getServerSideProps(context) {
                 ["sort_positions.by_calls_past_14_days", 1],
                 ["address", -1]
             ])
-            .limit(100)
+            .limit(25)
         
         var top_contracts = await cursor.toArray()
         await cursor.close()

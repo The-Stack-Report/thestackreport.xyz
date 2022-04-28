@@ -55,6 +55,7 @@ function _datetimeToDate(date) {
 	return dayjs(_date.format("YYYY-MM-DD"))
 }
 
+
 export function datetimeToDate(dates) {
 	if (_.isArray(dates)) {
 		return dates.map(d => _datetimeToDate(d))

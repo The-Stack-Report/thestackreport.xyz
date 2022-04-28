@@ -1,22 +1,20 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useRef } from "react"
 import {
     scaleLinear,
     scaleTime
 } from "@visx/scale"
 import {
-    AreaClosed,
-    LinePath
+    AreaClosed
 } from "@visx/shape"
 import {
     Box,
-    Stack,
-    Badge,
     Text
 } from "@chakra-ui/react"
 import { curveLinear } from '@visx/curve';
 import _ from "lodash"
 import dayjs from "dayjs"
 import chroma from "chroma-js"
+import BadgesLegend from "components/Charts/components/BadgesLegend"
 
 function dateKeyVal(val) {
     return dayjs.isDayjs(val) ? val : dayjs(val)
@@ -38,7 +36,6 @@ const CardAreaChart = React.memo(({
         bottom: 0
     }
 }) => {
-
     const chart = useMemo(
         () => {
             return {
@@ -96,41 +93,14 @@ const CardAreaChart = React.memo(({
     if(dayjs.isDayjs(xAxisEndLabel)) {
         xAxisEndLabel = xAxisEndLabel.format("MMM D, YYYY")
     }
-
     return (
         <div className='area-chart'>
-            <Box position="absolute"
-                padding="0.5rem"
-                >
-                <Text fontSize="0.5rem" fontWeight="bold" textTransform="uppercase"
-                    marginBottom="-5px"
-                    >
-                    Entrypoints called
-                </Text>
-                {columns.slice(0, 11).map((col, col_i) => {
-                    const colColor = colColors[col_i].hex()
-                    return (
-                        <Box marginBottom="-10px"
-                            key={col_i}
-                            >
-                        <Badge
-                            color={"white"}
-                            variant="solid"
-                            background={colColor}
-                            size="small"
-                            fontSize="0.5rem"
-                            margin="0.1rem"
-                            _groupHover={{
-                                color: colColor,
-                                background: "rgba(255,255,255,0.95)"
-                            }}
-                            >
-                            {col}
-                        </Badge>
-                        </Box>
-                    )
-                })}
-            </Box>
+            <BadgesLegend
+                columns={columns}
+                colColors={colColors}
+                boxPositionTop={"-12px"}
+                labelText="Entrypoint calls"
+                />
             <svg width={width} height={height}>
                 {columns.map((col, col_i) => {
                     var col_t = columns.length === 1 ? 0.5 : col_i / (columns.length - 1)
@@ -169,7 +139,7 @@ const CardAreaChart = React.memo(({
                     color="gray.500"
                     zIndex={15}
                     >
-                    {xAxisStartLabel}
+                    {_.isString(xAxisStartLabel) ? xAxisStartLabel : "xAxisStartLabel"}
                 </Text>
                 <Text
                     position="absolute"
@@ -179,7 +149,7 @@ const CardAreaChart = React.memo(({
                     color="gray.500"
                     zIndex={15}
                     >
-                    {xAxisEndLabel}
+                    {_.isString(xAxisEndLabel) ? xAxisEndLabel : "xAxisEndLabel"}
                 </Text>
             </Box>
         </div>

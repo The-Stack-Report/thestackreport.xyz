@@ -44,13 +44,9 @@ export async function connectToDatabase() {
         useUnifiedTopology: true
     }
     clientCounter += 1
-    console.log(`Creating new mongoClient. Current count: ${clientCounter}`)
     let client = new MongoClient(MONGODB_URI, opts)
-    console.log("client created, connecting client")
     await client.connect()
-    console.log("client connected, creating db")
     let db = client.db(MONGODB_DB)
-    console.log("db created from client")
 
     cachedClient = client
     cachedDb = db
@@ -59,7 +55,6 @@ export async function connectToDatabase() {
         global["__cachedClient"] = client
         global["__cachedDb"] = db
     }
-    console.log("got db connection, returning for fetching")
     return {
         client: cachedClient,
         db: cachedDb

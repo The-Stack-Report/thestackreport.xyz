@@ -15,6 +15,7 @@ import dayjs from "dayjs"
 import { gridScale } from "utils/colorScales"
 import StatsTable from "./StatsTable"
 import Badges from "./Badges"
+import { useDebouncedCallback } from 'use-debounce'
 
 
 const ContractCard = React.memo(({
@@ -109,6 +110,9 @@ const CardDataContent = React.memo(({
 }) => {
     const containerRef = useRef(null)
     const [dimensions, setDimensions] = useState({ width:defaultWidth, height: 300 });
+    const [windowResizeCounter, setWindowResizeCounter] = useState(0)
+
+
     useEffect(() => {
         if(containerRef.current) {
             setDimensions({
@@ -116,14 +120,37 @@ const CardDataContent = React.memo(({
                 height: containerRef.current.offsetHeight
             })
         }
-    }, [containerRef])
+    }, [containerRef, windowResizeCounter])
+
+    const handleResize = useDebouncedCallback(
+        () => {
+            setWindowResizeCounter((c) => c + 1)
+        },
+        100
+    );
+
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+      }, [handleResize]);
 
     const aspectRatio = 5/8
 
     var cols = _.sortBy(data.entrypoints, "count").reverse().map(p => p.entrypoint)
 
-    var lastDate = _.last(data)
+    var lastDate = _.last(data.byDay)
     lastDate = _.get(lastDate, "date", dayjs())
+    if(_.isString(lastDate)) {
+        lastDate = dayjs(lastDate)
+    }
+    var firstDate = _.first(data.byDay)
+    firstDate = _.get(firstDate, "date", lastDate.subtract(7, "day"))
+    if(_.isString(firstDate)) {
+        firstDate = dayjs(firstDate)
+    }
+
     var color = "black"
     if(_.isNumber(sortPosition)) {
         color = gridScale(_.clamp(sortPosition / 100, 0, 1))
@@ -145,7 +172,7 @@ const CardDataContent = React.memo(({
                 data={data.byDay}
                 dataDomain={data.dataDomain}
                 columns={cols}
-                xDomain={[lastDate.subtract(14, "day"), lastDate.subtract(2, "day")]}
+                xDomain={[firstDate, lastDate]}
                 xKey={"date"}
                 width={dimensions.width}
                 height={dimensions.width * aspectRatio}

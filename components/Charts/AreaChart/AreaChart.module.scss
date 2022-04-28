@@ -1,0 +1,13 @@
+.area-chart {
+    position: relative;
+    .tooltip-group {
+        transition: transform 0.2s;
+        .value-mark {
+            transition: transform 0.2s;
+        }
+    }
+
+    .tooltip-labels-box {
+        transition: left 0.2s;
+    }
+}
