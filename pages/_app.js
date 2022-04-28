@@ -9,8 +9,8 @@ const colors = {
 }
 
 const fonts = {
-  heading: "Roboto Mono",
-  body: "Roboto Mono"
+  heading: "Roboto Mono, monospace",
+  body: "Roboto Mono, monospace"
 }
 
 const fontSizes = [
