@@ -36,59 +36,75 @@ const ContractCard = React.memo(({
         recent_days_data = prepareContractDailyStats(_.get(contract, "past_14_days", false), contract)
     }
     return (
-    <Box position="relative" >
-        
-        <WrappedLink
+        <Box position="relative">
+            <WrappedLink
                 href={`/dashboards/tezos/contracts/${contract.address}`}
                 textDecoration="none"
-            >
-            <Box
-                key={contract.address}
-                shadow="sm"
-                borderWidth="1px"
-                padding="0.5rem"
-                _hover={{
-                    background: "black"
-                }}
-                role="group"
-                className={styles["contract-card"]}
-                >  
-                <CardDataContent
-                    data={recent_days_data}
-                    sortPosition={sortPosition}
-                    />
-                <Box minHeight="7rem" paddingTop="1.5rem">
-                <Heading fontSize="xl"
-                    textDecoration="underline"
-                    isTruncated={true}
+                >
+                <Box
+                    key={contract.address}
+                    shadow="sm"
+                    borderWidth="1px"
+                    padding="0.5rem"
+                    _hover={{
+                        background: "black"
+                    }}
+                    role="group"
+                    maxW="100%"
+                    className={styles["contract-card"]}
                     >
-                    <Highlighter
-                        highlightClassName={styles["search-term-highlight"]}
-                        searchWords={[highlightTerm]}
-                        autoEscape={true}
-                        textToHighlight={alias}
+                    <CardDataContent
+                        data={recent_days_data}
+                        sortPosition={sortPosition}
                         />
-                </Heading>
-                <Text fontSize="0.7rem"
-                    isTruncated={true}
-                    color="gray.500"
-                    >
-                    <Highlighter
-                        highlightClassName={styles["search-term-highlight"]}
-                        searchWords={[highlightTerm]}
-                        autoEscape={true}
-                        textToHighlight={contract.address}
+                    <Box minHeight="7rem" paddingTop="1.5rem"   
+                        overflow="hidden"
+                        maxW="100%"
+                        >
+                    <div style={{width: "100%", overflow: "hidden", position: "relative", height: 30}}>
+                        <Box position="absolute"
+                            top="0px"
+                            left="0px"
+                            right="0px"
+                            >
+                            <Heading fontSize="xl"
+                                textDecoration="underline"
+                                isTruncated={true}
+                                maxW="100%"
+                                >
+                                <Highlighter
+                                    highlightClassName={styles["search-term-highlight"]}
+                                    searchWords={[highlightTerm]}
+                                    autoEscape={true}
+                                    textToHighlight={alias}
+                                    />
+                                    
+                            </Heading>
+                        </Box>
+                    </div>
+                    <div style={{width: "100%", overflow: "hidden", position: "relative", height: 30}}>
+                        <Text fontSize="0.7rem"
+                            isTruncated={true}
+                            color="gray.500"
+                            >
+                            <Highlighter
+                                highlightClassName={styles["search-term-highlight"]}
+                                searchWords={[highlightTerm]}
+                                autoEscape={true}
+                                textToHighlight={contract.address}
+                                />
+                        </Text>
+
+                    </div>
+                    <StatsTable
+                        contract={contract}
                         />
-                </Text>
-                <StatsTable
-                    contract={contract}
-                    />
-                <Badges badges={badges} />
+                    <Badges badges={badges} />  
+
+                    </Box>
                 </Box>
-                
-            </Box>
-        </WrappedLink>
-    </Box>
+            </WrappedLink>
+        </Box>
     )
 }, (prev, next) => {
     if (prev.contract.address !== next.contract.address) {
@@ -155,11 +171,10 @@ const CardDataContent = React.memo(({
     if(_.isNumber(sortPosition)) {
         color = gridScale(_.clamp(sortPosition / 100, 0, 1))
     }
-
     return (
         <React.Fragment>
         <div
-            style={{position: "relative", overflow: "visible"}}
+            style={{position: "relative"}}
             ref={containerRef}
             >
             <Image
@@ -167,7 +182,7 @@ const CardDataContent = React.memo(({
                 src="/dashboard-card-bg.png"
                 width="100%"
                 />
-            <div style={{position: "absolute", top: 0, left: 0, zIndex: 10}}>
+            <div style={{position: "absolute", top: 0, left: 0, right: 0, zIndex: 10}}>
             <CardAreaChart
                 data={data.byDay}
                 dataDomain={data.dataDomain}

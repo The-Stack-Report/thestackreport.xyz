@@ -78,6 +78,7 @@ const TezosContractDashboard = ({
                 width={"dynamic"}
                 color={color}
                 height={300}
+                timelineBrush={true}
                 >
                 <BadgesLegend
                     columns={cols}

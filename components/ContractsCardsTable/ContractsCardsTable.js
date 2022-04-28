@@ -24,7 +24,8 @@ const ContractsCardsTable = ({
                                 lg: 3,
                                 xl: 4
                             }}
-                            spacing="10px">
+                            spacing="10px"
+                            >
                             {contracts.map(contract => {
                             const sortPosition = _.get(contract, "sort_positions.by_calls_past_14_days", false)
 

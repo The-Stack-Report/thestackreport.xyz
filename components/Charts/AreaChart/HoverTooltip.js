@@ -35,7 +35,7 @@ const HoverTooltip = ({
                 />
             <text
                 x={0}
-                y={chart.height + 25}
+                y={chart.height + 22}
                 textAnchor={ xPosition < chart.width * 0.7 ? "start" : "end" }
                 fontSize="0.8rem"
                 alignmentBaseline="hanging"

@@ -100,32 +100,38 @@ const CardAreaChart = React.memo(({
                 colColors={colColors}
                 boxPositionTop={"-12px"}
                 labelText="Entrypoint calls"
+                width={width}
                 />
-            <svg width={width} height={height}>
-                {columns.map((col, col_i) => {
-                    var col_t = columns.length === 1 ? 0.5 : col_i / (columns.length - 1)
-                    var areaColor = colColors[col_i]
+            <Box
+                overflow="hidden"
+                width={width}
+                >
+                <svg width={width} height={height}>
+                    {columns.map((col, col_i) => {
+                        var col_t = columns.length === 1 ? 0.5 : col_i / (columns.length - 1)
+                        var areaColor = colColors[col_i]
 
-                    return (
-                        <React.Fragment
-                            key={col_i}
-                            >
-                        <AreaClosed
-                            data={data}
-                            x={(d) => xScale(dateKeyVal(d.date))}
-                            y={(d) => yScaleArea(_.get(d, col, 0))}
-                            yScale={yScaleArea}
-                            fill={chroma(areaColor).brighten(0.5 + col_t * 0.5)}
-                            fillOpacity={0.8}
-                            opacity={1}
-                            stroke={areaColor}
-                            curve={curveLinear}
-                            />
-                        </React.Fragment>
-                    )
-                })}
-                
-            </svg>
+                        return (
+                            <React.Fragment
+                                key={col_i}
+                                >
+                            <AreaClosed
+                                data={data}
+                                x={(d) => xScale(dateKeyVal(d.date))}
+                                y={(d) => yScaleArea(_.get(d, col, 0))}
+                                yScale={yScaleArea}
+                                fill={chroma(areaColor).brighten(0.5 + col_t * 0.5)}
+                                fillOpacity={0.8}
+                                opacity={1}
+                                stroke={areaColor}
+                                curve={curveLinear}
+                                />
+                            </React.Fragment>
+                        )
+                    })}
+                    
+                </svg>
+            </Box>
             <Box
                 paddingTop="0.5rem"
                 height="2rem"

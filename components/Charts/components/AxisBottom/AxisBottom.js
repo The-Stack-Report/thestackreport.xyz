@@ -13,8 +13,9 @@ const AxisBottom = ({
 				var dt = dayjs(t)
 				var t_formatted = t
 				if(dt) {
-					t_formatted = dt.format("YY-MM")
+					t_formatted = dt.format("MMM D")
 				}
+				var monthNr = dt.month()
 				return (
 					<g transform={`translate(${xScale(dt)}, 0)`}
 						key={t_i}
@@ -27,6 +28,17 @@ const AxisBottom = ({
 							>
 						{t_formatted}
 						</text>
+						{monthNr === 0 && (
+							<text
+								alignmentBaseline="hanging"
+								x={5}
+								y={22}
+								fontSize="0.8rem"
+								fontWeight="bold"
+								>
+							{dt.format("YYYY")}
+							</text>
+						)}
 					</g>
 				)
 			})}

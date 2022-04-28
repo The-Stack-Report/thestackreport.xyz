@@ -11,7 +11,8 @@ const BadgesLegend = ({
     columns,
     colColors = false,
     labelText = "Nr of calls to entrypoints",
-    boxPositionTop="-20px"
+    boxPositionTop="-20px",
+    width="500px"
 }) => {
     const chartContext = useContext(AreaChartContext)
     var _colColors = colColors
@@ -24,7 +25,7 @@ const BadgesLegend = ({
             padding="0.5rem"
             top={boxPositionTop}
             left="-6px"
-            width="500px"
+            right="0px"
             opacity={_.get(chartContext, 'hovered', false) ? 0.1 : 1}
             style={{transition: "opacity 0.1s"}}
             >

@@ -3,6 +3,7 @@ import { Bar } from "@visx/shape"
 import { localPoint } from "@visx/event"
 import { clampDate } from "utils/dateUtils"
 import dayjs from "dayjs"
+import _ from "lodash"
 
 const HoverOverlay = ({
     xScale,
@@ -12,6 +13,13 @@ const HoverOverlay = ({
     setHoveredXValue,
     snapFunction = (val) => val
 }) => {
+    const width = _.get(chart, "width", false)
+	const height = _.get(chart, "height", false)
+	if(!_.isNumber(width)) return null
+	if(_.isNaN(width)) return null
+	if(!_.isNumber(height)) return null
+	if(_.isNaN(height)) return null
+    
     function handleTooltip(e) {
         var { x } = localPoint(e) || { x: 0 }
         x  -= margins.left
@@ -28,8 +36,8 @@ const HoverOverlay = ({
         <Bar
             x={-10}
             y={0}
-            width={chart.width + 20}
-            height={chart.height}
+            width={width + 20}
+            height={height}
             onTouchStart={handleTooltip}
             onTouchMove={handleTooltip}
             onMouseMove={handleTooltip}

@@ -35,6 +35,7 @@ const ContractPage = ({
                 <title>{`Dashboard - ${alias}`}</title>
                 <meta name="description" content="Dashboard page." />
             </Head>
+            <Box overflow="hidden">
             <Container maxW="container.xl" paddingTop="8rem">
                 {error ? (
                     <React.Fragment>
@@ -92,6 +93,7 @@ const ContractPage = ({
                     </React.Fragment>
                 )}
             </Container>
+            </Box>
         </PageLayout>
     )
 }

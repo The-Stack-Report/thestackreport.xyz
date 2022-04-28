@@ -12,6 +12,10 @@ import AxisBottom from "components/Charts/components/AxisBottom"
 
 import _ from "lodash"
 import { curveLinear } from '@visx/curve'
+import { Brush } from '@visx/brush'
+import { Bounds } from '@visx/brush/lib/types'
+import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush'
+import { PatternLines } from '@visx/pattern'
 import dayjs from "dayjs"
 import Grid from "components/Charts/components/Grid"
 import HoverOverlay from "components/Charts/components/HoverOverlay"
@@ -33,6 +37,8 @@ function dateKeyVal(val) {
 }
 
 export const AreaChartContext = createContext()
+
+const PATTERN_ID = 'brush_pattern';
 
 const AreaChart = React.memo(({
     data,
@@ -68,13 +74,15 @@ const AreaChart = React.memo(({
         top: 0,
         bottom: 0
     },
-    
+    timelineBrush = false,
+    timelineBrushChartHeight = 30,
     children
 }) => {
     const containerRef = useRef(null)
-    const [dimensions, setDimensions] = useState({ width:width, height: 300 })
+    const [dimensions, setDimensions] = useState({ width: 500, height: 300 })
     const [windowResizeCounter, setWindowResizeCounter] = useState(0)
     const [hoveredXValue, setHoveredXValue] = useState(false)
+    const [filteredData, setFilteredData] = useState(data)
     const windowSize = useWindowSize()
 
     
@@ -143,28 +151,71 @@ const AreaChart = React.memo(({
             height: height - _margins.top - _margins.bottom
         }
     }, [_width, height, _margins])
+    
+
+    const _dataDomain = useMemo(() => {
+        if(filteredData.length === data.length) {
+            return dataDomain
+        } else {
+            // process data domain
+            return [0, 100]
+        }
+    }, [filteredData, data, dataDomain])
+
+
+    const _xDomain = useMemo(() => {
+        if(filteredData.length === data.length) {
+            return xDomain
+        } else {
+            // process x domain
+            return [0, 100]
+        }
+    }, [data, filteredData, xDomain])
 
     const yScale = useMemo(
         () => {
             return scaleLinear({
                 range: [0, chart.height],
-                domain: dataDomain,
+                domain: _dataDomain,
                 nice: true
             })
         }
-    , [chart.height, dataDomain])
+    , [chart.height, _dataDomain])
 
     const yScaleArea = useMemo(
         () => {
             return scaleLinear({
                 range: [chart.height, 0],
+                domain: _dataDomain,
+                nice: true
+            })
+        }
+    , [chart.height, _dataDomain])
+
+
+    const yScaleTimelineArea = useMemo(
+        () => {
+            return scaleLinear({
+                range: [timelineBrushChartHeight, 0],
                 domain: dataDomain,
                 nice: true
             })
         }
-    , [chart.height, dataDomain])
+    , [timelineBrushChartHeight, dataDomain])
+    
+
+
 
     const xScale = useMemo(
+        () => {
+            return scaleTime({
+                range: [0, chart.width],
+                domain: _xDomain
+            })
+        }
+    , [chart.width, _xDomain])
+
+    const xScaleFull = useMemo(
         () => {
             return scaleTime({
                 range: [0, chart.width],
@@ -191,7 +242,6 @@ const AreaChart = React.memo(({
     }
 
     var xAxisLabelsPosition = _.get(windowSize, "width", 500) > breakpoints.xl2 ? "outside" : "inside"
-
     return (
         <AreaChartContext.Provider value={{
             colColors: colColors,
@@ -215,6 +265,8 @@ const AreaChart = React.memo(({
                     marginRight: _.get(_margins, "right")
                 }}
                 position="absolute"
+                left="0px"
+                right="0px"
                 >
                 {children}
                 <HoverLabelsOverlay
@@ -228,71 +280,130 @@ const AreaChart = React.memo(({
                     colColors={colColors}
                     />
             </Box>
-            <svg
-                width={_width}
-                height={height}
+            <Box
+                overflow="hidden"
                 >
-                <g transform={`translate(${_margins.left}, ${_margins.top})`}>
-                    <g style={{pointerEvents: 'none'}}>
-                        <Grid
-                            xScale={xScale}
-                            yScale={yScale}
-                            chart={chart}
-                            />
-                        
-                        {columns.map((col, col_i) => {
-                            var col_t = columns.length === 1 ? 0.5 : col_i / (columns.length - 1)
-                            var areaColor = colColors[col_i]
+                <svg
+                    width={_width}
+                    height={height}
+                    >
+                    <g transform={`translate(${_margins.left}, ${_margins.top})`}>
+                        <g style={{pointerEvents: 'none'}}>
+                            <Grid
+                                xScale={xScale}
+                                yScale={yScale}
+                                chart={chart}
+                                />
+                            
+                            {columns.map((col, col_i) => {
+                                var col_t = columns.length === 1 ? 0.5 : col_i / (columns.length - 1)
+                                var areaColor = colColors[col_i]
 
-                            return (
-                                <React.Fragment
-                                    key={col_i}
-                                    >
-                                <AreaClosed
-                                    data={data}
-                                    x={(d) => xScale(dateKeyVal(d[xKey]))}
-                                    y={(d) => yScaleArea(_.get(d, col, 0))}
-                                    yScale={yScaleArea}
-                                    fill={chroma(areaColor).brighten(0.5 + col_t * 0.5)}
-                                    fillOpacity={0.8}
-                                    opacity={1}
-                                    stroke={areaColor}
-                                    curve={curveLinear}
-                                    />
-                                </React.Fragment>
-                            )
-                        })}
-                        <HoverTooltip
-                            data={data}
-                            columns={columns}
-                            xKey={xKey}
+                                return (
+                                    <AreaClosed
+                                        key={col_i}
+                                        data={data}
+                                        x={(d) => {
+                                            const x = xScale(dateKeyVal(d[xKey]))
+                                            return _.isNaN(x) ? 0 : x
+                                        }}
+                                        y={(d) => {
+                                            const y = yScaleArea(_.get(d, col, 0))
+                                            return y
+                                        }}
+                                        yScale={yScaleArea}
+                                        fill={chroma(areaColor).brighten(0.5 + col_t * 0.5)}
+                                        fillOpacity={0.8}
+                                        opacity={1}
+                                        stroke={areaColor}
+                                        curve={curveLinear}
+                                        />
+                                )
+                            })}
+                            <HoverTooltip
+                                data={data}
+                                columns={columns}
+                                xKey={xKey}
+                                hoveredXValue={hoveredXValue}
+                                chart={chart}
+                                xScale={xScale}
+                                yScale={yScale}
+                                colColors={colColors}
+                                />
+                            <AxisRight
+                                yScale={yScale}
+                                chart={chart}
+                                labelsPosition={xAxisLabelsPosition}
+                                xAxisLabel={xAxisLabel}
+                                />
+                            <AxisBottom
+                                xScale={xScale}
+                                chart={chart}
+                                />
+                        </g>
+                        <HoverOverlay
+                            chart={chart}
+                            margins={_margins}
+                            xScale={xScale}
                             hoveredXValue={hoveredXValue}
-                            chart={chart}
-                            xScale={xScale}
-                            yScale={yScale}
-                            colColors={colColors}
-                            />
-                        <AxisRight
-                            yScale={yScale}
-                            chart={chart}
-                            labelsPosition={xAxisLabelsPosition}
-                            xAxisLabel={xAxisLabel}
-                            />
-                        <AxisBottom
-                            xScale={xScale}
-                            chart={chart}
+                            setHoveredXValue={setHoveredXValue}
+                            snapFunction={snapToEndOfDay}
                             />
                     </g>
-                    <HoverOverlay
-                        chart={chart}
-                        margins={_margins}
-                        xScale={xScale}
-                        hoveredXValue={hoveredXValue}
-                        setHoveredXValue={setHoveredXValue}
-                        snapFunction={snapToEndOfDay}
-                        />
-                </g>
-            </svg>
+                </svg>
+                {timelineBrush && (
+                <Box>
+                        <svg width={_width} height="30px">
+                            <g transform={`translate(${_margins.left}, 0)`}>
+                            <PatternLines
+                                id={PATTERN_ID}
+                                height={8}
+                                width={8}
+                                stroke={"grey"}
+                                strokeWidth={1}
+                                orientation={['diagonal']}
+                            />
+                            <Brush
+                                xScale={xScale}
+                                yScale={yScale}
+                                resizeTriggerAreas={['left', 'right']}
+                                brushDirection="horizontal"
+                                useWindowMoveEvents
+                                />
+                                <g style={{pointerEvents: 'none'}}>
+                                    {columns.map((col, col_i) => {
+                                        var col_t = columns.length === 1 ? 0.5 : col_i / (columns.length - 1)
+                                        var areaColor = colColors[col_i]
+        
+                                        return (
+                                            <AreaClosed
+                                                key={col_i}
+                                                data={data}
+                                                x={(d) => {
+                                                    const x = xScaleFull(dateKeyVal(d[xKey]))
+                                                    return _.isNaN(x) ? 0 : x
+                                                }}
+                                                y={(d) => {
+                                                    const y = yScaleTimelineArea(_.get(d, col, 0))
+                                                    return y
+                                                }}
+                                                yScale={yScaleTimelineArea}
+                                                fill={chroma(areaColor).brighten(0.5 + col_t * 0.5)}
+                                                fillOpacity={0.8}
+                                                opacity={1}
+                                                stroke={areaColor}
+                                                curve={curveLinear}
+                                                />
+                                        )
+                                    })}
+                                </g>
+                            </g>
+
+                        </svg>
+                    </Box>
+                )}
+            </Box>
+            
         </Box>
         </AreaChartContext.Provider>
     )
