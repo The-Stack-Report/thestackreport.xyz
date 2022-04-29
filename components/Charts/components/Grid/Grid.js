@@ -1,6 +1,7 @@
 import React from "react"
 import { decorationLineStyle } from "styles/chartStyles"
 import _ from "lodash"
+import dayjs from "dayjs"
 
 const Grid = ({
 	chart,
@@ -26,6 +27,7 @@ const Grid = ({
 				const t_pos = xScale(t)
 				if (!_.isNumber(t_pos)) return null
 				if(_.isNaN(t_pos)) return null
+				if (dayjs(t).hour() !== 0) return null
 				return (
 					<line
 						key={`x-${t_i}`}

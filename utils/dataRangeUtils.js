@@ -19,6 +19,33 @@ export function findDataRangeInData(data) {
 	return [_.min(values), _.max(values)]
 }
 
+export function dateInRange(date, range) {
+	return date.isAfter(range[0]) && date.isBefore(range[1])
+}
+
+export function dataInDateRange(data, dateRange, dateKey="date") {
+	var _dateRange = dateRange.map(d => {
+		if (dayjs.isDayjs(d)) {
+			return d
+		} else {
+			return dayjs(d)
+		}
+	})
+
+	return data.filter(p => {
+		if(_.has(p, dateKey)) {
+			if(dayjs.isDayjs(p[dateKey])) {
+				return dateInRange(_date, _dateRange)
+			} else {
+				var _date = dayjs(p[dateKey])
+				return dateInRange(_date, _dateRange)
+			}
+		} else {
+			return false
+		}
+	})
+}
+
 
 export function getDateRange(dates) {
 	var datesParsed = _.sortBy(dates.map(date => {

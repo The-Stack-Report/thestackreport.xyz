@@ -1,12 +1,14 @@
-import React from "react"
+import React, { useContext } from "react"
 import _ from "lodash"
 import dayjs from "dayjs"
+import { AreaChartContext } from "components/Charts/AreaChart/AreaChart"
 
 const AxisBottom = ({
 	xScale,
 	chart,
 	ticks = 5
 }) => {
+	const chartContext = useContext(AreaChartContext)
 	return (
 		<g transform={`translate(0, ${chart.height})`} >
 			{xScale.ticks(ticks).map((t, t_i) => {
@@ -16,6 +18,11 @@ const AxisBottom = ({
 					t_formatted = dt.format("MMM D")
 				}
 				var monthNr = dt.month()
+				var dayNr = dt.day()
+				var dayInMonth = parseInt(dt.format("D"))
+				var hour = dt.hour()
+				if (hour !== 0) return null
+
 				return (
 					<g transform={`translate(${xScale(dt)}, 0)`}
 						key={t_i}
@@ -25,16 +32,18 @@ const AxisBottom = ({
 							x={5}
 							y={5}
 							fontSize="0.8rem"
+							
 							>
 						{t_formatted}
 						</text>
-						{monthNr === 0 && (
+						{(monthNr === 0 && dayInMonth === 1) && (
 							<text
 								alignmentBaseline="hanging"
 								x={5}
 								y={22}
 								fontSize="0.8rem"
 								fontWeight="bold"
+								opacity={_.get(chartContext, 'hovered', false) ? 0.1 : 1}
 								>
 							{dt.format("YYYY")}
 							</text>

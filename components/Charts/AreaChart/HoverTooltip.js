@@ -40,7 +40,7 @@ const HoverTooltip = ({
                 fontSize="0.8rem"
                 alignmentBaseline="hanging"
                 >
-                {hoveredXValue.format("MMMM D, YYYY")}
+                {hoveredXValue.add(2, "minute").format("MMMM D, YYYY")}
             </text>
             {columns.map((col, col_i) => {
                 var colVal = _.get(hoveredData, col, false)

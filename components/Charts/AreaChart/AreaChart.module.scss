@@ -1,5 +1,6 @@
 .area-chart {
     position: relative;
+    user-select: none;
     .tooltip-group {
         transition: transform 0.2s;
         .value-mark {
