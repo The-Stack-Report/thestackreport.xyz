@@ -1,4 +1,8 @@
 import React from "react"
+import {
+    Box
+} from "@chakra-ui/react"
+import DataBlock from "components/DataBlock"
 
 const TopContractsDataBlocksList = () => {
     return (

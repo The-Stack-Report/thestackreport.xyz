@@ -10,8 +10,6 @@ import {
     Input
 } from "@chakra-ui/react"
 import WrappedLink from "components/WrappedLink"
-import ContractsCardsTable from "components/ContractsCardsTable"
-import { connectToDatabase } from "utils/mongo_db"
 import _ from "lodash"
 
 const dashboardDescription = `

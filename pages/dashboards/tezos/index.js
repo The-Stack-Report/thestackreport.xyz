@@ -110,8 +110,8 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
     }, [
         debouncedSearchTerm,
         queriedSearchTerm,
-        sortKey
-        // router
+        sortKey,
+        router
     ])
 
     useEffect(() => {
@@ -274,7 +274,6 @@ export async function getServerSideProps(context) {
             .find(findParams)
             .sort([
                 ["sort_positions.by_calls_past_14_days", 1],
-                ["address", -1]
             ])
             .limit(25)
         

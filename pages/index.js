@@ -15,9 +15,10 @@ import _ from "lodash"
 import { connectToDatabase } from "utils/mongo_db"
 import WrappedLink from "components/WrappedLink"
 import MarkdownWrapper from "components/MarkdownWrapper"
+import TopContractsLandingPageWidget from "components/TopContractsLandingPageWidget"
 
 
-const LandingPage = ({ landing, latestArticles, topContracts4x1 }) => {
+const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
     const featured = _.get(landing, "attributes.featured.data", false)
     const aboutText = _.get(landing, "attributes.about_tsr", "")
 
@@ -32,6 +33,7 @@ const LandingPage = ({ landing, latestArticles, topContracts4x1 }) => {
             }
         })
     }
+
     return (
         <PageLayout>
             <Head>
@@ -82,10 +84,17 @@ const LandingPage = ({ landing, latestArticles, topContracts4x1 }) => {
                         >
                         Top tezos contracts <Text as="span" fontWeight="light">by nr of</Text> contract calls 
                         <Text as="span" fontWeight="light">
-                            {" "}past 60 days.
+                            {" "}past 2 weeks.
                         </Text>
                     </Text>
-                    
+                    <TopContractsLandingPageWidget
+                        contracts={topContractsStats}
+                        />
+                    <Box paddingTop="2rem" paddingBottom="2rem">
+                        <WrappedLink href="/dashboards/tezos">
+                            Search through all Tezos contract dashboards
+                        </WrappedLink>
+                    </Box>
                 </Box>
             </SimpleGrid>
             </Container>
@@ -132,6 +141,8 @@ const landingPageContent = "/landing-page?populate=*"
 const recentArticlesApi = "/articles?sort=Published:desc&populate=%2A"
 const topContractsBlocks = ""
 
+var topContractsStatsCache = []
+
 export async function getServerSideProps(context) {
 
     var returnProps = {
@@ -139,7 +150,7 @@ export async function getServerSideProps(context) {
         latestArticles: [],
         recentWeekly: [],
         recentMonthly: [],
-        topContracts4x1: []
+        topContractsStats: []
         
     }
     console.log("Landing page serverside props.")
@@ -155,23 +166,20 @@ export async function getServerSideProps(context) {
 
         const { db } = await connectToDatabase()
 
-        var cursor = await db.collection("data_blocks")
-            .find(
-                {
-                    tags: {$in: ["top-contracts-4x1"]}
-                }
-            )
-            .sort({endDate: -1})
+        var cursor = await db.collection("contracts_metadata")
+            .find({
+                "sort_positions.by_calls_past_14_days": {$exists: true}
+            })
+            .sort([
+                ["sort_positions.by_calls_past_14_days", 1]
+            ])
             .limit(5)
         
-        var topContracts4x1 = await cursor.toArray()
+        var topContractsMeta = await cursor.toArray()
         await cursor.close()
-        topContracts4x1 = JSON.parse(JSON.stringify(topContracts4x1))
+        var topContractsMetaData = JSON.parse(JSON.stringify(topContractsMeta))
 
-        topContracts4x1.sort((a, b) => a.attributes.position - b.attributes.position)
-
-
-        returnProps.topContracts4x1 = topContracts4x1
+        returnProps.topContractsStats = topContractsMetaData
 
         
     } catch (err) {
