@@ -82,7 +82,7 @@ const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
                         textTransform="uppercase"
                         fontSize="0.7rem"
                         >
-                        Top tezos contracts <Text as="span" fontWeight="light">by nr of</Text> contract calls 
+                        Top tezos contract dashboards <Text as="span" fontWeight="light">by nr of</Text> contract calls 
                         <Text as="span" fontWeight="light">
                             {" "}past 2 weeks.
                         </Text>
