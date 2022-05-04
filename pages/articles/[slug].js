@@ -39,6 +39,13 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                 <script type="application/ld+json"
                     dangerouslySetInnerHTML={{__html: JSON.stringify(googleNewsJson)}}
                     />
+                
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:site" content="@thestackreport" />
+                <meta name="twitter:title" content={_.get(attrs, "Title", "Not-found")} />
+                <meta name="twitter:creator" content="@thestackreport" />
+                <meta name="twitter:description" content={_.get(attrs, "description", "not-found")} />
+                <meta name="twitter:image" content={attrs.banner_image_url} />
             </Head>
             
                 {error ? (
