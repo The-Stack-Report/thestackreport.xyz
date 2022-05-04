@@ -1,0 +1,3 @@
+import TopContractsLandingPageWidget from "./TopContractsLandingPageWidget"
+
+export default TopContractsLandingPageWidget

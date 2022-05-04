@@ -12,7 +12,9 @@ import {
     SimpleGrid,
     Select,
     Box,
-    Divider
+    Divider,
+    InputRightElement,
+    Button
 } from "@chakra-ui/react"
 import {
     SearchIcon
@@ -32,17 +34,17 @@ import { useRouter } from 'next/router'
 
 const sortOptions = [
     {
-        key: "past_14_days.total_calls",
-        label: "Calls in past 14 days"
+        key: "sort_positions.by_calls_past_14_days",
+        label: "Calls in past 2 weeks"
     },
     {
-        key: "TransactionsCount",
+        key: "sort_positions.by_total_calls",
         label: "Calls total"
     },
 ]
 
-function searchTezosContractsApi(search) {
-    return fetch(`/api/contracts?search_term=${search}&sort_key=sort_positions.by_calls_past_14_days`).then(resp => {
+function searchTezosContractsApi(search, sortKey) {
+    return fetch(`/api/contracts?search_term=${search}&sort_key=${sortKey}`).then(resp => {
         if(resp.status === 200) {
             return resp.json()
         } else {
@@ -54,13 +56,15 @@ function searchTezosContractsApi(search) {
 }
 
 const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
-    const [searchTerm, setSearchTerm] = useState("")
+    const [searchTerm, setSearchTerm] = useState(initial_search_term)
     const [isSearching, setIsSearching] = useState(false)
-    const [queriedSearchTerm, setQueriedSearchTerm] = useState("")
+    const [queriedSearchTerm, setQueriedSearchTerm] = useState(initial_search_term)
     const [query, setQuery] = useState(false)
     const [searchResults, setSearchResults] = useState(false)
     const [searchTermInitialized, setSearchTermInitialized] = useState(false)
-    // const router = useRouter()
+    const [sortKey, setSortKey] = useState(sortOptions[0].key)
+    const [queriedSortKey, setQueriedSortKey] = useState(sortOptions[0].key)
+    const router = useRouter()
 
     
     useEffect(() => {
@@ -81,21 +85,22 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
             setQuery(false)
             setSearchResults(false)
             if(getUrlParam("search_term") !== undefined) {
-                // removeQueryParamsFromRouter(router, ["search_term"])
+                removeQueryParamsFromRouter(router, ["search_term"])
 
             }
-        } else if(debouncedSearchTerm !== queriedSearchTerm) {
+        }
+        if(debouncedSearchTerm !== queriedSearchTerm) {
             setIsSearching(true)
             setQueriedSearchTerm(debouncedSearchTerm)
-            // router.push(
-            //     insertUrlParam("search_term", debouncedSearchTerm),
-            //     undefined,
-            //     { shallow: true}
-            // )
+            router.push(
+                insertUrlParam("search_term", debouncedSearchTerm),
+                undefined,
+                { shallow: true}
+            )
             
 
 
-            searchTezosContractsApi(debouncedSearchTerm).then((results) => {
+            searchTezosContractsApi(debouncedSearchTerm, sortKey).then((results) => {
                 if(_.isArray(results)) {
                     setSearchResults(results)
                 }
@@ -105,8 +110,22 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
     }, [
         debouncedSearchTerm,
         queriedSearchTerm,
+        sortKey
         // router
     ])
+
+    useEffect(() => {
+        if(sortKey !== queriedSortKey) {
+            setQueriedSortKey(sortKey)
+            searchTezosContractsApi(debouncedSearchTerm, sortKey).then((results) => {
+                if(_.isArray(results)) {
+                    setSearchResults(results)
+                }
+                setIsSearching(false)
+            })
+        }
+    }, [sortKey, queriedSortKey, debouncedSearchTerm])
+
 
     const contractsToShow = _.isArray(searchResults) ? searchResults : top_contracts
 
@@ -152,6 +171,21 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
                             placeholder="Search by contract alias or address"
                             
                             />
+                        <InputRightElement
+                            width="5rem"
+                            >
+                            <Button
+                                h='1.75rem' size='sm' 
+                                position="relative"
+                                top="0.175rem"
+                                right="0.4rem"
+                                onPointerDown={() => {
+                                    setSearchTerm("")
+                                }}
+                                >
+                                Clear
+                            </Button>
+                        </InputRightElement>
                     </InputGroup>
                     </Box>
                     <Box
@@ -163,7 +197,11 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
                             >
                             Sorted by:
                         </Text>
-                        <Select>
+                        <Select
+                            onChange={(e) => {
+                                setSortKey(e.target.value)
+                            }}
+                            >
                             {sortOptions.map(option => {
                                 return (
                                     <option
@@ -219,8 +257,21 @@ export async function getServerSideProps(context) {
     } else {
         const { db } = await connectToDatabase()
 
+        var findParams = {
+            "sort_positions.by_calls_past_14_days":
+            {$exists: true}
+        }
+        if(_.isString(initial_term)) {
+            if(initial_term.length > 0) {
+                findParams["$or"] = [
+                    {"tzkt_account_data.alias": {"$regex":initial_term, "$options": "i"}},
+                    {"address": {"$regex":initial_term, "$options": "xi"}}
+                ]
+            }
+        }
+
         var cursor = await db.collection("contracts_metadata")
-            .find({"sort_positions.by_calls_past_14_days": {$exists: true}})
+            .find(findParams)
             .sort([
                 ["sort_positions.by_calls_past_14_days", 1],
                 ["address", -1]

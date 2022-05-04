@@ -85,18 +85,7 @@ const LandingPage = ({ landing, latestArticles, topContracts4x1 }) => {
                             {" "}past 60 days.
                         </Text>
                     </Text>
-                    {topContracts4x1.map(block => {
-                        return (
-                            <Box
-                                maxW="500"
-                                marginBottom="2rem"
-                                key={block._id}
-                                border="0px solid transparent"
-                                >
-                            <DataBlock block={block} autoPlayOnLoad={true} />
-                            </Box>
-                        )
-                    })}
+                    
                 </Box>
             </SimpleGrid>
             </Container>
