@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import Head from "next/head"
 import { Container } from "@chakra-ui/layout"
 import {
@@ -80,11 +80,16 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
 
     const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
+    
+
     useEffect(() => {
+
         if(debouncedSearchTerm === "") {
             setQuery(false)
             setSearchResults(false)
-            if(getUrlParam("search_term") !== undefined) {
+            var search_term_param = getUrlParam("search_term")
+            if(!_.isNull(search_term_param)) {
+                console.log("removing param")
                 removeQueryParamsFromRouter(router, ["search_term"])
 
             }
@@ -115,6 +120,8 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
     ])
 
     useEffect(() => {
+        console.log("render tezos index page")
+
         if(sortKey !== queriedSortKey) {
             setQueriedSortKey(sortKey)
             searchTezosContractsApi(debouncedSearchTerm, sortKey).then((results) => {
