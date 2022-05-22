@@ -17,7 +17,7 @@ const BadgesLegend = ({
 }) => {
     const areaChartContext = useContext(AreaChartContext)
     const chartContext = useContext(ChartContext)
-    var _colColors = false
+    var _colColors = colColors
     if(_colColors === false) {
         if(!_.isUndefined(areaChartContext)) {
             _colColors = _.get(areaChartContext, 'colColors', ["rgb(0,255,0)", "rgb(0,0,255)"])

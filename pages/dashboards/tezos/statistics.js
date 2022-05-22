@@ -141,7 +141,7 @@ const TezosStatisticsPage = ({ dailyStatsOld, dailyChainStats }) => {
                 <meta name="description" content="Tezos blockchain statistics." />
 
             </Head>
-            <Box  padding="1rem" paddingTop="8rem" id="page-top">
+            <Box  padding="1rem" paddingTop="8rem" id="page-top" overflow="hidden">
                 <Grid templateColumns="repeat(5, 1fr)" >
                     <GridItem
                         colSpan={{
