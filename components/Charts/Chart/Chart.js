@@ -61,6 +61,7 @@ const Chart = React.memo(({
     xAxisLabel= "x-axis",
     strokeWidth = 1,
     height = 400,
+    autoScaleToMaxWindowHeight = true,
     margins = marginsDefault,
     marginsMd = marginsMdDefault,
     marginsXl2 = marginsXl2Default,
@@ -100,6 +101,13 @@ const Chart = React.memo(({
     }, [handleResize]);
 
 
+    const _height = useMemo(() => {
+        if(windowSize.height < height) {
+            return windowSize.height * 0.6
+        } else {
+            return height
+        }
+    }, [windowSize, height])
 
     const xValues = useMemo(() => {
         return data.map(p => _.get(p, xKey, false))
@@ -170,9 +178,9 @@ const Chart = React.memo(({
     const chart = useMemo(() => {
         return {
             width: _width - _margins.left - _margins.right,
-            height: height - _margins.top - _margins.bottom
+            height: _height - _margins.top - _margins.bottom
         }
-    }, [_width, height, _margins])
+    }, [_width, _height, _margins])
 
     const timelineChart = useMemo(() => {
         return {
@@ -384,7 +392,7 @@ const Chart = React.memo(({
                         colColors={colColors}
                         />
                 </Box>
-                <svg width={_width} height={height}>
+                <svg width={_width} height={_height}>
                     
                     <g transform={`translate(${_margins.left}, ${margins.top})`}>
                         <g style={{pointerEvents: "none"}}>
