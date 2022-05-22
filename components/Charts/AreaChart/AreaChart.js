@@ -41,6 +41,12 @@ import {
     findDataRangeInData
 } from "utils/dataRangeUtils"
 import isTouchEnabled from "utils/isTouchEnabled"
+import {
+    marginsDefault,
+    marginsMdDefault,
+    marginsXl2Default,
+    containerDefaultMargins
+} from "components/Charts/constants/marginDefaults"
 
 
 
@@ -56,7 +62,7 @@ const PATTERN_ID = 'brush_pattern';
 const selectedBrushStyle = {
     fill: `url(#${PATTERN_ID})`,
     stroke: 'rgb(150,150,150)',
-  };
+};
 
 const AreaChart = React.memo(({
     data,
@@ -68,30 +74,10 @@ const AreaChart = React.memo(({
     xAxisLabel= "Nr of calls",
     width = 400,
     height = 400,
-    margins = {
-        left: 10,
-        top: 30,
-        right: 10,
-        bottom: 50
-    },
-    marginsMd = {
-        left: 10,
-        top: 30,
-        right: 10,
-        bottom: 50
-    },
-    marginsXl2 = {
-        left: 10,
-        top: 30,
-        right: 110,
-        bottom: 50
-    },
-    containerMargins = {
-        left: -10,
-        right: -110,
-        top: 0,
-        bottom: 0
-    },
+    margins = marginsDefault,
+    marginsMd = marginsMdDefault,
+    marginsXl2 = marginsXl2Default,
+    containerMargins = containerDefaultMargins,
     timelineBrush = false,
     timelineBrushChartHeight = 30,
     children
@@ -441,6 +427,7 @@ const AreaChart = React.memo(({
                             chart={chart}
                             margins={_margins}
                             xScale={xScale}
+                            xValueType={"date"}
                             hoveredXValue={hoveredXValue}
                             setHoveredXValue={setHoveredXValue}
                             snapFunction={snapToEndOfDay}
@@ -458,7 +445,7 @@ const AreaChart = React.memo(({
                                 stroke={"grey"}
                                 strokeWidth={1}
                                 orientation={['diagonal']}
-                            />
+                                />
                             {touchEnabled ? (
                                 <rect
                                     style={selectedBrushStyle}

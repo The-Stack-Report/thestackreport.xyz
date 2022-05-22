@@ -20,7 +20,12 @@ export function findDataRangeInData(data) {
 }
 
 export function dateInRange(date, range) {
-	return date.isAfter(range[0]) && date.isBefore(range[1])
+	if(dayjs.isDayjs(date)) {
+		return date.isAfter(range[0]) && date.isBefore(range[1])
+	} else {
+		return false
+	}
+	
 }
 
 export function dataInDateRange(data, dateRange, dateKey="date") {
@@ -35,7 +40,7 @@ export function dataInDateRange(data, dateRange, dateKey="date") {
 	return data.filter(p => {
 		if(_.has(p, dateKey)) {
 			if(dayjs.isDayjs(p[dateKey])) {
-				return dateInRange(_date, _dateRange)
+				return dateInRange(p[dateKey], _dateRange)
 			} else {
 				var _date = dayjs(p[dateKey])
 				return dateInRange(_date, _dateRange)

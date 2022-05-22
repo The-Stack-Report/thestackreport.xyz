@@ -7,6 +7,7 @@ import _ from "lodash"
 
 const HoverOverlay = ({
     xScale,
+    xValueType = "number",
     chart,
     margins,
     hoveredXValue,
@@ -24,7 +25,13 @@ const HoverOverlay = ({
         var { x } = localPoint(e) || { x: 0 }
         x  -= margins.left
         var xDomain = xScale.domain()
-        var x0 = clampDate(snapFunction(xScale.invert(x)), dayjs(xDomain[0]).subtract(1, "minute"), xDomain[1])
+        var x0 = 0
+        if(xValueType === "date") {
+            x0 = clampDate(snapFunction(xScale.invert(x)), dayjs(xDomain[0]).subtract(1, "second"), xDomain[1])
+
+        } else {
+            x0 = _.clamp(snapFunction(xScale.invert(x)), xDomain[0], xDomain[1])
+        }
         if(x0 !== hoveredXValue) {
             setHoveredXValue(x0)
         }

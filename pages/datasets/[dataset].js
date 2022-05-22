@@ -10,16 +10,25 @@ import {
     InputGroup,
     InputRightElement,
     Button,
-    Box
+    Box,
+    SimpleGrid,
+    Grid,
+    GridItem,
+    Divider
 } from "@chakra-ui/react"
 import { connectToDatabase } from "utils/mongo_db"
 import _ from "lodash"
 import Link from 'next/link'
 import PageLayout from "components/PageLayout"
 import WrappedLink from "components/WrappedLink"
+import MarkdownWrapper from "components/MarkdownWrapper"
 
 const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
     const spaces_url = _.get(dataset, "spaces_url", false)
+    const columns = _.get(dataset, "columns", false)
+    const name = _.get(dataset, "name", false)
+    const description_md = _.get(dataset, "description_md", false)
+
     return (
         <PageLayout>
             <Head>
@@ -47,12 +56,12 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                                 md: "1rem"
                             }}
                             >
-                        <WrappedLink
-                            href="/datasets"
-                            fontSize="0.7rem"
-                            >
-                            To datasets overview
-                        </WrappedLink>
+                            <WrappedLink
+                                href="/datasets"
+                                fontSize="0.7rem"
+                                >
+                                To datasets overview
+                            </WrappedLink>
                         </Box>
                         <Heading
                             as="h1"
@@ -65,44 +74,116 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                             >
                             Dataset: <Text as="span" fontWeight="bold">{_.get(dataset, "key")}</Text>
                         </Heading>
-                        <Box maxW="container.md">
-                        <Text
-                            marginBottom="1rem"
-                            >
-                            Uploaded: {_.get(dataset, "upload_date", false)}
-                        </Text>
-                        <InputGroup size="md">
-                            <Input
-                                fontSize="small"
-                                value={spaces_url}
-                                readOnly={true}
-                                />
-                            <InputRightElement width="6rem">
-                                <Button
-                                    h="2rem"
-                                    marginTop="0.35rem"
-                                    size="sm"
-                                    marginRight="0.2rem"
-                                    borderRadius="0.2rem"
-                                    _hover={{
-                                        bg: "black",
-                                        color: "white"
-                                    }}
-                                    onPointerDown={() => {
-                                        navigator.clipboard.writeText(spaces_url).then(function() {
-                                            /* clipboard successfully set */
-                                            console.log(`Copied ${spaces_url} to clipboard.`)
-                                        }, function() {
-                                        /* clipboard write failed */
-                                        });
-                                    }}
+                        <Box>
+                            <Text
+                                marginBottom="1rem"
+                                >
+                                Uploaded: {_.get(dataset, "upload_date", false)}
+                            </Text>
+                            <Box display="flex">
+                            <InputGroup size="md">
+                                <Input
+                                    fontSize="small"
+                                    value={spaces_url}
+                                    readOnly={true}
+                                    />
+                                <InputRightElement width="6rem">
+                                    <Button
+                                        h="2rem"
+                                        marginTop="0.35rem"
+                                        size="sm"
+                                        marginRight="0.2rem"
+                                        borderRadius="0.2rem"
+                                        _hover={{
+                                            bg: "black",
+                                            color: "white"
+                                        }}
+                                        onPointerDown={() => {
+                                            navigator.clipboard.writeText(spaces_url).then(function() {
+                                                /* clipboard successfully set */
+                                                console.log(`Copied ${spaces_url} to clipboard.`)
+                                            }, function() {
+                                            /* clipboard write failed */
+                                            });
+                                        }}
 
-                                    >
-                                    Copy url
-                                </Button>
-                            </InputRightElement>
-                        </InputGroup>
+                                        >
+                                        Copy url
+                                    </Button>
+                                </InputRightElement>
+                            </InputGroup>
+                            <Button as="a" href={spaces_url} download
+                                width="300px"
+                                marginLeft="1rem"
+                                >
+                                Download
+                            </Button>
+                            </Box>
+                            
                         </Box>
+                        <Box maxW="container.sm" marginTop="2rem">
+                            {description_md && (
+                                <>
+                                <Text textTransform="uppercase">
+                                    Description
+                                </Text>
+                                <MarkdownWrapper
+                                    markdownText={description_md}
+                                    />
+                                </>
+                            )}
+                        </Box>
+
+                        {columns && (
+                            <Box marginTop="2rem" marginBottom="4rem">
+                                <Divider />
+                                <Text textTransform="uppercase">
+                                    Columns in dataset
+                                </Text>
+                                
+                                    {columns.map((col, col_i) => {
+                                        return (
+                                            <Box
+                                                paddingBottom="1rem"
+                                                border="1px solid rgb(220,220,220)"
+                                                marginBottom="-1px"
+                                                paddingTop="0.25rem"
+                                                paddingLeft="0.5rem"
+                                                key={col_i}
+                                                >
+                                                <Grid
+                                                    templateColumns="repeat(3, 1fr)"
+                                                    >
+                                                    <GridItem
+                                                        colSpan={{
+                                                            base: 1,
+                                                            sm: 2,
+                                                            md: 1
+                                                        }}
+                                                        >
+                                                    <Text
+                                                        fontWeight="bold"
+                                                        marginRight="1rem"
+                                                        >
+                                                    {_.get(col, "column", false)}
+                                                    </Text>
+                                                    </GridItem>
+                                                    <GridItem colSpan={2}>
+                                                    <Box
+                                                        paddingRight="2rem"
+                                                        >
+                                                        <MarkdownWrapper
+                                                            markdownText={_.get(col, "description_md", "")}
+                                                            />
+                                                    </Box>
+                                                    </GridItem>
+                                                </Grid>
+                                            </Box>
+                                        )
+                                    })}
+                                
+                            </Box>
+                        )}
                     </React.Fragment>
                 )}
                 

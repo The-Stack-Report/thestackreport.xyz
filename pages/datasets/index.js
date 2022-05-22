@@ -114,6 +114,7 @@ export async function getServerSideProps(context) {
         const { db } = await connectToDatabase()
         var datasets = await db.collection("datasets")
             .find()
+            .sort({"upload_date": -1})
             .toArray()
         datasets = JSON.parse(JSON.stringify(datasets))
         cache = datasets

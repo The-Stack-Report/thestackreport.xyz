@@ -5,6 +5,7 @@ import {
     Badge
 } from "@chakra-ui/react"
 import { AreaChartContext } from "components/Charts/AreaChart/AreaChart"
+import { ChartContext } from "components/Charts/Chart/Chart"
 import _ from "lodash"
 
 const BadgesLegend = ({
@@ -14,10 +15,21 @@ const BadgesLegend = ({
     boxPositionTop="-20px",
     width="500px"
 }) => {
-    const chartContext = useContext(AreaChartContext)
-    var _colColors = colColors
+    const areaChartContext = useContext(AreaChartContext)
+    const chartContext = useContext(ChartContext)
+    var _colColors = false
     if(_colColors === false) {
-        _colColors = _.get(chartContext, 'colColors', ["rgb(0,255,0)", "rgb(0,0,255)"])
+        if(!_.isUndefined(areaChartContext)) {
+            _colColors = _.get(areaChartContext, 'colColors', ["rgb(0,255,0)", "rgb(0,0,255)"])
+
+        }
+        if(!_.isUndefined(chartContext)) {
+            _colColors = _.get(chartContext, 'colColors', ["rgb(0,255,0)", "rgb(0,0,255)"])
+
+        }
+    }
+    if(_colColors === false) {
+        _colColors = ["rgb(0,255,0)", "rgb(0,0,255)"]
     }
 
     return (
