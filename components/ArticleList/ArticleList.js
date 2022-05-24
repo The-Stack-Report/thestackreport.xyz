@@ -6,7 +6,6 @@ const ArticleList = ({ articles }) => {
     return (
         <div>
             {articles.map(article => {
-                const attrs = article.attributes
                 return (
                     <ArticleCard
                         article={article}

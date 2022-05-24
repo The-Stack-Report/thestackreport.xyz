@@ -8,6 +8,9 @@ import {
 import _ from "lodash"
 import dayjs from "dayjs"
 import { basicImgLoader } from "utils/basicImgLoader"
+import {
+    placeholderImg
+} from "constants/cms"
 
 const ArticleCard = ({
     article
@@ -15,6 +18,10 @@ const ArticleCard = ({
     const attrs = article.attributes
     const authors = _.get(attrs, "authors.data", false)
     const categories = _.get(attrs, "categories.data", false)
+    var bannerImgUrl = _.get(attrs, "banner_image_url", false)
+    if(!_.isString(bannerImgUrl)) {
+        bannerImgUrl = placeholderImg
+    }
     return (
         <Link
             href={`/articles/${_.get(attrs, "slug", "no-slug-set-for-article")}`}
@@ -43,8 +50,8 @@ const ArticleCard = ({
                 <div style={{position: "relative", width: "100%", height: "100%", overflow: "hidden"}}>
                 <Image
                     loader={basicImgLoader}
-                    src={attrs.banner_image_url}
-                    alt={attrs.Title}
+                    src={bannerImgUrl}
+                    alt={_.get(attrs, "Title", "no-title")}
                     layout="fill"
                     objectFit="cover"
                     unoptimized={true}
@@ -129,7 +136,7 @@ const ArticleCard = ({
                         marginLeft="auto"
                         background="white"
                         >
-                        {attrs.Title}
+                        {_.get(attrs, "Title", 'no-title')}
                     </Text>
                     </div>
                     <div style={{display: "flex", alignItems: "end", textAlign: "right"}}>
@@ -144,7 +151,7 @@ const ArticleCard = ({
                         color="gray400"
                         background="white"
                         >
-                        {attrs.Snippet}
+                        {_.get(attrs, "Snippet", "no-snippet")}
                     </Text>
                     </div>
                     {categories && (

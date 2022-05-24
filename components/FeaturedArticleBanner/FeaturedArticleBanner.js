@@ -9,14 +9,26 @@ import {
 import _ from "lodash"
 import dayjs from "dayjs"
 import { basicImgLoader } from "utils/basicImgLoader"
+import {
+    placeholderImg
+} from "constants/cms"
 
 
 const FeaturedArticleBanner = ({ article }) => {
+    if(article === false) {
+        return (
+            <div style={{minHeight: 400}}></div>
+        )
+    }
     var articleSet = _.isObject(article)
     const articleId = _.get(article, "id")
     const articleSlug = _.get(article, "attributes.slug", "not-found")
     const title = _.get(article, "attributes.Title", "Featured article not set.")
-    const bannerImgSrc = _.get(article, "attributes.banner_image_url", "https://the-stack-report.ams3.digitaloceanspaces.com/website_assets/Article_missing_img.png")
+    var bannerImgSrc = _.get(article, "attributes.banner_image_url", placeholderImg)
+    
+    if (!_.isString(bannerImgSrc)) {
+        bannerImgSrc = placeholderImg
+    }
     return (
         <div style={{position: "relative", borderBottom: "1px solid black"}}>
             <div style={{
@@ -63,7 +75,7 @@ const FeaturedArticleBanner = ({ article }) => {
                             fontSize="0.7rem"
                             color="black"
                             >
-                            {dayjs(_.get(article, "attributes.Published", false)).format("MMMM D, YYYY h:mm A")}
+                            {dayjs(_.get(article, "attributes.Published", "2022-01-01")).format("MMMM D, YYYY h:mm A")}
                         </Text>
                     </Box>
                     </div>

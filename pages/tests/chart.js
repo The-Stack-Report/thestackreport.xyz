@@ -2,7 +2,9 @@ import React from "react"
 import Head from "next/head"
 import { Container } from "@chakra-ui/layout"
 import {
-    Heading
+    Heading,
+    SimpleGrid,
+    Box
 } from "@chakra-ui/react"
 import PageLayout from "components/PageLayout"
 import _ from "lodash"
@@ -39,6 +41,8 @@ const ChartTestPage = ({dailyData}) => {
             date: dayjs(p["date"])
         }
     })
+
+    var nrCols = _.keys(_.first(tezosSampleData)).filter(c => c !== "date")
     return (
         <PageLayout>
             <Head>
@@ -51,16 +55,24 @@ const ChartTestPage = ({dailyData}) => {
                 <Chart
                     data={tezosSampleData}
                     xKey={"date"}
-                    columns={["total_transactions", "total_ops"]}
+                    columns={["transactions", "transaction_groups"]}
                     timelineBrush={true}
                     color={grayScale}
                     />
                 <Chart
                     data={tezosSampleData}
                     xKey={"date"}
-                    columns={["nr_of_unique_sender_wallets", "nr_of_unique_initiator_wallets"]}
+                    columns={["wallets_sending_transactions", "contracts_sending_transactions"]}
                     timelineBrush={true}
                     color={grayScale}
+                    />
+                <Chart
+                    data={tezosSampleData}
+                    xKey={"date"}
+                    columns={nrCols}
+                    timelineBrush={true}
+                    color={gridScale(0.5)}
+                    columnToggles={true}
                     />
                 <Chart
                     data={testData}
@@ -93,14 +105,36 @@ const ChartTestPage = ({dailyData}) => {
                     color={gridScale(1)}
                     timelineBrush={true}
                     />
-               
+                <SimpleGrid
+                    columns={2}
+                    spacing={10}
+                    >
+                    <Box>
+                        <Chart
+                            data={tezosSampleData}
+                            xKey={"date"}
+                            columns={["transactions", "transaction_groups"]}
+                            timelineBrush={true}
+                            color={grayScale}
+                            />
+                    </Box>
+                    <Box>
+                        <Chart
+                            data={tezosSampleData}
+                            xKey={"date"}
+                            columns={["transactions", "transaction_groups"]}
+                            timelineBrush={true}
+                            color={grayScale}
+                            />
+                    </Box>
+                </SimpleGrid>
             </Container>
         </PageLayout>
     )
 }
 
 
-var tezosTestDataUrl = "https://the-stack-report.ams3.digitaloceanspaces.com/datasets/tests/tezos_stats_by_day_test.csv"
+var tezosTestDataUrl = "https://the-stack-report.ams3.cdn.digitaloceanspaces.com/datasets/tezos/chain/tezos-daily-chain-stats.csv"
 
 export async function getServerSideProps() {
     var isProd = process.env.NODE_ENV === "production"
@@ -116,17 +150,14 @@ export async function getServerSideProps() {
         
         const resp = await fetch(tezosTestDataUrl)
         var dailyData = await resp.text()
+        dailyData = d3.csvParse(dailyData)
+        var nrCols = _.keys(_.first(dailyData)).filter(c => c !== "date")
+
         dailyData = prepareDf(
-            d3.csvParse(dailyData),
+            dailyData,
             ["date"],
-            [
-                "nr_of_unique_initiator_wallets",
-                "nr_of_unique_sender_wallets",
-                "total_ops",
-                "total_transactions"
-            ]
+            nrCols
             )
-        console.log(dailyData)
 
         return {
             props: {

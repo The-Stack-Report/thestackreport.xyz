@@ -21,7 +21,6 @@ import TopContractsLandingPageWidget from "components/TopContractsLandingPageWid
 const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
     const featured = _.get(landing, "attributes.featured.data", false)
     const aboutText = _.get(landing, "attributes.about_tsr", "")
-
     const googleArticlesCarouselJson = {
         "@context":"https://schema.org",
         "@type":"ItemList",
@@ -33,7 +32,8 @@ const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
             }
         })
     }
-
+    const featuredId = _.get(featured, "id", false)
+    var latestArticlesWithoutFeatured = latestArticles.filter(article => article.id !== featuredId).slice(0, 5)
     return (
         <PageLayout>
             <Head>
@@ -66,7 +66,55 @@ const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
                         Recent articles
                     </Text>
                     <ArticleList
-                        articles={latestArticles.filter(article => article.id !== featured.id).slice(0, 5)}
+                        articles={latestArticlesWithoutFeatured}
+                        />
+                    <Text>{">> "}
+                    <WrappedLink
+                        href="/articles">
+                            All articles
+                        </WrappedLink>
+                    </Text>
+                    
+                </Box>
+            </SimpleGrid>
+            </Container>
+        </PageLayout>
+    )
+
+    return (
+        <PageLayout>
+            
+            <Head>
+                <title>The Stack Report</title>
+                <meta name="description" content="Data driven reporting and visualisations from within the Tezos ecosystem." />
+                <script type="application/ld+json"
+                    dangerouslySetInnerHTML={{__html: JSON.stringify(googleArticlesCarouselJson)}}
+                    />
+            </Head>
+            <FeaturedArticleBanner
+                article={featured}
+                />
+            <Container maxW="container.xl" marginTop="4rem">
+                New!
+                <br />
+                <WrappedLink
+                    href="/dashboards/tezos"
+                    >
+                {`Dashboards >>>`}
+                </WrappedLink>
+            </Container>
+            <Container maxW="container.xl" marginTop="4rem">
+            <SimpleGrid columns={[1, 1, 2]} spacing={8}>
+                <Box>
+                    <Text
+                        fontWeight="bold"
+                        textTransform="uppercase"
+                        fontSize="0.7rem"
+                        >
+                        Recent articles
+                    </Text>
+                    <ArticleList
+                        articles={latestArticles.filter(article => article.id !== _.get(featured, "id", false)).slice(0, 5)}
                         />
                     <Text>{">> "}
                     <WrappedLink
@@ -153,7 +201,6 @@ export async function getServerSideProps(context) {
         topContractsStats: []
         
     }
-    console.log("Landing page serverside props.")
     try {
         const resp = await fetch(CMS_URL + landingPageContent)
         const data = await resp.json()
@@ -185,7 +232,6 @@ export async function getServerSideProps(context) {
     } catch (err) {
         console.log("error in landing page server side props: ", err)
     }
-    
     return {
         props: returnProps
     }

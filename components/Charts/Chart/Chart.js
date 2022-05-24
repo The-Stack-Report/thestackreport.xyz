@@ -46,6 +46,7 @@ function dateKeyVal(val) {
     return dayjs.isDayjs(val) ? val : dayjs(val)
 }
 
+var rightAxisBreakpoint = 1367
 
 export const ChartContext = createContext()
 
@@ -70,6 +71,7 @@ const Chart = React.memo(({
     timelineBrush = false,
     timelineHeight = 30,
 
+    columnToggles = false,
     children
 }) => {
     const containerRef = useRef(null)
@@ -100,9 +102,18 @@ const Chart = React.memo(({
         };
     }, [handleResize]);
 
+    const _columns = useMemo(() => {
+        if(_.isArray(columns)) {
+            return columns
+        } else {
+            console.log("Columns is not array")
+            return []
+        }
+    }, [columns])
+
 
     const _height = useMemo(() => {
-        if(windowSize.height < height) {
+        if(windowSize.height < height * 0.75) {
             return windowSize.height * 0.6
         } else {
             return height
@@ -130,15 +141,15 @@ const Chart = React.memo(({
 
     const yValues = useMemo(() => {
         return _.flatten(data.map(p => {
-            return columns.map(c => _.get(p, c, false))
+            return _columns.map(c => _.get(p, c, false))
         }))
-    }, [data, columns])
+    }, [data, _columns])
 
     const yValuesFiltered = useMemo(() => {
         return _.flatten(filteredData.map(p => {
-            return columns.map(c => _.get(p, c, false))
+            return _columns.map(c => _.get(p, c, false))
         }))
-    }, [filteredData, columns])
+    }, [filteredData, _columns])
 
     useEffect(() => {
         if(containerRef.current) {
@@ -163,7 +174,7 @@ const Chart = React.memo(({
         const windowWidth = _.get(windowSize, "width", 500)
         if(windowWidth < breakpoints.md) {
             return marginsMd
-        } else if(windowWidth > breakpoints.xl2) {
+        } else if(_width > rightAxisBreakpoint) {
             return marginsXl2
         } else {
             return margins
@@ -301,10 +312,13 @@ const Chart = React.memo(({
         })
     }, [timelineHeight, _yDomain])
 
-    var _containerMargins = containerMargins
+    var _containerMargins = _.cloneDeep(containerMargins)
 
-    if(_.get(windowSize, "width", 500) < breakpoints.xl2) {
+    console.log(_width)
+
+    if(_width < rightAxisBreakpoint) {
         _containerMargins.right = -10
+
 
     }
 
@@ -312,8 +326,8 @@ const Chart = React.memo(({
     /**
      * Colors preparation
      */
-    const colColors = columns.map((col, col_i) => {
-        var col_t = columns.length === 1 ? 0.5 : col_i / (columns.length - 1)
+    const colColors = _columns.map((col, col_i) => {
+        var col_t = _columns.length === 1 ? 0.5 : col_i / (_columns.length - 1)
         var colColor = color
         if(_.isFunction(color)) {
             colColor = color(col_t)
@@ -321,10 +335,11 @@ const Chart = React.memo(({
         return colColor
     })
 
-    var xAxisLabelsPosition = _.get(windowSize, "width", 500) > breakpoints.xl2 ? "outside" : "inside"
+
+    var xAxisLabelsPosition = _width > rightAxisBreakpoint ? "outside" : "inside"
 
     var dataColumnsProps = {
-        columns: columns,
+        columns: _columns,
         type: type,
         colColors: colColors,
         xKey: xKey,
@@ -352,6 +367,7 @@ const Chart = React.memo(({
             return snapToEndOfDay
         }
     }, [xValueType])
+
     return (
         <ChartContext.Provider value={{
                 colColors: colColors,
@@ -382,7 +398,7 @@ const Chart = React.memo(({
                     {children}
                     <HoverLabelsOverlay
                         data={data}
-                        columns={columns}
+                        columns={_columns}
                         xKey={xKey}
                         xValueType={xValueType}
                         hoveredXValue={hoveredXValue}
@@ -404,7 +420,7 @@ const Chart = React.memo(({
                             <DataColumns {...dataColumnsProps} />
                             <HoverTooltip
                                 data={data}
-                                columns={columns}
+                                columns={_columns}
                                 xKey={xKey}
                                 xValueType={xValueType}
                                 hoveredXValue={hoveredXValue}

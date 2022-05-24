@@ -101,7 +101,8 @@ const charts = [
         description: "A detailed look at transactions grouped by who is sending and who is receiving the transaction. These groupings are not mutually exclusive.",
         type: "line",
         dataset: "daily_chain_stats",
-        color: grayScaleColor
+        color: grayScaleColor,
+        columnToggles: true
     }
 ]
 
@@ -222,6 +223,7 @@ const TezosStatisticsPage = ({ dailyStatsOld, dailyChainStats }) => {
                             var chartColumns = _.get(chart, "columns", [])
                             var chartType = _.get(chart, "type", "line")
                             var chartColor = _.get(chart, "color", "rgb(100,100,100)")
+                            var columnToggles = _.get(chart, "columnToggles", false)
                             return (
                                 <Box paddingBottom="2rem"
                                     key={chart_i}
@@ -239,6 +241,7 @@ const TezosStatisticsPage = ({ dailyStatsOld, dailyChainStats }) => {
                                             columns={chartColumns}
                                             type={chartType}
                                             color={chartColor}
+                                            columnToggles={columnToggles}
                                             />
                                     )}
                                     <Text
@@ -264,7 +267,8 @@ const ChartContainer = ({
     data,
     columns,
     type="line",
-    color
+    color,
+    columnToggles
 }) => {
 
     var dateCol = ["date"]
@@ -294,6 +298,7 @@ const ChartContainer = ({
             timelineBrush={true}
             type={type}
             color={color}
+            columnToggles={columnToggles}
             >
             <BadgesLegend
                 labelText="Metrics"
