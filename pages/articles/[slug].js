@@ -61,7 +61,7 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                 <meta name="twitter:description" content={_.get(attrs, "description", "not-found")} />
                 <meta name="twitter:image" content={bannerImgSrc} />
             </Head>
-            
+            <Box overflow="hidden">
                 {error ? (
                     <Container
                         maxW="container.md" style={{paddingTop: 200, paddingBottom: 100}}
@@ -144,7 +144,7 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                     </Container>
                     </>
                 )}
-            
+            </Box>
         </PageLayout>
     )
 }
