@@ -314,9 +314,7 @@ const Chart = React.memo(({
     }, [timelineHeight, _yDomain])
 
     var _containerMargins = _.cloneDeep(containerMargins)
-
-    console.log(_width)
-
+    
     if(_width < rightAxisBreakpoint) {
         _containerMargins.right = -10
 

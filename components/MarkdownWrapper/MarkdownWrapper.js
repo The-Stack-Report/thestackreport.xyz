@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import ChakraUIRenderer from 'chakra-ui-markdown-renderer';
 import rehypeRaw from 'rehype-raw'
 import { DataBlockDynamic } from "components/DataBlock/DataBlock"
+import ChartBySlug from "components/Charts/ChartBySlug"
 import {
     UnorderedList,
     Button,
@@ -36,6 +37,25 @@ var markdownComponents = {
                 }}
                 >
             <DataBlockDynamic block_key={block_key} autoPlayOnLoad={false} />
+            </Box>
+        )
+    },
+    "chart": (props) => {
+        var chartSlug = _.get(props, "children[0]", false)
+        if(chartSlug === false) {
+            chartSlug = _.get(props, "node.properties.slug", false)
+        }
+        if(_.isString(chartSlug)) {
+            chartSlug = chartSlug.trim()
+        }
+        console.log("rendering dynamic chart: ", chartSlug)
+        return (
+            <Box marginTop="3rem" marginBottom="3rem">
+                {_.isString(chartSlug) ? (
+                    <ChartBySlug slug={chartSlug} />
+                ) : (
+                    <Text>Chart key missing</Text>
+                )}
             </Box>
         )
     },

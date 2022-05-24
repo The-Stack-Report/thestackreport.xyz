@@ -60,7 +60,6 @@ const TimelineBrush = ({
 
     useEffect(() => {
         if(touchSliderValues === false) {
-            console.log(xDomain)
             setTouchSliderValues(xDomain.map(p => {
                 if(_.isNumber(p)) {
                     return p

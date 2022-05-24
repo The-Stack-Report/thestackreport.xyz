@@ -22,7 +22,6 @@ const ChartLoader = ({
 
     useEffect(() => {
         if(data === false && dataLoading === false) {
-            console.log("load data")
             setDataLoading(true)
             var url = _.get(chart, "dataset_url", false)
             if(_.isString(url)) {
@@ -61,17 +60,13 @@ const ChartLoader = ({
         }
     }, [chart, data, dataLoading])
 
-    console.log(data)
-
     var showState = "chart"
     if(data === false && dataLoading === false) {
         showState = "initial"
     } else if(data === false && dataLoading === true) {
         showState = "loading-data"
     } else if(data && dataLoading === false) {
-        console.log("showing chart")
     }
-    console.log(showState)
     var chartProps = {
         data: data
     }
@@ -93,7 +88,6 @@ const ChartLoader = ({
         ...chartProps,
         ...props
     }
-    console.log(chartProps)
     return (
         <Box>
             {showState === "initial" && (
