@@ -16,7 +16,6 @@ import PageLayout from 'components/PageLayout'
 
 
 const ArticlesPage = ({ articles, categories }) => {
-    console.log(articles)
     return (
         <PageLayout>
             <Head>
@@ -90,14 +89,27 @@ export async function getServerSideProps(context) {
 
         } else {
             const articlesResp = await fetch(CMS_URL + "/articles?sort=Published:desc&populate=%2A")
-            const articles = await articlesResp.json()
+            var articles = await articlesResp.json()
     
+            
+            articles = _.get(articles, "data", [])
+            articles = articles.filter(article => {
+                var previewMode = _.get(article, "attributes.preview", false)
+                var envIsDevelopment = process.env.ENVIRONMENT === "development"
+                if(envIsDevelopment) {
+                    return true
+                } else {
+                    return !previewMode
+                }
+            })
+
             const categoriesResp = await fetch(CMS_URL + "/categories")
             const categories = await categoriesResp.json()
-    
+
+            
             return {
                 props: {
-                    articles: _.get(articles, "data", []),
+                    articles: articles,
                     categories: _.get(categories, "data", [])
                 }
             }

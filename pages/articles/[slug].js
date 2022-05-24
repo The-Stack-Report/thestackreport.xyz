@@ -158,17 +158,29 @@ export async function getServerSideProps(context) {
             if(resp.status === 200) {
                 const respData = await resp.json()
                 const data = respData.data
-                var previewMode = _.get(data, "attributes.preview", false)
-                if(previewMode && process.env.ENVIRONMENT !== "development") {
-                    return { props: {errorMessage: "Article not found.", error: true} }
+                var article = _.first(data)
+                var previewMode = _.get(article, "attributes.preview", false)
+                console.log("preview mode: ", previewMode)
+                if(process.env.ENVIRONMENT === "development") {
+                    return {
+                        props: {
+                            article: JSON.parse(JSON.stringify(article)),
+                            error: false
+                        }
+                    }
                 } else {
                     if(data.length > 0) {
-                        return {
-                            props: {
-                                article: JSON.parse(JSON.stringify(_.first(data))),
-                                error: false
+                        if(previewMode) {
+                            return { props: {errorMessage: "Article not found.", error: true} }
+                        } else {
+                            return {
+                                props: {
+                                    article: JSON.parse(JSON.stringify(article)),
+                                    error: false
+                                }
                             }
                         }
+                        
                     } else {
                         return { props: {errorMessage: "Article not found.", error: true} }
                     }
