@@ -34,52 +34,7 @@ const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
     }
     const featuredId = _.get(featured, "id", false)
     var latestArticlesWithoutFeatured = latestArticles.filter(article => article.id !== featuredId).slice(0, 5)
-    return (
-        <PageLayout>
-            <Head>
-                <title>The Stack Report</title>
-                <meta name="description" content="Data driven reporting and visualisations from within the Tezos ecosystem." />
-                <script type="application/ld+json"
-                    dangerouslySetInnerHTML={{__html: JSON.stringify(googleArticlesCarouselJson)}}
-                    />
-            </Head>
-            <FeaturedArticleBanner
-                article={featured}
-                />
-            <Container maxW="container.xl" marginTop="4rem">
-                New!
-                <br />
-                <WrappedLink
-                    href="/dashboards/tezos"
-                    >
-                {`Dashboards >>>`}
-                </WrappedLink>
-            </Container>
-            <Container maxW="container.xl" marginTop="4rem">
-            <SimpleGrid columns={[1, 1, 2]} spacing={8}>
-                <Box>
-                    <Text
-                        fontWeight="bold"
-                        textTransform="uppercase"
-                        fontSize="0.7rem"
-                        >
-                        Recent articles
-                    </Text>
-                    <ArticleList
-                        articles={latestArticlesWithoutFeatured}
-                        />
-                    <Text>{">> "}
-                    <WrappedLink
-                        href="/articles">
-                            All articles
-                        </WrappedLink>
-                    </Text>
-                    
-                </Box>
-            </SimpleGrid>
-            </Container>
-        </PageLayout>
-    )
+ 
 
     return (
         <PageLayout>
@@ -114,7 +69,7 @@ const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
                         Recent articles
                     </Text>
                     <ArticleList
-                        articles={latestArticles.filter(article => article.id !== _.get(featured, "id", false)).slice(0, 5)}
+                        articles={latestArticlesWithoutFeatured}
                         />
                     <Text>{">> "}
                     <WrappedLink
@@ -209,7 +164,18 @@ export async function getServerSideProps(context) {
 
         const articles_resp = await fetch(CMS_URL + recentArticlesApi)
         var recentArticles = await articles_resp.json()
-        returnProps.latestArticles = _.get(recentArticles, "data", [])
+        // Get data from response and filter out articles in preview mode
+        returnProps.latestArticles = _.get(recentArticles, "data", []).filter(
+            article => {
+                var previewMode = _.get(article, "attributes.preview", false)
+                var envIsDevelopment = process.env.ENVIRONMENT === "development"
+                if(envIsDevelopment) {
+                    return true
+                } else {
+                    return !previewMode
+                }
+            }
+        )
 
         const { db } = await connectToDatabase()
 

@@ -22,6 +22,8 @@ const ArticleCard = ({
     if(!_.isString(bannerImgUrl)) {
         bannerImgUrl = placeholderImg
     }
+
+    var previewMode = _.get(attrs, "preview", false)
     return (
         <Link
             href={`/articles/${_.get(attrs, "slug", "no-slug-set-for-article")}`}
@@ -57,6 +59,19 @@ const ArticleCard = ({
                     unoptimized={true}
                     />
                 </div>
+                {previewMode && (
+                    <Box
+                        position="absolute"
+                        zIndex="1000"
+                        color="rgb(200,50,150)"
+                        top="0px"
+                        left="0px"
+                        right="0px"
+                        textAlign="center"
+                        >
+                        PREVIEW
+                    </Box>
+                )}
                 <div
                     style={{
                         position: "absolute",

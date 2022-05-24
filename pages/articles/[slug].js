@@ -11,25 +11,39 @@ import Article from 'components/Article'
 import WrappedLink from "components/WrappedLink"
 import Image from "next/image"
 import { basicImgLoader } from "utils/basicImgLoader"
+import {
+    placeholderImg
+} from "constants/cms"
+
 
 const ArticlePage = ({ article, error, errorMessage="Error" }) => {
     const attrs = _.get(article, "attributes", {})
+    var authors = _.get(attrs, "authors.data", [])
+    if(!_.isArray(authors)) {
+        authors = []
+    }
     var googleNewsJson = {
         "@context": "https://schema.org",
         "@type": "NewsArticle",
-        "headline": attrs.Title,
+        "headline": _.get(attrs, "Title", "no-title"),
         "image": [
             attrs.banner_image_url
         ],
-        "datePublished": attrs.publishedAt,
-        "dateModified": attrs.publishedAt,
-        "author": attrs.authors.data.map(author => {
+        "datePublished": _.get(attrs, "publishedAt", ""),
+        "dateModified": _.get(attrs, "publishedAt", ""),
+        "author": authors.map(author => {
             return {
                 "@type": "Person",
-                "name": author.attributes.first_name,
+                "name": _.get(author, "attributes.first_name", ""),
                 "url": `https://www.twitter.com/${_.get(author, "attributes.twitter", "thestackreport")}`
             }
         })
+    }
+
+    var bannerImgSrc = _.get(article, "attributes.banner_image_url", placeholderImg)
+    
+    if (!_.isString(bannerImgSrc)) {
+        bannerImgSrc = placeholderImg
     }
     return (
         <PageLayout>
@@ -45,7 +59,7 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                 <meta name="twitter:title" content={_.get(attrs, "Title", "Not-found")} />
                 <meta name="twitter:creator" content="@thestackreport" />
                 <meta name="twitter:description" content={_.get(attrs, "description", "not-found")} />
-                <meta name="twitter:image" content={attrs.banner_image_url} />
+                <meta name="twitter:image" content={bannerImgSrc} />
             </Head>
             
                 {error ? (
@@ -79,8 +93,8 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                         }}>
                         <Image
                             loader={basicImgLoader}
-                            src={attrs.banner_image_url}
-                            alt={attrs.Title}
+                            src={bannerImgSrc}
+                            alt={_.get(attrs, "Title", "")}
                             layout="fill"
                             objectFit="cover"
                             unoptimized={true}
@@ -144,16 +158,22 @@ export async function getServerSideProps(context) {
             if(resp.status === 200) {
                 const respData = await resp.json()
                 const data = respData.data
-                if(data.length > 0) {
-                    return {
-                        props: {
-                            article: JSON.parse(JSON.stringify(_.first(data))),
-                            error: false
-                        }
-                    }
-                } else {
+                var previewMode = _.get(data, "attributes.preview", false)
+                if(previewMode && process.env.ENVIRONMENT !== "development") {
                     return { props: {errorMessage: "Article not found.", error: true} }
+                } else {
+                    if(data.length > 0) {
+                        return {
+                            props: {
+                                article: JSON.parse(JSON.stringify(_.first(data))),
+                                error: false
+                            }
+                        }
+                    } else {
+                        return { props: {errorMessage: "Article not found.", error: true} }
+                    }
                 }
+                
             } else {
                 return { props: {errorMessage: "Article not found.", error: true} }
             }
