@@ -183,7 +183,8 @@ const Chart = React.memo(({
         margins,
         marginsMd,
         marginsXl2,
-        windowSize
+        windowSize,
+        _width
     ])
 
     const chart = useMemo(() => {

@@ -59,7 +59,7 @@ const ChartLoader = ({
                 })
             }
         }
-    }, [data, dataLoading])
+    }, [chart, data, dataLoading])
 
     console.log(data)
 
