@@ -2,7 +2,7 @@ import _ from "lodash"
 import chroma from "chroma-js"
 
 // export const CMS_URL = "https://the-stack-report-cms-y5pxm.ondigitalocean.app/api"
-export const CMS_URL = "http://localhost:1337/api"
+export const CMS_URL = process.env.CMS_URL
 
 export var placeholderImg = "https://the-stack-report.ams3.digitaloceanspaces.com/website_assets/Article_missing_img.png"
 

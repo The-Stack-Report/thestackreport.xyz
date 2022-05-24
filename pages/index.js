@@ -34,7 +34,6 @@ const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
     }
     const featuredId = _.get(featured, "id", false)
     var latestArticlesWithoutFeatured = latestArticles.filter(article => article.id !== featuredId).slice(0, 5)
- 
 
     return (
         <PageLayout>
@@ -159,7 +158,6 @@ export async function getServerSideProps(context) {
     try {
         const resp = await fetch(CMS_URL + landingPageContent)
         const data = await resp.json()
-
         returnProps.landing = data.data
 
         const articles_resp = await fetch(CMS_URL + recentArticlesApi)
