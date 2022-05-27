@@ -34,22 +34,80 @@ const DataColumns = ({
                 if(_.isArray(_type)) {
                     _type = _type[c_i % _type.length] 
                 }
+                var values = data.map(p => _.get(p, c))                
+                var valueSegments = []
+                
+                if(_.some(values, v => v === false || _.isNaN(v))) {
+                    // values includes missing values
+                    var currentSegment = []
+                    values.forEach((v, v_i) => {
+                        if(v !== false && !_.isNaN(v)) {
+                            var splitSegmentElem = {}
+                            splitSegmentElem[c] = v
+                            splitSegmentElem[xKey] = _.get(data[v_i], xKey)
+                            currentSegment.push(splitSegmentElem)
+                        } else {
+                            if(currentSegment.length > 0) {
+                                valueSegments.push(_.cloneDeep(currentSegment))
+                                currentSegment = []
+                            }
+                        }
+                    })
+                    if(currentSegment.length > 0) {
+                        valueSegments.push(_.cloneDeep(currentSegment))
+                    }
 
+                } else {
+                    valueSegments = [data]
+                }
                 var colColor = colColors[c_i]
                 if(_type === "line") {
                     return (
-                        <LinePath
-                            key={c_i}
-                            data={data}
-                            x={p => {
-                                return xScale(_.get(p, xKey))
-                            }}
-                            y={p => {
-                                return chart.height - yScale(_.get(p, c))
-                            }}
-                            stroke={colColor}
-                            strokeWidth={strokeWidth}
-                            />
+                        <React.Fragment
+                            key={`line-${c_i}`}
+                            >
+                            {valueSegments.map((segment, segment_i) => {
+
+                                if(segment.length > 1) {
+                                    const xyPath = segment.map(p => {
+                                        return {
+                                            x: xScale(_.get(p, xKey)),
+                                            y: chart.height - yScale(_.get(p, c))
+                                        }
+                                    }).filter(p => !_.isNaN(p.x) && !_.isNaN(p.y))
+                                    return (
+                                        <LinePath
+                                            key={`segment-${segment_i}`}
+                                            data={xyPath}
+                                            x={p => p.x}
+                                            y={p => p.y}
+                                            stroke={colColor}
+                                            strokeWidth={strokeWidth}
+                                            />
+                                    )
+                                } else if(segment.length === 1) {
+                                    var segmentPoint = {
+                                        x: xScale(_.get(segment[0], xKey)),
+                                        y: chart.height - yScale(_.get(segment[0], c))
+                                    }
+                                    if(!_.isNaN(segmentPoint.x) && !_.isNaN(segmentPoint.y)) {
+                                        return (
+                                            <circle
+                                            key={`segment-${segment_i}`}
+                                            r={1}
+                                            fill={colColor}
+                                            stroke="transparent"
+                                            cx={segmentPoint.x}
+                                            cy={segmentPoint.y}
+                                            />
+                                        )
+                                    }
+                                }
+                                return null
+                                
+                            })}
+                        </React.Fragment>
+                        
                     )
                 } else if(_type === "bar") {
                     var pointWidth = chart.width / data.length
@@ -59,7 +117,7 @@ const DataColumns = ({
                     var barShift = barRelativeWidth * 0.5 * barWidth + barWidth
                     return (
                         <React.Fragment
-                            key={c_i}
+                            key={`bar-${c_i}`}
                             >
                             {data.map((p, p_i) => {
                                 var x = xScale(_.get(p, xKey)) - barShift
@@ -81,7 +139,7 @@ const DataColumns = ({
                 } else if(_type === "area") {
                     return (
                         <AreaClosed
-                            key={c_i}
+                            key={`area-${c_i}`}
                             data={data}
                             x={(d) => {
                                 const x = xScale(dateKeyVal(d[xKey]))
@@ -101,7 +159,7 @@ const DataColumns = ({
                     )
                 } else {
                     return (
-                        <g key={c_i}><text>Unknown type</text></g>
+                        <g key={`unknown-${c_i}`}><text>Unknown type</text></g>
                     )
                 }
             })}

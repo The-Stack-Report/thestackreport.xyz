@@ -48,7 +48,6 @@ var markdownComponents = {
         if(_.isString(chartSlug)) {
             chartSlug = chartSlug.trim()
         }
-        console.log("rendering dynamic chart: ", chartSlug)
         return (
             <Box marginTop="3rem" marginBottom="3rem">
                 {_.isString(chartSlug) ? (

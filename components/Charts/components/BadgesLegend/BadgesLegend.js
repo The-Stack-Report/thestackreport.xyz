@@ -46,6 +46,10 @@ const BadgesLegend = ({
                 >
                 {labelText}
             </Text>
+            <Box
+                position="absolute"
+                top="1rem"
+                >
             {columns.slice(0, 11).map((col, col_i) => {
                 var colColor = _colColors[col_i % _colColors.length]
                 if(!_.isString(colColor)) {
@@ -75,6 +79,7 @@ const BadgesLegend = ({
                     </Box>
                 )
             })}
+            </Box>
         </Box>
     )
 }

@@ -21,7 +21,7 @@ const ChartPage = ({ chart }) => {
                 <meta name="description" content={_.get(chart, "description", "")} />
 
             </Head>
-            <Container maxW="container.xl" paddingTop="100px">
+            <Container maxW="container.xl" paddingTop="100px" paddingBottom="100px">
                         <Box
                             position="absolute"
                             paddingTop={{

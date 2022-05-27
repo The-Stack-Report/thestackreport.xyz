@@ -32,10 +32,13 @@ export const chartCMSProps = [
             }
         }
     },{
-        CMS_key: "",
-        propKey: ""
+        CMS_key: "badges_legend",
+        propKey: "badgesLegend"
     },{
-        CMS_key: "",
-        propKey: ""
-    },
+        CMS_key: "badges_legend_text",
+        propKey: "badgesLegendText"
+    },{
+        CMS_key: "name",
+        propKey: "name",
+    }
 ]

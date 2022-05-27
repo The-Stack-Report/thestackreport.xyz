@@ -16,8 +16,6 @@ const ChartBySlug = ({
     useEffect(() => {
         if(chartData === false && isLoading === false) {
             var fetchUrl = NEXT_PUBLIC_CMS_URL + `/charts?filters[slug][$eq]=${slug}&populate=*`
-            console.log(NEXT_PUBLIC_CMS_URL)
-            console.log(fetchUrl)
             fetch(fetchUrl).then(resp => {
                 if(resp.status === 200) {
                     return resp.json()

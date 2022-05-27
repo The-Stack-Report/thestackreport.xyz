@@ -107,7 +107,10 @@ const TimelineBrush = ({
         }
     })
 
-
+    var brushPreviewWidth = dataColumnsProps.xScale(dayjs(touchSliderValues[1] * 1000)) - dataColumnsProps.xScale(dayjs(touchSliderValues[0] * 1000))
+    if(_.isNaN(brushPreviewWidth)) {
+        brushPreviewWidth = 0
+    }
     return (
         <Box>
             <svg width={width} height={height}>
@@ -123,7 +126,7 @@ const TimelineBrush = ({
                     {touchEnabled ? (
                         <rect
                             style={selectedBrushStyle}
-                            width={dataColumnsProps.xScale(dayjs(touchSliderValues[1] * 1000)) - dataColumnsProps.xScale(dayjs(touchSliderValues[0] * 1000))}
+                            width={brushPreviewWidth}
                             height={30}
                             x={dataColumnsProps.xScale(dayjs(touchSliderValues[0] * 1000))}
                             y={0}
@@ -182,7 +185,7 @@ const TimelineBrush = ({
             )}
             <Box
                 paddingTop="1rem"
-                paddingBottom="1rem"
+                paddingBottom="0rem"
                 paddingLeft={`${margins.left}px`}
                 >
                 <Button onPointerDown={() => {

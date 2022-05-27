@@ -79,6 +79,9 @@ const ChartLoader = ({
                 chartProps[prop.propKey] = prepFunction(providedProp)
             } else {
                 chartProps[prop.propKey] = providedProp
+                if(_.isNull(chartProps[prop.propKey])) {
+                    chartProps[prop.propKey] = false
+                }
             }
         }
     })
@@ -107,22 +110,23 @@ const ChartLoader = ({
             )}
             {showState === "chart" && (
                 <Box>
+                    
+                    <Chart
+                        {...chartProps}
+                        />
                     <Text
                         color="gray.500"
                         fontSize="0.7rem"
                         textAlign="right"
                         position="relative"
-                        top="20px"
+                        top="0px"
                         zIndex="100"
                         >
-                            Chart: 
-                    <WrappedLink href={`/charts/${_.get(chart, "slug", "not-found")}`}>
-                        {`#${_.get(chart, "slug", "not-found")}`}
-                    </WrappedLink>
+                        Chart:{" "}
+                        <WrappedLink href={`/charts/${_.get(chart, "slug", "not-found")}`}>
+                            {`#${_.get(chart, "slug", "not-found")}`}
+                        </WrappedLink>
                     </Text>
-                    <Chart
-                        {...chartProps}
-                        />
                 </Box>
             )}
         </Box>

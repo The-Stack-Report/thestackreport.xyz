@@ -25,7 +25,9 @@ import HoverOverlay from "components/Charts/components/HoverOverlay"
 import HoverLabelsOverlay from "./HoverLabelsOverlay"
 import HoverTooltip from "./HoverTooltip"
 import {
-    Box
+    Box,
+    Text,
+    Button
 } from "@chakra-ui/react"
 import styles from "./Chart.module.scss"
 import { useDebouncedCallback } from 'use-debounce'
@@ -39,7 +41,10 @@ import AxisBottom from "components/Charts/components/AxisBottom"
 import chroma from "chroma-js"
 import DataColumns from "./DataColumns"
 import TimelineBrush from "./TimelineBrush"
+import BadgesLegend from "components/Charts/components/BadgesLegend"
 import { snapToEndOfDay } from "utils/snapFunctions"
+import { exportAsImage } from "utils/exportAsImage"
+import isTouchEnabled from "utils/isTouchEnabled"
 
 
 function dateKeyVal(val) {
@@ -51,6 +56,7 @@ var rightAxisBreakpoint = 1367
 export const ChartContext = createContext()
 
 const Chart = React.memo(({
+    name = "Chart",
     data = [],
     columns = [],
     color = "pink",
@@ -72,6 +78,8 @@ const Chart = React.memo(({
     timelineHeight = 30,
 
     columnToggles = false,
+    badgesLegend = false,
+    badgesLegendText = " ",
     children
 }) => {
     const containerRef = useRef(null)
@@ -367,6 +375,7 @@ const Chart = React.memo(({
         }
     }, [xValueType])
 
+    const touchEnabled = isTouchEnabled()
     return (
         <ChartContext.Provider value={{
                 colColors: colColors,
@@ -381,90 +390,131 @@ const Chart = React.memo(({
                     marginRight: _.get(_containerMargins, "right"),
                 }}
                 >
-                <Box
-                    pointerEvents="none"
-                    style={{
-                        marginLeft: _.get(_margins, "left"),
-                        marginTop: _.get(_margins, "top"),
-                        marginBottom: _.get(_margins, "bottom"),
-                        marginRight: _.get(_margins, "right")
-                    }}
-                    position="absolute"
-                    left="0px"
-                    right="0px"
-                    zIndex={100}
-                    >
-                    {children}
-                    <HoverLabelsOverlay
-                        data={data}
-                        columns={_columns}
-                        xKey={xKey}
-                        xValueType={xValueType}
-                        hoveredXValue={hoveredXValue}
-                        chart={chart}
-                        xScale={xScale}
-                        yScale={yScale}
-                        colColors={colColors}
-                        />
-                </Box>
-                <svg width={_width} height={_height}>
-                    
-                    <g transform={`translate(${_margins.left}, ${margins.top})`}>
-                        <g style={{pointerEvents: "none"}}>
-                            <Grid
-                                xScale={xScale}
-                                yScale={yScale}
-                                chart={chart}
+                {_.isNumber(_width) && (
+                    <>
+                    <Box
+                        pointerEvents="none"
+                        style={{
+                            marginLeft: _.get(_margins, "left"),
+                            marginTop: _.get(_margins, "top"),
+                            marginBottom: _.get(_margins, "bottom"),
+                            marginRight: _.get(_margins, "right")
+                        }}
+                        position="absolute"
+                        left="0px"
+                        right="0px"
+                        zIndex={100}
+                        >
+                        {children}
+                        {badgesLegend && (
+                            <BadgesLegend
+                                columns={columns}
+                                labelText={badgesLegendText}
                                 />
-                            <DataColumns {...dataColumnsProps} />
-                            <HoverTooltip
-                                data={data}
-                                columns={_columns}
-                                xKey={xKey}
-                                xValueType={xValueType}
-                                hoveredXValue={hoveredXValue}
-                                chart={chart}
-                                xScale={xScale}
-                                yScale={yScale}
-                                colColors={colColors}
-                                />
-                            <AxisRight
-                                yScale={yScale}
-                                chart={chart}
-                                labelsPosition={xAxisLabelsPosition}
-                                xAxisLabel={xAxisLabel}
-                                />
-                            <AxisBottom
-                                xScale={xScale}
-                                chart={chart}
-                                />
-                        </g>
-                        <HoverOverlay
-                            chart={chart}
-                            margins={_margins}
-                            xScale={xScale}
+                        )}
+                        <HoverLabelsOverlay
+                            data={data}
+                            columns={_columns}
+                            xKey={xKey}
                             xValueType={xValueType}
                             hoveredXValue={hoveredXValue}
-                            setHoveredXValue={setHoveredXValue}
-                            snapFunction={hoverSnapFunction}
+                            chart={chart}
+                            xScale={xScale}
+                            yScale={yScale}
+                            colColors={colColors}
                             />
-                    </g>
-                </svg>
-                {timelineBrush && (
-                    <TimelineBrush
-                        dataColumnsProps={dataColumnsTimelineProps}
-                        width={_width}
-                        margins={_margins}
-                        xScaleFull={xScaleFull}
-                        yScaleTimeline={yScaleTimeline}
-                        yScaleTimelineArea={yScaleTimelineArea}
-                        xDomain={_xDomain}
-                        height={timelineHeight}
-                        setFilteredData={setFilteredData}
-                        xValueType={xValueType}
-                        />
+                    </Box>
+                    <svg width={_width} height={_height}>
+                        
+                        <g transform={`translate(${_margins.left}, ${margins.top})`}>
+                            <text
+                                fontSize="0.7rem"
+                                x={0}
+                                y={-15}
+                                fontWeight="bold"
+                                >
+                                {name}
+                            </text>
+                            <g style={{pointerEvents: "none"}}>
+                                <Grid
+                                    xScale={xScale}
+                                    yScale={yScale}
+                                    chart={chart}
+                                    />
+                                <DataColumns {...dataColumnsProps} />
+                                <HoverTooltip
+                                    data={data}
+                                    columns={_columns}
+                                    xKey={xKey}
+                                    xValueType={xValueType}
+                                    hoveredXValue={hoveredXValue}
+                                    chart={chart}
+                                    xScale={xScale}
+                                    yScale={yScale}
+                                    colColors={colColors}
+                                    />
+                                <AxisRight
+                                    yScale={yScale}
+                                    chart={chart}
+                                    labelsPosition={xAxisLabelsPosition}
+                                    xAxisLabel={xAxisLabel}
+                                    />
+                                <AxisBottom
+                                    xScale={xScale}
+                                    chart={chart}
+                                    />
+                            </g>
+                            <HoverOverlay
+                                chart={chart}
+                                margins={_margins}
+                                xScale={xScale}
+                                xValueType={xValueType}
+                                hoveredXValue={hoveredXValue}
+                                setHoveredXValue={setHoveredXValue}
+                                snapFunction={hoverSnapFunction}
+                                />
+                        </g>
+                    </svg>
+                    {timelineBrush && (
+                        <TimelineBrush
+                            dataColumnsProps={dataColumnsTimelineProps}
+                            width={_width}
+                            margins={_margins}
+                            xScaleFull={xScaleFull}
+                            yScaleTimeline={yScaleTimeline}
+                            yScaleTimelineArea={yScaleTimelineArea}
+                            xDomain={_xDomain}
+                            height={timelineHeight}
+                            setFilteredData={setFilteredData}
+                            xValueType={xValueType}
+                            />
+                    )}
+                    </>
                 )}
+                
             </Box>
+            {!touchEnabled && (
+                <Box
+                    display="flex"
+                    justifyContent="flex-end"
+                    >
+                <Text
+                    onPointerDown={() => {
+                        exportAsImage(containerRef.current, name)
+                    }}
+                    cursor="pointer"
+                    _hover={{
+                        background: "black",
+                        color: "white"
+                    }}
+                    fontSize="0.7rem"
+                    textAlign="right"                    
+                    >
+                    Download as PNG
+                </Text>
+                </Box>
+            )}
+            
         </ChartContext.Provider>
     )
 })
