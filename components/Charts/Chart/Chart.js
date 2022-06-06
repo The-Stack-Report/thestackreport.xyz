@@ -64,6 +64,7 @@ const Chart = React.memo(({
     type = "line",
     xDomain = "auto",
     yDomain = "auto",
+    yAxisTickLabel = "",
     width = "dynamic",
     xAxisLabel= "x-axis",
     strokeWidth = 1,
@@ -418,6 +419,7 @@ const Chart = React.memo(({
                             xKey={xKey}
                             xValueType={xValueType}
                             hoveredXValue={hoveredXValue}
+                            yAxisTickLabel={yAxisTickLabel}
                             chart={chart}
                             xScale={xScale}
                             yScale={yScale}
@@ -457,7 +459,7 @@ const Chart = React.memo(({
                                     yScale={yScale}
                                     chart={chart}
                                     labelsPosition={xAxisLabelsPosition}
-                                    xAxisLabel={xAxisLabel}
+                                    yAxisTickLabel={yAxisTickLabel}
                                     />
                                 <AxisBottom
                                     xScale={xScale}

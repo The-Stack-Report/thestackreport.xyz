@@ -6,7 +6,7 @@ const AxisRight = ({
 	yScale,
 	ticks = 5,
 	labelsPosition = "outside",
-	xAxisLabel = "x-axis-label"
+	yAxisTickLabel = ""
 }) => {
 	return (
 		<g transform={`translate(${chart.width}, 0)`} >
@@ -23,6 +23,8 @@ const AxisRight = ({
 									fontSize="0.8rem"
 									>
 									{t.toLocaleString()}
+									{" "}
+									{yAxisTickLabel}
 								</text>
 								<line
 									x1={5}
@@ -43,6 +45,8 @@ const AxisRight = ({
 									textAnchor="end"
 									>
 									{t.toLocaleString()}
+									{" "}
+									{yAxisTickLabel}
 								</text>
 							</React.Fragment>
 						)}

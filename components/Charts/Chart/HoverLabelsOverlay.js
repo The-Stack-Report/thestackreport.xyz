@@ -15,6 +15,7 @@ const HoverLabelsOverlay = ({
     hoveredXValue,
     chart,
     margins,
+    yAxisTickLabel,
     xScale,
     yScale,
     colColors,
@@ -77,6 +78,10 @@ const HoverLabelsOverlay = ({
                     </span> 
             </Text>
     }
+
+    var colsToShowSorted = _.cloneDeep(columnsToShow)
+    colsToShowSorted = _.sortBy(colsToShowSorted, "value").reverse()    
+
     return (
         <Box
             className={styles["tooltip-labels-box"]}
@@ -94,8 +99,20 @@ const HoverLabelsOverlay = ({
                 </Box>
             ) : (
                 <React.Fragment>
-                    {columnsToShow.map((col, col_i) => {
+                    {colsToShowSorted.map((col, col_i) => {
                         var isLast = col_i === columnsToShow.length - 1
+
+                        var colValue = col.value
+                        var colValueRounded = colValue
+                        if(colValue > 1000) {
+                            colValueRounded = _.round(colValueRounded)
+                        }
+                        var colValueLabel = colValue.toLocaleString()
+                        if(colValue !== colValueRounded) {
+                            colValueLabel = `~${colValueRounded.toLocaleString()}`
+                        } else {
+
+                        }
                         return (
                             <Box
                                 key={col_i}
@@ -111,7 +128,7 @@ const HoverLabelsOverlay = ({
                                     padding="3px"
                                     fontWeight="bold"
                                     >
-                                    {`${col.value.toLocaleString()} `}
+                                    {`${colValueLabel} ${yAxisTickLabel}`}
                                 </Text>
                                 <Text
                                     fontSize="0.7rem"

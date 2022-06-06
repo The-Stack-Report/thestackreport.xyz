@@ -40,5 +40,8 @@ export const chartCMSProps = [
     },{
         CMS_key: "name",
         propKey: "name",
+    },{
+        CMS_key: "y_axis_tick_label",
+        propKey: "yAxisTickLabel"
     }
 ]
