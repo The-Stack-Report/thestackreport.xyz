@@ -4,7 +4,8 @@ import { Container } from "@chakra-ui/layout"
 import {
     Heading,
     Box,
-    Text
+    Text,
+    Divider
 } from "@chakra-ui/react"
 import PageLayout from "components/PageLayout"
 import _ from "lodash"
@@ -12,8 +13,11 @@ import { CMS_URL } from 'constants/cms'
 import ChartLoader from "components/Charts/ChartLoader"
 import prepareChartMetadata from "utils/prepareChartMetadata"
 import WrappedLink from "components/WrappedLink"
+import MarkdownWrapper from "components/MarkdownWrapper"
 
 const ChartPage = ({ chart }) => {
+    const richDescription = _.get(chart, "rich_description", false)
+    console.log(richDescription)
     return (
         <PageLayout>
             <Head>
@@ -51,6 +55,15 @@ const ChartPage = ({ chart }) => {
                         chart={chart}
                         timelineBrush={true}
                         />
+                )}
+                {_.isString(richDescription) && (
+                    <>
+                    <Divider />
+                    <Box maxWidth="700px">
+                        <Heading as="h5" fontWeight="thin" fontSize="1.6rem" paddingTop="1rem" paddingBottom="2rem">About this chart</Heading>
+                    <MarkdownWrapper markdownText={richDescription} />
+                    </Box>
+                    </>
                 )}
                 
             </Container>

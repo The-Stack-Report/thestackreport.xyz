@@ -6,14 +6,56 @@ import {
     Button,
     Input,
     InputGroup,
-    InputRightAddon
+    InputRightAddon,
+    Accordion,
+    AccordionItem,
+    AccordionButton,
+    AccordionPanel,
+    AccordionIcon
 } from "@chakra-ui/react"
 import ContractStatsCarousel from "./components/ContractStatsCarousel"
 import AreaChart from "components/Charts/AreaChart"
+import Chart from "components/Charts/Chart"
 import { gridScale } from "utils/colorScales"
 import dayjs from "dayjs"
 import _ from "lodash"
 import BadgesLegend from "components/Charts/components/BadgesLegend"
+import chroma from "chroma-js"
+import AccordionExplainer from "components/AccordionExplainer"
+
+
+const grayScale = chroma.scale([
+    "rgb(0,0,0)",
+    "rgb(150,150,150)"
+])
+
+const contractCallsChartDescription = _.trim(`
+Tezos *smart contracts* are programs that can run on the Tezos blockchain.
+Developers can implement any amount of *endpoints* which can be *called* through adding a transaction to the chain.
+
+The above chart shows the amount of transactions per day that successfully *called* an entrypoint of the smart contract.
+
+
+`)
+
+const usageChartDescription = _.trim(`
+Contracts can be called by any type of account on the Tezos blockchain. There are currently two main types of accounts: 'wallet' accounts and 'contract' accounts.
+
+When a wallet account calls a smart contract, this usually comes from an interaction with a dApp interface which is then approved by the user in their Wallet app.
+In the case of a smart contract calling another smart contract, this usually comes from the smart contract code executing some sort of function.
+
+The above chart shows the number of *wallets* calling the contract per day 
+and the number of *contracts* calling the contract per day.
+
+For more explanation on account types, see: [opentezos.operations](https://opentezos.com/tezos-basics/operations/)
+
+
+`)
+
+const smartContractsDescription = _.trim(`
+Smart contracts are published on the Tezos blockchain through what's called an **'origination'** operation.
+`)
+
 
 const TezosContractDashboard = ({
     contract,
@@ -26,12 +68,21 @@ const TezosContractDashboard = ({
     if(_.isNumber(sortPosition)) {
         color = gridScale(_.clamp(sortPosition / 100, 0, 1))
     }
-
     var xDomain = [
         _.first(dailyStats.byDay),
         _.last(dailyStats.byDay)
     ].map(d => dayjs(d.date))
 
+    // console.log(dailyStats)
+
+    var usage = _.get(dailyStats, "usageByDay", [])
+    if(_.isArray(usage) && usage.length === 0) usage = false
+
+    var sentByDay = _.get(dailyStats, "sentByDay", [])
+    if(_.isArray(sentByDay) && sentByDay.length === 0) sentByDay = false
+
+    // console.log(sentByDay)
+    console.log(dailyStats)
     return (
         <div className='tezos-contract-dashboard'>
             <InputGroup
@@ -65,13 +116,14 @@ const TezosContractDashboard = ({
             <Text
                 fontWeight="bold"
                 marginTop="2rem"
-                fontSize="xl"
+                as="h1"
                 >
                 Contract calls per entrypoint
             </Text>
-            <AreaChart
+            <Chart
+                name=" "
                 data={dailyStats.byDay}
-                dataDomain={dailyStats.dataDomain}
+                type="area"
                 columns={cols}
                 xKey={"date"}
                 xDomain={xDomain}
@@ -79,12 +131,75 @@ const TezosContractDashboard = ({
                 color={color}
                 height={300}
                 timelineBrush={true}
-                >
-                <BadgesLegend
-                    columns={cols}
+                badgesLegend={true}
+                noDataTooltipPlaceholder={"No calls for date: "}
+                badgesLegendText = "Nr of calls to entrypoints"
+                />
+            <AccordionExplainer
+                title={"About smart contract entrypoints"}
+                textMd={contractCallsChartDescription}
+                />
+           
+            {_.isArray(usage) && (
+                <>
+                <Divider />
+                <Text
+                    fontWeight="bold"
+                    marginTop="2rem"
+                    as="h1"
+                    >
+                    Contract users
+                    <Text as="span" fontWeight="light" color="gray.500">
+                        {` (wallets & other contracts)`}
+                    </Text>
+                </Text>
+                <Chart
+                    name=" "
+                    data={usage}
+                    type="line"
+                    columns={[
+                        "wallets_sending_transactions",
+                        "contracts_sending_transactions"
+                    ]}
+                    color={grayScale}
+                    xKey="date"
+                    height={250}
+                    timelineBrush={true}
+                    badgesLegend={true}
                     />
-            </AreaChart>
-            <Divider marginTop="1rem" marginBottom="2rem" />
+                <AccordionExplainer
+                    title={"About smart contract users"}
+                    textMd={usageChartDescription}
+                    />
+                </>
+            )}
+
+            {_.isArray(sentByDay) && (
+                <>
+                <Divider />
+                <Text
+                    fontWeight="bold"
+                    marginTop="2rem"
+                    as="h1"
+                    >
+                    Contract-generated transactions
+                    <Text as="span" fontWeight="light" color="gray.500">
+                        {` (Grouped by target, top 100 accounts)`}
+                    </Text>
+                </Text>
+                <Chart
+                    name=" "
+                    data={sentByDay}
+                    type="line"
+                    columns={dailyStats.targetsShortened}
+                    color={grayScale}
+                    xKey="date"
+                    height={250}
+                    timelineBrush={true}
+                    badgesLegend={true}
+                    />
+                </>
+            )}
             <Box minHeight="8rem" />
 
         </div>

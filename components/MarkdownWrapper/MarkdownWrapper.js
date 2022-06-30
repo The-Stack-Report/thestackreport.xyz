@@ -12,7 +12,7 @@ import {
     Divider
 } from "@chakra-ui/react"
 import _ from "lodash"
-
+import dayjs from "dayjs"
 
 const ULMarkdown = (props) => {
     return (
@@ -48,10 +48,43 @@ var markdownComponents = {
         if(_.isString(chartSlug)) {
             chartSlug = chartSlug.trim()
         }
+        var chartProps = {}
+
+        var dateRange = false
+
+        var startDate = _.get(props, "start_date", false)
+        var endDate = _.get(props, "end_date", false)
+
+        chartProps["endDate"] = endDate
+        if(startDate && endDate) {
+            startDate = dayjs(startDate)
+            endDate = dayjs(endDate)
+
+            dateRange = [startDate, endDate]
+        }
+
+        if(dateRange) {
+            chartProps["xDomain"] = dateRange
+        }
+
+        var overlay = _.get(props, "overlay", false)
+
+        if(module) {
+            chartProps["overlay"] = overlay
+        }
+
+
         return (
-            <Box marginTop="3rem" marginBottom="3rem">
+            <Box
+                marginTop="3rem"
+                marginBottom="3rem"
+                overflow="visible"
+                >
                 {_.isString(chartSlug) ? (
-                    <ChartBySlug slug={chartSlug} />
+                    <ChartBySlug
+                        slug={chartSlug}
+                        chartProps={chartProps}
+                        />
                 ) : (
                     <Text>Chart key missing</Text>
                 )}
@@ -118,12 +151,14 @@ var markdownComponents = {
 
 const MarkdownWrapper = ({ markdownText }) => {
     return (
+        <div className='markdown-wrapper'>
         <ReactMarkdown
             components={ChakraUIRenderer(markdownComponents)}
             rehypePlugins={[rehypeRaw]}
             >
             {markdownText}
         </ReactMarkdown>
+        </div>
     )
 }
 

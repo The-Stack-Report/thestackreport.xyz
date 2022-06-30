@@ -8,7 +8,8 @@ import ChartLoader from "components/Charts/ChartLoader"
 import prepareChartMetadata from "utils/prepareChartMetadata"
 
 const ChartBySlug = ({
-    slug
+    slug,
+    chartProps = {}
 }) => {
     const [chartData, setChartData] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -35,6 +36,7 @@ const ChartBySlug = ({
                 <ChartLoader
                     chart={chartData}
                     timelineBrush={true}
+                    {...chartProps}
                     />
             )}
         </Box>

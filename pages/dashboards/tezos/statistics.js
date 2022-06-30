@@ -14,6 +14,7 @@ import PageLayout from "components/PageLayout"
 import * as d3 from "d3"
 import prepareDailyBlockchainStats from "utils/data/prepareDailyBlockchainStats"
 import Chart from "components/Charts/Chart"
+import ChartBySlug from "components/Charts/ChartBySlug"
 import dayjs from "dayjs"
 import _ from "lodash"
 import { findDataRangeInData } from "utils/dataRangeUtils"
@@ -44,6 +45,12 @@ var grayScaleColor = chroma.scale([
     "rgb(150,150,150)"
 ])
 
+const segments = [
+    {
+        chartSlug: "daily-active-wallets"
+    }
+]
+
 const charts = [
     {
         title: "Daily transactions",
@@ -53,7 +60,6 @@ const charts = [
         dataset: "daily_chain_stats",
         color: grayScaleColor
     },
-
     {
         title: "Daily Active Wallets",
         columns: ["unique_sender_wallets", "unique_initiator_wallets"],
@@ -216,6 +222,16 @@ const TezosStatisticsPage = ({ dailyStatsOld, dailyChainStats }) => {
                             markdownText={introduction}
                             />
                         </Box>
+                        {segments.map((segment, segment_i) => {
+                            return (
+                                <Box paddingBottom="2rem"
+                                    key={`segment-${segment_i}`}>
+                                    <ChartBySlug
+                                        slug={_.get(segment, "chartSlug")}
+                                        />
+                                </Box>
+                            )
+                        })}
                         
                         {charts.map((chart, chart_i) => {
                             var datasetKey = _.get(chart, "dataset", "")
@@ -323,6 +339,8 @@ export async function getServerSideProps(context) {
 
     var dailyChainStats = await resp2.text()
     dailyChainStats = d3.csvParse(dailyChainStats)
+
+    
 
     return {
         props: {

@@ -30,7 +30,9 @@ const TimelineBrush = ({
     width,
     margins,
     xDomain,
+    xDomainFiltered,
     xValueType,
+    xScaleFull,
     height= 30
 }) => {
     const brushRef = useRef(null)
@@ -79,10 +81,10 @@ const TimelineBrush = ({
 
     const initialBrushPosition = useMemo(() => {
         return {
-            start: {x: chart.width - chart.width * 0.5},
-            end: {x: chart.width}
+            start: {x: xScaleFull(xDomainFiltered[0])},
+            end: {x: xScaleFull(xDomainFiltered[1])}
         }
-    }, [chart.width])
+    }, [xDomainFiltered, xScaleFull])
 
     const onBrushChange = (domain) => {
         if(!domain) return

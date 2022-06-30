@@ -27,8 +27,7 @@ const ContractPage = ({
 }) => {
     var address = _.get(contract_meta, "address", 'no-address')
     var alias = _.get(contract_meta, "tzkt_account_data.alias", address)
-    console.log("rendering contract dashboard page for: ", alias)
-    console.log("alias: ", alias)
+
     return (
         <PageLayout>
             <Head>
@@ -110,9 +109,10 @@ export async function getServerSideProps(context) {
 
             const resp = await fetch(`https://the-stack-report.ams3.digitaloceanspaces.com/datasets/tezos/contracts_daily_stats/${address}-daily-stats.json`)
             const full_daily_data = await resp.json()
+
+            // console.log(full_daily_data)
             var dailyStats = JSON.parse(JSON.stringify(prepareContractDailyStats(full_daily_data)))
 
-            
             returnData =  {
                 props: {
                     contract_meta: contract_meta,

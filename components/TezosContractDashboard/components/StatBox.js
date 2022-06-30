@@ -24,7 +24,17 @@ const StatBox = ({
             >
         <Stat>
             <StatLabel>{label}</StatLabel>
-            <StatNumber>{value}</StatNumber>
+            {value === "null" ? (
+                <StatNumber
+                    fontWeight="light"
+                    opacity={0.5}
+                    >
+                    {value}
+                </StatNumber>
+            ) : (
+                <StatNumber>{value}</StatNumber>
+            )}
+            
             <StatHelpText>{helpText}</StatHelpText>
         </Stat>
         </Box>

@@ -34,9 +34,14 @@ const DataColumns = ({
                 if(_.isArray(_type)) {
                     _type = _type[c_i % _type.length] 
                 }
-                var values = data.map(p => _.get(p, c))                
-                var valueSegments = []
-                
+                var values = data.map(p => {
+                    var v = _.get(p, c)
+                    if(_.isUndefined(v)) {
+                        v = NaN
+                    }
+                    return v
+                })        
+                var valueSegments = []                
                 if(_.some(values, v => v === false || _.isNaN(v))) {
                     // values includes missing values
                     var currentSegment = []

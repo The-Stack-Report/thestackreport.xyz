@@ -17,6 +17,11 @@ const stats = [
         valuePath: "total_contract_calls",
         label: "Total nr of contract calls",
         helpText: "total_date_range"
+    },
+    {
+        valuePath: "total_sent",
+        label: "Transactions sent by Contract",
+        helpText: "total_date_range"
     }
 ]
 
@@ -45,6 +50,9 @@ const ContractStatsCarousel = ({ contract, dailyStats }) => {
                         _.last(dailyStats.byDay)
                     ].map(d => dayjs(_.get(d, "date")).format("MMM D, YYYY"))
                     helpText = `${date_range[0]} - ${date_range[1]}`
+                }
+                if(_.isNull(value)) {
+                    value = "null"
                 }
                 return (
                     <WrapItem

@@ -22,3 +22,12 @@ video {
   margin: 0px;
   padding: 0px;
 }
+
+
+.markdown-wrapper div {
+  overflow: visible;
+}
+
+.markdown-wrapper svg {
+  overflow: visible;
+}

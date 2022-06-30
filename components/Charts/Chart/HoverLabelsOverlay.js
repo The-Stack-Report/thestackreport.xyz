@@ -19,6 +19,7 @@ const HoverLabelsOverlay = ({
     xScale,
     yScale,
     colColors,
+    noDataTooltipPlaceholder = "No data for date:",
     colMetricDescriptions = ` `
 }) => {
     if(hoveredXValue === false) {
@@ -36,6 +37,8 @@ const HoverLabelsOverlay = ({
 
     var boxWidth = 300
 
+    
+
     var columnsToShow = columns.map((col, col_i) => {
         var colVal = _.get(hoveredData, col, false)
         var areaColor = colColors[col_i]
@@ -46,9 +49,25 @@ const HoverLabelsOverlay = ({
         }
     }).filter(c => _.isNumber(c.value) && c.value > 0)
 
+    var colsToShowSorted = _.cloneDeep(columnsToShow)
+    colsToShowSorted = _.sortBy(colsToShowSorted, "value").reverse()
+
+    var limit = 12
+    var limitExceeded = false
+    var removedItems = 0
+    if(colsToShowSorted.length > limit) {
+        limitExceeded = true
+        removedItems = colsToShowSorted.length - limit
+        colsToShowSorted = colsToShowSorted.slice(0, limit)
+
+        colsToShowSorted.push({
+            label: `and ${removedItems} more.`
+        })
+    }
+
     var rowHeight = 22
-    var boxHeight = columnsToShow.length * rowHeight
-    if(columnsToShow.length === 0) {
+    var boxHeight = colsToShowSorted.length * rowHeight
+    if(colsToShowSorted.length === 0) {
         boxHeight = rowHeight
     }
     var hoverLabelReplacement = (<Text></Text>)
@@ -60,9 +79,9 @@ const HoverLabelsOverlay = ({
                 padding="3px"
                 color="gray.500"
                 >
-                No calls for date {" "}
+                {noDataTooltipPlaceholder} {" "}
                     <span style={{fontStyle: "italic", fontWeight: "bold"}}>
-                    {hoveredXValue.format("MMMM D, YYYY")}
+                    {hoveredXValue.add(2, "minute").format("MMMM D, YYYY")}
                     </span> 
             </Text>
         )
@@ -79,9 +98,7 @@ const HoverLabelsOverlay = ({
             </Text>
     }
 
-    var colsToShowSorted = _.cloneDeep(columnsToShow)
-    colsToShowSorted = _.sortBy(colsToShowSorted, "value").reverse()    
-
+   
     return (
         <Box
             className={styles["tooltip-labels-box"]}
@@ -95,7 +112,7 @@ const HoverLabelsOverlay = ({
             >
             {columnsToShow.length === 0 ? (
                 <Box>
-                
+                {hoverLabelReplacement}
                 </Box>
             ) : (
                 <React.Fragment>
@@ -107,12 +124,14 @@ const HoverLabelsOverlay = ({
                         if(colValue > 1000) {
                             colValueRounded = _.round(colValueRounded)
                         }
-                        var colValueLabel = colValue.toLocaleString()
-                        if(colValue !== colValueRounded) {
-                            colValueLabel = `~${colValueRounded.toLocaleString()}`
-                        } else {
-
+                        var colValueLabel = ""
+                        if(_.isNumber(colValue)) {
+                            colValueLabel = colValue.toLocaleString()
+                            if(colValue !== colValueRounded) {
+                                colValueLabel = `~${colValueRounded.toLocaleString()}`
+                            }
                         }
+                        
                         return (
                             <Box
                                 key={col_i}
@@ -123,7 +142,7 @@ const HoverLabelsOverlay = ({
                                 >
                                 <Text
                                     isTruncated
-                                    minWidth="80px"
+                                    minWidth="100px"
                                     fontSize="0.7rem"
                                     padding="3px"
                                     fontWeight="bold"

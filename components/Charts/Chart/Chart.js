@@ -45,6 +45,7 @@ import BadgesLegend from "components/Charts/components/BadgesLegend"
 import { snapToEndOfDay } from "utils/snapFunctions"
 import { exportAsImage } from "utils/exportAsImage"
 import isTouchEnabled from "utils/isTouchEnabled"
+import WeeklyTrend from "./overlays/WeeklyTrend"
 
 
 function dateKeyVal(val) {
@@ -55,39 +56,57 @@ var rightAxisBreakpoint = 1367
 
 export const ChartContext = createContext()
 
-const Chart = React.memo(({
-    name = "Chart",
-    data = [],
-    columns = [],
-    color = "pink",
-    xKey = "date",
-    type = "line",
-    xDomain = "auto",
-    yDomain = "auto",
-    yAxisTickLabel = "",
-    width = "dynamic",
-    xAxisLabel= "x-axis",
-    strokeWidth = 1,
-    height = 400,
-    autoScaleToMaxWindowHeight = true,
-    margins = marginsDefault,
-    marginsMd = marginsMdDefault,
-    marginsXl2 = marginsXl2Default,
-    containerMargins = containerDefaultMargins,
-
-    timelineBrush = false,
-    timelineHeight = 30,
-
-    columnToggles = false,
-    badgesLegend = false,
-    badgesLegendText = " ",
-    children
-}) => {
+const Chart = React.memo((props) => {
+    const {
+        name = "Chart",
+        data = [],
+        columns = [],
+        color = "pink",
+        xKey = "date",
+        type = "line",
+        xDomain = "auto",
+        yDomain = "auto",
+        yAxisTickLabel = "",
+        width = "dynamic",
+        xAxisLabel= "x-axis",
+        noDataTooltipPlaceholder = "No data for date",
+        strokeWidth = 1,
+        height = 400,
+        autoScaleToMaxWindowHeight = true,
+        margins = marginsDefault,
+        marginsMd = marginsMdDefault,
+        marginsXl2 = marginsXl2Default,
+        containerMargins = containerDefaultMargins,
+    
+        timelineBrush = false,
+        timelineHeight = 30,
+    
+        columnToggles = false,
+        badgesLegend = false,
+        badgesLegendText = " ",
+        children,
+        overlay = [],
+        endDate = false
+    } = props
+    const _data = useMemo(() => {
+        return data.map(p => {
+            return {
+                ...p,
+                date: dayjs(_.get(p, "date", false))
+            }
+        })
+    }, [data])
     const containerRef = useRef(null)
     const [dimensions, setDimensions] = useState({ width: width, height: 400 })
     const [windowResizeCounter, setWindowResizeCounter] = useState(0)
-    const [filteredData, setFilteredData] = useState(data)
+    const [filteredData, setFilteredData] = useState(_data)
+    const [brushMoved, setBrushMoved] = useState(false)
+    const [brushZoomInitialized, setBrushZoomInitialized] = useState(false)
     const windowSize = useWindowSize()
+
+    const windowWidth = useMemo(() => {
+        return _.get(windowSize, "width", 500)
+    }, [windowSize])
 
     const [hoveredXValue, setHoveredXValue] = useState(false)
 
@@ -97,6 +116,11 @@ const Chart = React.memo(({
         },
         50
     );
+
+    const handleBrushMove = (newFilteredData) => {
+        setFilteredData(newFilteredData)
+        setBrushMoved(true)
+    }
     
     useEffect(() => {
         if(windowResizeCounter === 0) {
@@ -130,8 +154,8 @@ const Chart = React.memo(({
     }, [windowSize, height])
 
     const xValues = useMemo(() => {
-        return data.map(p => _.get(p, xKey, false))
-    }, [data, xKey])
+        return _data.map(p => _.get(p, xKey, false))
+    }, [_data, xKey])
 
     const xValuesFiltered = useMemo(() => {
         return filteredData.map(p => _.get(p, xKey, false))
@@ -149,10 +173,10 @@ const Chart = React.memo(({
     }, [xValues])
 
     const yValues = useMemo(() => {
-        return _.flatten(data.map(p => {
+        return _.flatten(_data.map(p => {
             return _columns.map(c => _.get(p, c, false))
         }))
-    }, [data, _columns])
+    }, [_data, _columns])
 
     const yValuesFiltered = useMemo(() => {
         return _.flatten(filteredData.map(p => {
@@ -210,47 +234,44 @@ const Chart = React.memo(({
         }
     }, [_width, timelineHeight, _margins])
 
-
-    const _xDomain = useMemo(() => {
-        if(xDomain === "auto") {
-            if(xValueType === "number") {
-                return [_.min(xValues), _.max(xValues)]
-            } else if(xValueType === "date") {
-                return [_.first(xValues), _.last(xValues)]
-            } else {
-    
-            }
+    const _xDomainFromData = useMemo(() => {
+        if(xValueType === "number") {
+            return [_.min(xValues), _.max(xValues)]
+        } else if(xValueType === "date") {
+            return [_.first(xValues), _.last(xValues)]
         } else {
             return xDomain
         }
-        
-    }, [xValues, xDomain, xValueType])
+    }, [xValueType, xDomain, xValues])
 
     const _xDomainFiltered = useMemo(() => {
-            if(xValueType === "number") {
-                return [_.min(xValuesFiltered), _.max(xValuesFiltered)]
-            } else if(xValueType === "date") {
-                return [_.first(xValuesFiltered), _.last(xValuesFiltered)]
+            if(brushMoved === true || xDomain === "auto") {
+                if(xValueType === "number") {
+                    return [_.min(xValuesFiltered), _.max(xValuesFiltered)]
+                } else if(xValueType === "date") {
+                    return [_.first(xValuesFiltered), _.last(xValuesFiltered)]
+                } else {
+                    xDomain
+                }
             } else {
-                xDomain
+                return xDomain
             }
-        
-    }, [xValuesFiltered, xDomain, xValueType])
+    }, [xValuesFiltered, xDomain, xValueType, brushMoved])
 
 
     const xScaleFull = useMemo(() => {
         if(xValueType === "number") {
             return scaleLinear({
                 range: [0, chart.width],
-                domain: _xDomain
+                domain: _xDomainFromData
             })
         } else if(xValueType === "date") {
             return scaleTime({
                 range: [0, chart.width],
-                domain: _xDomain
+                domain: _xDomainFromData
             })
         }
-    }, [chart.width, _xDomain, xValueType])
+    }, [chart.width, _xDomainFromData, xValueType])
 
     const xScale = useMemo(() => {
         if(xValueType === "number") {
@@ -295,7 +316,8 @@ const Chart = React.memo(({
     const yScale = useMemo(() => {
         return scaleLinear({
             range: [0, chart.height],
-            domain: _yDomainFiltered
+            domain: _yDomainFiltered,
+            nice: true
         })
     }, [chart.height, _yDomainFiltered])
 
@@ -322,12 +344,36 @@ const Chart = React.memo(({
         })
     }, [timelineHeight, _yDomain])
 
+    useEffect(() => {
+        if(brushZoomInitialized === false) {
+            setBrushZoomInitialized(true)
+            if(xDomain !== "auto") {                
+                setFilteredData(_data.filter(p => {
+                    if(xValueType === "date") {
+                        return dayjs(p[xKey]).isAfter(
+                                dayjs(xDomain[0]).add(-1, "day")
+                            )
+                            && dayjs(p[xKey]).isBefore(
+                                dayjs(xDomain[1]).add(1, "day")
+                            )
+                    }
+                }))
+            }
+        }
+        
+    }, [brushZoomInitialized, xDomain, _data, xKey, xValueType])
+
     var _containerMargins = _.cloneDeep(containerMargins)
     
-    if(_width < rightAxisBreakpoint) {
+    var xAxisLabelsPosition = "outside"
+
+    if(windowWidth < rightAxisBreakpoint || _width < 700) {
         _containerMargins.right = -10
+        xAxisLabelsPosition = "inside"
+    }
 
-
+    if(_width < 700 && windowWidth > 900) {
+        xAxisLabelsPosition = "outside"
     }
 
 
@@ -344,7 +390,6 @@ const Chart = React.memo(({
     })
 
 
-    var xAxisLabelsPosition = _width > rightAxisBreakpoint ? "outside" : "inside"
 
     var dataColumnsProps = {
         columns: _columns,
@@ -362,7 +407,7 @@ const Chart = React.memo(({
     dataColumnsProps.yScaleArea = yScaleArea
     dataColumnsProps.chart = chart
 
-    dataColumnsTimelineProps.data = data
+    dataColumnsTimelineProps.data = _data
     dataColumnsTimelineProps.xScale = xScaleFull
     dataColumnsTimelineProps.yScale = yScaleTimeline
     dataColumnsTimelineProps.yScaleArea = yScaleTimelineArea
@@ -377,10 +422,13 @@ const Chart = React.memo(({
     }, [xValueType])
 
     const touchEnabled = isTouchEnabled()
+    const hovered = hoveredXValue !== false
+
+
     return (
         <ChartContext.Provider value={{
                 colColors: colColors,
-                hovered: hoveredXValue !== false
+                hovered: hovered,
             }}>
             <Box className={styles["chart"]}
                 ref={containerRef}
@@ -414,12 +462,13 @@ const Chart = React.memo(({
                                 />
                         )}
                         <HoverLabelsOverlay
-                            data={data}
+                            data={_data}
                             columns={_columns}
                             xKey={xKey}
                             xValueType={xValueType}
                             hoveredXValue={hoveredXValue}
                             yAxisTickLabel={yAxisTickLabel}
+                            noDataTooltipPlaceholder={noDataTooltipPlaceholder}
                             chart={chart}
                             xScale={xScale}
                             yScale={yScale}
@@ -438,6 +487,9 @@ const Chart = React.memo(({
                                 {name}
                             </text>
                             <g style={{pointerEvents: "none"}}>
+                            
+                            
+                            
                                 <Grid
                                     xScale={xScale}
                                     yScale={yScale}
@@ -445,7 +497,7 @@ const Chart = React.memo(({
                                     />
                                 <DataColumns {...dataColumnsProps} />
                                 <HoverTooltip
-                                    data={data}
+                                    data={_data}
                                     columns={_columns}
                                     xKey={xKey}
                                     xValueType={xValueType}
@@ -465,7 +517,21 @@ const Chart = React.memo(({
                                     xScale={xScale}
                                     chart={chart}
                                     />
+                            <g opacity={hovered ? 0.5 : 1}>
+                            {overlay === "weekly_trend" && (
+                                <WeeklyTrend
+                                    data={data}
+                                    chart={chart}
+                                    xScale={xScale}
+                                    yScale={yScale}
+                                    endDate={endDate}
+                                    trendKey={columns[0]}
+                                    xDomainFiltered={_xDomainFiltered}
+                                    />
+                            )}
                             </g>
+                            </g>
+                            
                             <HoverOverlay
                                 chart={chart}
                                 margins={_margins}
@@ -485,9 +551,10 @@ const Chart = React.memo(({
                             xScaleFull={xScaleFull}
                             yScaleTimeline={yScaleTimeline}
                             yScaleTimelineArea={yScaleTimelineArea}
-                            xDomain={_xDomain}
+                            xDomain={_xDomainFromData}
+                            xDomainFiltered={_xDomainFiltered}
                             height={timelineHeight}
-                            setFilteredData={setFilteredData}
+                            setFilteredData={handleBrushMove}
                             xValueType={xValueType}
                             />
                     )}
@@ -499,21 +566,25 @@ const Chart = React.memo(({
                 <Box
                     display="flex"
                     justifyContent="flex-end"
+                    position="relative"
+                    top="-30px"
+                    pointerEvents="none"
                     >
-                <Text
-                    onPointerDown={() => {
-                        exportAsImage(containerRef.current, name)
-                    }}
-                    cursor="pointer"
-                    _hover={{
-                        background: "black",
-                        color: "white"
-                    }}
-                    fontSize="0.7rem"
-                    textAlign="right"                    
-                    >
-                    Download as PNG
-                </Text>
+                    <Text
+                        onPointerDown={() => {
+                            exportAsImage(containerRef.current, name)
+                        }}
+                        cursor="pointer"
+                        _hover={{
+                            background: "black",
+                            color: "white"
+                        }}
+                        fontSize="0.7rem"
+                        textAlign="right"     
+                        pointerEvents="initial"               
+                        >
+                        Download as PNG
+                    </Text>
                 </Box>
             )}
             
