@@ -512,6 +512,7 @@ const Chart = React.memo((props) => {
                                     chart={chart}
                                     labelsPosition={xAxisLabelsPosition}
                                     yAxisTickLabel={yAxisTickLabel}
+                                    dimValues={overlay === "weekly_trend"}
                                     />
                                 <AxisBottom
                                     xScale={xScale}

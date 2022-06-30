@@ -6,11 +6,18 @@ const AxisRight = ({
 	yScale,
 	ticks = 5,
 	labelsPosition = "outside",
-	yAxisTickLabel = ""
+	yAxisTickLabel = "",
+	dimValues
 }) => {
 	return (
 		<g transform={`translate(${chart.width}, 0)`} >
-			{yScale.ticks(ticks).map((t, t_i) => {
+			{yScale.ticks(ticks).map((t, t_i, t_a) => {
+
+				var tickLabelOpacity = 1
+
+				if(labelsPosition === "inside" && dimValues && t_i < t_a.length - 1) {
+					tickLabelOpacity = 0.1
+				}
 				return (
 					<g transform={`translate(0, ${chart.height - yScale(t)})`}
 						key={t_i}
@@ -43,6 +50,7 @@ const AxisRight = ({
 									y={-5}
 									fontSize="0.8rem"
 									textAnchor="end"
+									opacity={tickLabelOpacity}
 									>
 									{t.toLocaleString()}
 									{" "}
