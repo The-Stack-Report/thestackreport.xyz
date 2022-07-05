@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 import Head from "next/head"
 import {
     Container
@@ -17,7 +17,6 @@ import TezosContractDashboard from "components/TezosContractDashboard"
 import WrappedLink from "components/WrappedLink"
 import _ from "lodash"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"
-
 
 const ContractPage = ({
     error,

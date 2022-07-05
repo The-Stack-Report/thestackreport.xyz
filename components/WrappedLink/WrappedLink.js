@@ -3,7 +3,7 @@ import NextLink from "next/link"
 import { Box, Link } from "@chakra-ui/react"
 
 const WrappedLink = ({
-        href,
+        href = "",
         children,
         inline=false,
         textDecoration = false,

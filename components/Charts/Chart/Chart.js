@@ -60,6 +60,7 @@ const Chart = React.memo((props) => {
     const {
         name = "Chart",
         data = [],
+        dataHash = "",
         columns = [],
         color = "pink",
         xKey = "date",
@@ -121,6 +122,10 @@ const Chart = React.memo((props) => {
         setFilteredData(newFilteredData)
         setBrushMoved(true)
     }
+
+    useEffect(() => {
+        setBrushZoomInitialized(false)
+    }, [dataHash])
     
     useEffect(() => {
         if(windowResizeCounter === 0) {
@@ -423,8 +428,6 @@ const Chart = React.memo((props) => {
 
     const touchEnabled = isTouchEnabled()
     const hovered = hoveredXValue !== false
-
-
     return (
         <ChartContext.Provider value={{
                 colColors: colColors,

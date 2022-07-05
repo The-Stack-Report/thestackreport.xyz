@@ -22,7 +22,7 @@ import _ from "lodash"
 import BadgesLegend from "components/Charts/components/BadgesLegend"
 import chroma from "chroma-js"
 import AccordionExplainer from "components/AccordionExplainer"
-
+import ContractTransactionFlow from "components/ContractTransactionFlow"
 
 const grayScale = chroma.scale([
     "rgb(0,0,0)",
@@ -52,8 +52,19 @@ For more explanation on account types, see: [opentezos.operations](https://opent
 
 `)
 
-const smartContractsDescription = _.trim(`
-Smart contracts are published on the Tezos blockchain through what's called an **'origination'** operation.
+const sentTransactionsDescription = _.trim(`
+When smart contract entrypoints are called, the smart contract code can generate new transactions targetting other wallets or smart contract entrypoints.
+The above chart displays these historic transactions for the top 100 accounts/entrypoints being targetted.
+`)
+
+const flowDescription = _.trim(`
+The above visual shows three elements combined. The first table contains the top accounts (both wallets and other contracts) that generate transactions targetting this contract.
+
+The central pie chart displays the distribution of entrypoints being called by those accounts.
+
+Calling an entrypoint triggers the smart contract code to run. This might trigger new transactions coming from that smart contract code. These transactions can have other targets again.
+
+A common pattern is for example an NFT marketplace contract which is being called by various wallets and generates transactions that are then targetting the NFT contract. 
 `)
 
 
@@ -62,6 +73,8 @@ const TezosContractDashboard = ({
     dailyStats
 }) => {
     var cols = _.sortBy(dailyStats.entrypoints, "count").reverse().map(p => p.entrypoint)
+
+    const contract_address = _.get(contract, "address", "no-address")
 
     const sortPosition = _.get(contract, "sort_positions.by_calls_past_14_days", false)
     var color = "black"
@@ -82,7 +95,6 @@ const TezosContractDashboard = ({
     if(_.isArray(sentByDay) && sentByDay.length === 0) sentByDay = false
 
     // console.log(sentByDay)
-    console.log(dailyStats)
     return (
         <div className='tezos-contract-dashboard'>
             <InputGroup
@@ -123,6 +135,7 @@ const TezosContractDashboard = ({
             <Chart
                 name=" "
                 data={dailyStats.byDay}
+                dataHash={contract_address}
                 type="area"
                 columns={cols}
                 xKey={"date"}
@@ -156,6 +169,7 @@ const TezosContractDashboard = ({
                 <Chart
                     name=" "
                     data={usage}
+                    dataHash={contract_address}
                     type="line"
                     columns={[
                         "wallets_sending_transactions",
@@ -190,6 +204,7 @@ const TezosContractDashboard = ({
                 <Chart
                     name=" "
                     data={sentByDay}
+                    dataHash={contract_address}
                     type="line"
                     columns={dailyStats.targetsShortened}
                     color={grayScale}
@@ -198,10 +213,26 @@ const TezosContractDashboard = ({
                     timelineBrush={true}
                     badgesLegend={true}
                     />
+                <AccordionExplainer
+                    title={"About sent transactions"}
+                    textMd={sentTransactionsDescription}
+                    />
                 </>
             )}
+            <Divider />
+            <Box minHeight="6rem" />
+            <ContractTransactionFlow
+                contract={{
+                    ...contract,
+                    dailyStats: dailyStats
+                }}
+                color={color}
+                />
+            <AccordionExplainer
+                    title={"About transaction flow"}
+                    textMd={flowDescription}
+                    />
             <Box minHeight="8rem" />
-
         </div>
     )
 }
