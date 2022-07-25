@@ -76,7 +76,7 @@ var ContractChartRenderer = ({
                 })
         }
         
-    })
+    }, [metaData, loadingMeta, address])
     if(isLoading === true || !_.isObject(metaData)) {
         return (
             <div style={{height: 200}}>
