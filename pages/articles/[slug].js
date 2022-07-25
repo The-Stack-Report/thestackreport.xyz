@@ -193,8 +193,8 @@ export async function getServerSideProps(context) {
             return { props: {errorMessage: "Undefined article.", error: true} }
         }
     } catch(err) {
-        console.log("server side article fetch error: ", pid, error)
-        return { props: {errorMessage: "Db error.", error: true} }
+        console.log("server side article fetch error: ", err)
+        return { props: {errorMessage: "Db error.", err: true} }
     }
     
 }

@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import ChakraUIRenderer from 'chakra-ui-markdown-renderer';
 import rehypeRaw from 'rehype-raw'
 import { DataBlockDynamic } from "components/DataBlock/DataBlock"
+import ModelChart from "components/Charts/ModelChart"
 import ChartBySlug from "components/Charts/ChartBySlug"
 import {
     UnorderedList,
@@ -91,7 +92,39 @@ var markdownComponents = {
             </Box>
         )
     },
-    "button": ({children, ...props}) => {
+    "modelchart": ({children, ...props}) => {
+        var chartProps = {}
+
+        var dateRange = false
+
+        var startDate = _.get(props, "start_date", false)
+        var endDate = _.get(props, "end_date", false)
+
+        chartProps["endDate"] = endDate
+        if(startDate && endDate) {
+            startDate = dayjs(startDate)
+            endDate = dayjs(endDate)
+
+            dateRange = [startDate, endDate]
+        }
+
+        if(dateRange) {
+            chartProps["xDomain"] = dateRange
+        }
+
+        var overlay = _.get(props, "overlay", false)
+
+        if(module) {
+            chartProps["overlay"] = overlay
+        }
+        return (
+            <ModelChart
+                {...props}
+                chartProps={chartProps}
+                />
+        )
+    },
+     "button": ({children, ...props}) => {
         return (
             <Button {...props}
                 _hover={{

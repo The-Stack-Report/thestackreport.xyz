@@ -1,5 +1,6 @@
 import React from "react"
 import Link from 'next/link'
+import WrappedLink from "components/WrappedLink"
 import Image from "next/image"
 import {
     Box,
@@ -25,7 +26,7 @@ const ArticleCard = ({
 
     var previewMode = _.get(attrs, "preview", false)
     return (
-        <Link
+        <WrappedLink
             href={`/articles/${_.get(attrs, "slug", "no-slug-set-for-article")}`}
             passHref={true}
             >
@@ -77,6 +78,7 @@ const ArticleCard = ({
                         position: "absolute",
                         bottom: 5,
                         right: 5,
+                        left: 5,
                         zIndex: 10,
                     }}>
                     <div style={{display: "flex", alignItems: "end", textAlign: "right"}}>
@@ -157,6 +159,10 @@ const ArticleCard = ({
                     <div style={{display: "flex", alignItems: "end", textAlign: "right"}}>
                     <Text
                         fontSize="0.7rem"
+                        _groupHover={{
+                            bg: "black",
+                            color: "white"
+                        }}
                         marginTop="0.35rem"
                         textAlign="right"
                         marginLeft="auto"
@@ -195,7 +201,7 @@ const ArticleCard = ({
                     )}
                 </div>
             </Box>
-        </Link>
+        </WrappedLink>
     )
 }
 

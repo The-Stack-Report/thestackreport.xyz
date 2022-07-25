@@ -18,3 +18,8 @@ export function gridScale(t) {
         redScale(t)
     ])
 }
+
+export const grayScale = chroma.scale([
+    "rgb(0,0,0)",
+    "rgb(150,150,150)"
+])
