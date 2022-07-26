@@ -28,7 +28,6 @@ const ArticleCard = ({
     return (
         <WrappedLink
             href={`/articles/${_.get(attrs, "slug", "no-slug-set-for-article")}`}
-            passHref={true}
             >
             <Box key={article.id}
                 border={"1px solid black"}

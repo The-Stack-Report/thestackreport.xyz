@@ -47,7 +47,6 @@ import { exportAsImage } from "utils/exportAsImage"
 import isTouchEnabled from "utils/isTouchEnabled"
 import WeeklyTrend from "./overlays/WeeklyTrend"
 
-
 function dateKeyVal(val) {
     return dayjs.isDayjs(val) ? val : dayjs(val)
 }
@@ -94,7 +93,7 @@ const Chart = React.memo((props) => {
         return data.map(p => {
             return {
                 ...p,
-                date: dayjs(_.get(p, "date", false))
+                date: xValTransform(dayjs(_.get(p, "date", false)))
             }
         })
     }, [data])
