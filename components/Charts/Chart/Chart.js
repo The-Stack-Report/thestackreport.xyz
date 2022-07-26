@@ -278,9 +278,6 @@ const Chart = React.memo((props) => {
         }
     }, [chart.width, _xDomainFromData, xValueType])
 
-    console.log(_xDomainFiltered)
-    console.log(_data)
-
     const xScale = useMemo(() => {
         if(xValueType === "number") {
             return scaleLinear({

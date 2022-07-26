@@ -84,9 +84,7 @@ const TezosContractDashboard = ({
     var xDomain = [
         _.first(dailyStats.byDay),
         _.last(dailyStats.byDay)
-    ].map(d => dayjs(d.date))
-
-    // console.log(dailyStats)
+    ].map(d => dayjs(d.date).startOf("day"))
 
     var usage = _.get(dailyStats, "usageByDay", [])
     if(_.isArray(usage) && usage.length === 0) usage = false
@@ -94,7 +92,6 @@ const TezosContractDashboard = ({
     var sentByDay = _.get(dailyStats, "sentByDay", [])
     if(_.isArray(sentByDay) && sentByDay.length === 0) sentByDay = false
 
-    // console.log(sentByDay)
     return (
         <div className='tezos-contract-dashboard'>
             <InputGroup
