@@ -61,6 +61,7 @@ const Chart = React.memo((props) => {
         data = [],
         dataHash = "",
         columns = [],
+        initialColumnToggles = [],
         color = "pink",
         xKey = "date",
         xValTransform = (p) => p.startOf("day"),
@@ -96,13 +97,15 @@ const Chart = React.memo((props) => {
                 date: xValTransform(dayjs(_.get(p, "date", false)))
             }
         })
-    }, [data])
+    }, [data, xValTransform])
     const containerRef = useRef(null)
     const [dimensions, setDimensions] = useState({ width: width, height: 400 })
     const [windowResizeCounter, setWindowResizeCounter] = useState(0)
     const [filteredData, setFilteredData] = useState(_data)
     const [brushMoved, setBrushMoved] = useState(false)
     const [brushZoomInitialized, setBrushZoomInitialized] = useState(false)
+    const [columnsToggled, setColumnsToggled] = useState(initialColumnToggles)
+
     const windowSize = useWindowSize()
 
     const windowWidth = useMemo(() => {
@@ -140,6 +143,9 @@ const Chart = React.memo((props) => {
         };
     }, [handleResize]);
 
+
+    
+
     const _columns = useMemo(() => {
         if(_.isArray(columns)) {
             return columns
@@ -148,6 +154,15 @@ const Chart = React.memo((props) => {
             return []
         }
     }, [columns])
+
+    // Array that either is all columns when no specific columns are selected, or specifically the selected columns.
+    const _filteredColumns = useMemo(() => {
+        if(columnsToggled.length === 0) {
+            return _columns
+        } else {
+            return _columns.filter(column => columnsToggled.includes(column))
+        }
+    }, [columnsToggled, _columns])
 
 
     const _height = useMemo(() => {
@@ -182,6 +197,12 @@ const Chart = React.memo((props) => {
             return _columns.map(c => _.get(p, c, false))
         }))
     }, [_data, _columns])
+
+    const yValuesForSelectedFilteredColumns = useMemo(() => {
+        return _.flatten(filteredData.map(p => {
+            return _filteredColumns.map(c => _.get(p, c, false))
+        }))
+    }, [filteredData, _filteredColumns])
 
     const yValuesFiltered = useMemo(() => {
         return _.flatten(filteredData.map(p => {
@@ -307,8 +328,8 @@ const Chart = React.memo((props) => {
 
     const _yDomainFiltered = useMemo(() => {
         if(yDomain === "auto") {
-            var min = _.min(yValuesFiltered)
-            var max = _.max(yValuesFiltered)
+            var min = _.min(yValuesForSelectedFilteredColumns)
+            var max = _.max(yValuesForSelectedFilteredColumns)
             if (min > 0) {
                 min = 0
             }
@@ -316,7 +337,7 @@ const Chart = React.memo((props) => {
         } else {
             return yDomain
         }
-    }, [yValuesFiltered, yDomain])
+    }, [yValuesForSelectedFilteredColumns, yDomain])
 
     const yScale = useMemo(() => {
         return scaleLinear({
@@ -397,7 +418,7 @@ const Chart = React.memo((props) => {
 
 
     var dataColumnsProps = {
-        columns: _columns,
+        columns: _filteredColumns,
         type: type,
         colColors: colColors,
         xKey: xKey,
@@ -428,10 +449,26 @@ const Chart = React.memo((props) => {
 
     const touchEnabled = isTouchEnabled()
     const hovered = hoveredXValue !== false
+
     return (
         <ChartContext.Provider value={{
                 colColors: colColors,
                 hovered: hovered,
+                columnsToggled: columnsToggled,
+                setColumnsToggled: setColumnsToggled,
+                toggleColumn: (col) => {
+                    if(columnsToggled.includes(col)) {
+                        setColumnsToggled(
+                            columnsToggled.filter(c => c !== col)
+                        )
+                    } else {
+                        var newColsToggled = _.cloneDeep(columnsToggled)
+                        newColsToggled.push(col)
+                        setColumnsToggled(
+                            newColsToggled
+                        )
+                    }
+                }
             }}>
             <Box className={styles["chart"]}
                 ref={containerRef}
@@ -466,7 +503,7 @@ const Chart = React.memo((props) => {
                         )}
                         <HoverLabelsOverlay
                             data={_data}
-                            columns={_columns}
+                            columns={_filteredColumns}
                             xKey={xKey}
                             xValueType={xValueType}
                             hoveredXValue={hoveredXValue}
@@ -501,7 +538,7 @@ const Chart = React.memo((props) => {
                                 <DataColumns {...dataColumnsProps} />
                                 <HoverTooltip
                                     data={_data}
-                                    columns={_columns}
+                                    columns={_filteredColumns}
                                     xKey={xKey}
                                     xValueType={xValueType}
                                     hoveredXValue={hoveredXValue}

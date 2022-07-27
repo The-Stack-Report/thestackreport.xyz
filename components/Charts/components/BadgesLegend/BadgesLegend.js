@@ -17,6 +17,11 @@ const BadgesLegend = ({
 }) => {
     const areaChartContext = useContext(AreaChartContext)
     const chartContext = useContext(ChartContext)
+
+
+    var columnsToggled = _.get(chartContext, "columnsToggled", columns)
+    var toggleColumn = _.get(chartContext, "toggleColumn", false)
+
     var _colColors = colColors
     if(_colColors === false) {
         if(!_.isUndefined(areaChartContext)) {
@@ -39,7 +44,6 @@ const BadgesLegend = ({
             left="-6px"
             right="0px"
             opacity={_.get(chartContext, 'hovered', false) ? 0.1 : 1}
-            style={{transition: "opacity 0.1s"}}
             >
             <Text fontSize="0.5rem" fontWeight="bold" textTransform="uppercase"
                 marginBottom="-5px"
@@ -49,36 +53,62 @@ const BadgesLegend = ({
             <Box
                 position="absolute"
                 top="1rem"
+                paddingBottom="0.5rem"
+                style={{transition: "opacity 0.1s"}}
                 >
-            {columns.slice(0, 11).map((col, col_i) => {
-                var colColor = _colColors[col_i % _colColors.length]
-                if(!_.isString(colColor)) {
-                        if(_.has(colColor, "_rgb")) {
-                            colColor = colColor.hex()
+                {columns.slice(0, 11).map((col, col_i) => {
+                    var colColor = _colColors[col_i % _colColors.length]
+                    if(!_.isString(colColor)) {
+                            if(_.has(colColor, "_rgb")) {
+                                colColor = colColor.hex()
+                            }
+                            
+                    }
+                    var colIsToggled = true
+                    var opacity = 1
+                    if(columnsToggled.length > 0) {
+                        colIsToggled = columnsToggled.includes(col)
+                    }
+
+                    opacity = colIsToggled ? 1 : 0.2
+
+                    var interactionProps = {}
+                    if(_.isFunction(toggleColumn)) {
+                        interactionProps["onPointerDown"] = () => {
+                            toggleColumn(col)
                         }
-                        
-                }
-                return (
-                    <Box marginBottom="-10px"
-                        key={col_i}
-                        >
-                    <Badge
-                        color={"white"}
-                        variant="solid"
-                        background={colColor}
-                        size="small"
-                        fontSize="0.5rem"
-                        margin="0.1rem"
-                        _groupHover={{
-                            color: colColor,
-                            background: "rgba(255,255,255,0.95)"
-                        }}
-                        >
-                        {col}
-                    </Badge>
-                    </Box>
-                )
-            })}
+
+                        interactionProps["cursor"] = "pointer"
+                    }
+                    return (
+                        <Box marginBottom="0px"
+                            key={col_i}
+                            height={"14px"}
+                            >
+                        <Badge
+                            color={"white"}
+                            variant="solid"
+                            background={colColor}
+                            size="small"
+                            fontSize="0.5rem"
+                            margin="0.1rem"
+
+                            pointerEvents="initial"
+                            opacity={opacity}
+                            {...interactionProps}
+                            _hover={{
+                                opacity: 0.8
+                            }}
+                            _groupHover={{
+                                color: colColor,
+                                background: "rgba(255,255,255,0.95)"
+                            }}
+                            >
+                            {col}
+                        </Badge>
+                        </Box>
+                    )
+                })}
             </Box>
         </Box>
     )

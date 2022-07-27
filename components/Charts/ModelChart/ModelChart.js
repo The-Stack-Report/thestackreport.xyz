@@ -6,6 +6,10 @@ import Chart from "components/Charts/Chart"
 import { gridScale, grayScale } from "utils/colorScales"
 import dayjs from "dayjs"
 import _ from "lodash"
+import WrappedLink from "components/WrappedLink"
+import {
+    Text
+} from "@chakra-ui/react"
 
 const ModelChart = ({
     model,
@@ -41,6 +45,7 @@ const ModelChart = ({
             <ContractChartRenderer
                 address={_key}
                 view={view}
+                chartProps={chartProps}
                 />
         )
     }
@@ -54,7 +59,8 @@ const ModelChart = ({
 
 var ContractChartRenderer = ({
     address,
-    view
+    view,
+    chartProps
 }) => {
     const { isLoading, data } = useFetch(`https://the-stack-report.ams3.digitaloceanspaces.com/datasets/tezos/contracts_daily_stats/${address}-daily-stats.json`)
     const [metaData, setMetaData] = useState(false)
@@ -110,6 +116,16 @@ var ContractChartRenderer = ({
         _.last(contract.byDay)
     ].map(d => dayjs(d.date))
 
+    var _props = {
+        xDomain: xDomain
+    }
+
+    // Merge props parsed from markdown into the component
+    _props = {
+        ..._props,
+        ...chartProps
+    }
+
     var usage = _.get(contract, "usageByDay", [])
     if(_.isArray(usage) && usage.length === 0) usage = false
 
@@ -119,25 +135,58 @@ var ContractChartRenderer = ({
                 <p>Loading data for {address}</p>
             ) : (
                 <>
+                
                 {view === "entrypoints-daily" && (
-                    <Chart
-                        name=" "
-                        data={contract.byDay}
-                        dataHash={address}
-                        type="area"
-                        columns={cols}
-                        xKey={"date"}
-                        xDomain={xDomain}
-                        width={"dynamic"}
-                        color={color}
-                        height={300}
-                        timelineBrush={true}
-                        badgesLegend={true}
-                        noDataTooltipPlaceholder={"No calls for date: "}
-                        badgesLegendText = "Nr of calls to entrypoints"
-                        />
+                    <>
+                        <Text
+                            fontWeight="bold"
+                            fontSize="0.8rem"
+                            >
+                            <Text
+                            as="span"
+                            fontWeight="light"
+                            >
+                            Entrypoints called{" "}
+                            </Text>
+                            <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
+                            {_.get(contract, "tzkt_account_data.alias", address)}
+                            </WrappedLink>
+                        </Text>
+                        <Chart
+                            name=" "
+                            data={contract.byDay}
+                            dataHash={address}
+                            type="area"
+                            columns={cols}
+                            xKey={"date"}
+                            width={"dynamic"}
+                            color={color}
+                            height={300}
+                            timelineBrush={true}
+                            badgesLegend={true}
+                            noDataTooltipPlaceholder={"No calls for date: "}
+                            badgesLegendText = "Nr of calls to entrypoints"
+                            {..._props}
+                            />
+                    </>
                 )}
                 {view === "accounts-active-daily" && (
+                    <>
+                    <Text
+                        fontWeight="bold"
+
+                        fontSize="0.8rem"
+                        >
+                        <Text
+                        as="span"
+                        fontWeight="light"
+                        >
+                        Accounts using{" "}
+                        </Text>
+                        <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
+                        {_.get(contract, "tzkt_account_data.alias", address)}
+                        </WrappedLink>
+                    </Text>
                     <Chart
                         name=" "
                         data={usage}
@@ -152,8 +201,25 @@ var ContractChartRenderer = ({
                         height={250}
                         timelineBrush={true}
                         badgesLegend={true}
+                        noDataTooltipPlaceholder={"No accounts active for date: "}
+                        badgesLegendText = "Nr of accounts active, split by wallet/contract."
+                        {..._props}
                         />
+                    </>
                 )}
+                <Text
+                        fontSize="0.7rem"
+                        textAlign="right"
+                        marginBottom="1rem"
+                        color="gray.500"
+                        >
+                        Dashboard:{" "}
+                <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
+                    
+                    {_.get(contract, "tzkt_account_data.alias", address)}
+                    
+                </WrappedLink>
+                </Text>
                 </>
             )}
         </div>

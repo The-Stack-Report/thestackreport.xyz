@@ -177,6 +177,8 @@ const TezosContractDashboard = ({
                     height={250}
                     timelineBrush={true}
                     badgesLegend={true}
+                    noDataTooltipPlaceholder={"No accounts active for date: "}
+                    badgesLegendText = "Nr of accounts active, split by wallet/contract."
                     />
                 <AccordionExplainer
                     title={"About smart contract users"}

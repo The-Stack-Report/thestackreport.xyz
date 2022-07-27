@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react"
 import _ from "lodash"
 import dayjs from "dayjs"
+import prepareChartProps from "./prepareChartProps"
 
 const ULMarkdown = (props) => {
     return (
@@ -42,37 +43,20 @@ var markdownComponents = {
         )
     },
     "chart": (props) => {
+        
+        // Get chart slug from children
         var chartSlug = _.get(props, "children[0]", false)
+
         if(chartSlug === false) {
             chartSlug = _.get(props, "node.properties.slug", false)
         }
         if(_.isString(chartSlug)) {
             chartSlug = chartSlug.trim()
         }
-        var chartProps = {}
 
-        var dateRange = false
+        var chartProps = prepareChartProps(props)
 
-        var startDate = _.get(props, "start_date", false)
-        var endDate = _.get(props, "end_date", false)
-
-        chartProps["endDate"] = endDate
-        if(startDate && endDate) {
-            startDate = dayjs(startDate)
-            endDate = dayjs(endDate)
-
-            dateRange = [startDate, endDate]
-        }
-
-        if(dateRange) {
-            chartProps["xDomain"] = dateRange
-        }
-
-        var overlay = _.get(props, "overlay", false)
-
-        if(module) {
-            chartProps["overlay"] = overlay
-        }
+        
 
 
         return (
@@ -93,30 +77,7 @@ var markdownComponents = {
         )
     },
     "modelchart": ({children, ...props}) => {
-        var chartProps = {}
-
-        var dateRange = false
-
-        var startDate = _.get(props, "start_date", false)
-        var endDate = _.get(props, "end_date", false)
-
-        chartProps["endDate"] = endDate
-        if(startDate && endDate) {
-            startDate = dayjs(startDate)
-            endDate = dayjs(endDate)
-
-            dateRange = [startDate, endDate]
-        }
-
-        if(dateRange) {
-            chartProps["xDomain"] = dateRange
-        }
-
-        var overlay = _.get(props, "overlay", false)
-
-        if(module) {
-            chartProps["overlay"] = overlay
-        }
+        var chartProps = prepareChartProps(props)
         return (
             <ModelChart
                 {...props}
