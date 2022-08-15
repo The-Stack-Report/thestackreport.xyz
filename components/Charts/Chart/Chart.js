@@ -8,6 +8,7 @@ import React, {
 import _ from "lodash"
 import {
     scaleLinear,
+    scaleLog,
     scaleTime
 } from "@visx/scale"
 import {
@@ -69,6 +70,7 @@ const Chart = React.memo((props) => {
         xDomain = "auto",
         yDomain = "auto",
         yAxisTickLabel = "",
+        yScaleType = "linear",
         width = "dynamic",
         xAxisLabel= "x-axis",
         noDataTooltipPlaceholder = "No data for date",
@@ -193,22 +195,37 @@ const Chart = React.memo((props) => {
     }, [xValues])
 
     const yValues = useMemo(() => {
+        if(type === "boxplot") {
+            return _data.map(p => {
+                return _.get(p, `${_columns[0]}.max`, 0)
+            })
+        }
         return _.flatten(_data.map(p => {
             return _columns.map(c => _.get(p, c, false))
         }))
-    }, [_data, _columns])
+    }, [_data, _columns, type])
 
     const yValuesForSelectedFilteredColumns = useMemo(() => {
+        if(type === "boxplot") {
+            return filteredData.map(p => {
+                return _.get(p, `${_columns[0]}.max`, 0)
+            })
+        }
         return _.flatten(filteredData.map(p => {
             return _filteredColumns.map(c => _.get(p, c, false))
         }))
-    }, [filteredData, _filteredColumns])
+    }, [filteredData, _filteredColumns, _columns, type])
 
     const yValuesFiltered = useMemo(() => {
+        if(type === "boxplot") {
+            return filteredData.map(p => {
+                return _.get(p, `${_columns[0]}.max`, 0)
+            })
+        }
         return _.flatten(filteredData.map(p => {
             return _columns.map(c => _.get(p, c, false))
         }))
-    }, [filteredData, _columns])
+    }, [filteredData, _columns, type])
 
     useEffect(() => {
         if(containerRef.current) {
@@ -340,35 +357,72 @@ const Chart = React.memo((props) => {
     }, [yValuesForSelectedFilteredColumns, yDomain])
 
     const yScale = useMemo(() => {
-        return scaleLinear({
-            range: [0, chart.height],
-            domain: _yDomainFiltered,
-            nice: true
-        })
-    }, [chart.height, _yDomainFiltered])
+        if(yScaleType === "log") {
+            return scaleLog({
+                range: [0, chart.height],
+                domain: [1/1000000, _yDomainFiltered[1]],
+                nice: true
+            })
+        } else {
+            return scaleLinear({
+                range: [0, chart.height],
+                domain: _yDomainFiltered,
+                nice: true
+            })
+        }
+        
+    }, [chart.height, _yDomainFiltered, yScaleType])
 
     const yScaleArea = useMemo(() => {
-        return scaleLinear({
-            range: [chart.height, 0],
-            domain: _yDomainFiltered,
-            nice: true
-        })
-    }, [chart.height, _yDomainFiltered])
+        if(yScaleType === "log") {
+            return scaleLog({
+                range: [0, chart.height],
+                domain: [1/1000000, _yDomainFiltered[1]],
+                nice: true
+            })
+        } else {
+            return scaleLinear({
+                range: [chart.height, 0],
+                domain: _yDomainFiltered,
+                nice: true
+            })
+        }
+        
+        
+    }, [chart.height, _yDomainFiltered, yScaleType])
 
     const yScaleTimeline = useMemo(() => {
-        return scaleLinear({
-            range: [0, timelineHeight],
-            domain: _yDomain
-        })
-    }, [timelineHeight, _yDomain])
+        if(yScaleType === "log") {
+            return scaleLog({
+                range: [0, timelineHeight],
+                domain: [1/1000000, _yDomainFiltered[1]],
+                nice: true
+            })
+        } else {
+            return scaleLinear({
+                range: [0, timelineHeight],
+                domain: _yDomain
+            })
+        }
+        
+    }, [timelineHeight, _yDomain, _yDomainFiltered, yScaleType])
 
     const yScaleTimelineArea = useMemo(() => {
-        return scaleLinear({
-            range: [timelineHeight, 0],
-            domain: _yDomain,
-            nice: true
-        })
-    }, [timelineHeight, _yDomain])
+        if(yScaleType === "log") {
+            return scaleLog({
+                range: [0, timelineHeight],
+                domain: [1/1000000, _yDomainFiltered[1]],
+                nice: true
+            })
+        } else {
+            return scaleLinear({
+                range: [timelineHeight, 0],
+                domain: _yDomain,
+                nice: true
+            })
+        }
+        
+    }, [timelineHeight, _yDomain, _yDomainFiltered, yScaleType])
 
     useEffect(() => {
         if(brushZoomInitialized === false) {

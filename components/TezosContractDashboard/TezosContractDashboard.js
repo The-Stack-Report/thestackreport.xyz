@@ -14,6 +14,7 @@ import {
     AccordionIcon
 } from "@chakra-ui/react"
 import ContractStatsCarousel from "./components/ContractStatsCarousel"
+import EntrypointsXtzStats from "./components/EntrypointsXtzStats"
 import AreaChart from "components/Charts/AreaChart"
 import Chart from "components/Charts/Chart"
 import { gridScale } from "utils/colorScales"
@@ -31,7 +32,7 @@ const grayScale = chroma.scale([
 
 const contractCallsChartDescription = _.trim(`
 Tezos *smart contracts* are programs that can run on the Tezos blockchain.
-Developers can implement any amount of *endpoints* which can be *called* through adding a transaction to the chain.
+Developers can implement any amount of *entrypoints* which can be *called* through adding a transaction to the chain.
 
 The above chart shows the amount of transactions per day that successfully *called* an entrypoint of the smart contract.
 
@@ -70,7 +71,8 @@ A common pattern is for example an NFT marketplace contract which is being calle
 
 const TezosContractDashboard = ({
     contract,
-    dailyStats
+    dailyStats,
+    xtzEntrypointsStats
 }) => {
     var cols = _.sortBy(dailyStats.entrypoints, "count").reverse().map(p => p.entrypoint)
 
@@ -231,6 +233,12 @@ const TezosContractDashboard = ({
                     title={"About transaction flow"}
                     textMd={flowDescription}
                     />
+            <Box minHeight="4rem" />
+            {xtzEntrypointsStats && (
+                <EntrypointsXtzStats
+                    contract={contract}
+                    xtzEntrypointsStats={xtzEntrypointsStats} />
+            )}
             <Box minHeight="8rem" />
         </div>
     )

@@ -8,8 +8,9 @@ import { curveLinear } from '@visx/curve'
 import chroma from "chroma-js"
 import dayjs from "dayjs"
 import _ from "lodash"
+import BoxPlot from "./types/BoxPlot"
 
-function dateKeyVal(val) {
+export function dateKeyVal(val) {
     return dayjs.isDayjs(val) ? val : dayjs(val)
 }
 
@@ -160,6 +161,17 @@ const DataColumns = ({
                             opacity={1}
                             stroke={colColor}
                             curve={curveLinear}
+                            />
+                    )
+                } else if(_type === "boxplot") {
+                    return (
+                        <BoxPlot
+                            data={data}
+                            prefix={c}
+                            xScale={xScale}
+                            yScale={yScale}
+                            xKey={xKey}
+                            chart={chart}
                             />
                     )
                 } else {
