@@ -111,7 +111,9 @@ const TopMenu = ({
                     zIndex="206"
                     pointerEvents="none"
                     />
-            <SlideFade direction="top" in={isOpen} offsetY={-100}>
+            <SlideFade direction="top" in={isOpen} offsetY={-100}
+                style={{pointerEvents: "none"}}
+                >
                 <Box
                     paddingTop="0.5rem"
                     paddingBottom="1rem"
@@ -122,7 +124,7 @@ const TopMenu = ({
                     zIndex="100"
                     >
                     <Container maxW="container.xl"
-                        pointerEvents="initial"
+                        pointerEvents={isOpen ? "initial" : "none"}
                         role="group"
                         _hover={{
                             background: "black"
@@ -152,7 +154,7 @@ const TopMenu = ({
                             <Container maxW="container.xl"
                                 cursor="pointer"
                                 key={section_i}
-                                pointerEvents="initial"
+                                pointerEvents={isOpen ? "initial" : "none"}
                                 role="group"
                                 _hover={{
                                     background: "black"

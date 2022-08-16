@@ -67,9 +67,11 @@ const ContractPage = ({
                 {error ? (
                     <React.Fragment>
                         <Text>{errorMessage}</Text>
+                        <Box height="0.5rem" />
                         <WrappedLink
                             href="/dashboards/tezos" 
                             fontSize="0.7rem"
+                            paddingTop="0.5rem"
                             >
                             Back to contract dashboards overview.
                         </WrappedLink>
@@ -79,7 +81,7 @@ const ContractPage = ({
                         <Box
                             position="absolute"
                             paddingTop={{
-                                base: "0rem",
+                                base: "0.5rem",
                                 md: "1rem"
                             }}
                             >
@@ -90,7 +92,7 @@ const ContractPage = ({
                         
                         <Heading
                             marginTop={{
-                                base: "2rem",
+                                base: "2.5rem",
                                 md: "4rem"
                             }}
                             fontWeight="thin"

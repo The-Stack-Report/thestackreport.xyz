@@ -57,6 +57,7 @@ const EntrypointsXtzStats = ({
                 columns={sumCols}
                 color={xtzScale}
                 yAxisTickLabel="xtz"
+                height={300}
                 />
             <Box minHeight="4rem" />
             <Chart
@@ -67,6 +68,7 @@ const EntrypointsXtzStats = ({
                 columns={medianCols}
                 color={xtzScale}
                 yAxisTickLabel="xtz"
+                height={300}
                 />
             <Box minHeight="4rem" />
             <Chart
@@ -77,6 +79,7 @@ const EntrypointsXtzStats = ({
                 columns={meanCols}
                 color={xtzScale}
                 yAxisTickLabel="xtz"
+                height={300}
                 />
             <Box minHeight="4rem" />
             <Chart
@@ -87,6 +90,7 @@ const EntrypointsXtzStats = ({
                 columns={maxColumns}
                 color={xtzScale}
                 yAxisTickLabel="xtz"
+                height={300}
                 />
         </Box>
     )
