@@ -47,6 +47,11 @@ const TopMenu = ({
         return currentOffset + scrollPosition - scrollPosition
     }, [menuRef, scrollPosition, onLoad])
 
+    var menuOpacity = menuOffset > 0 ? 0.5 : 1
+    if(onLoad === false) {
+        menuOpacity = 0
+    }
+
     return (
         <>
         <Box height={contentOffset}></Box>
@@ -64,7 +69,7 @@ const TopMenu = ({
                 }}
                 position="relative"
                 zIndex="205"
-                opacity={menuOffset > 0 ? 0.5 : 1}
+                opacity={menuOpacity}
                 >
                 <HamburgerIcon
                     position="absolute"
