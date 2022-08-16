@@ -79,7 +79,7 @@ const HoverLabelsOverlay = ({
                                 display="flex"
                                 >
                                 <Text
-                                    isTruncated
+                                    noOfLines={1}
                                     minWidth="80px"
                                     fontSize="0.7rem"
                                     padding="3px"

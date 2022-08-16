@@ -69,7 +69,7 @@ const ContractCard = React.memo(({
                             >
                             <Heading fontSize="xl"
                                 textDecoration="underline"
-                                isTruncated={true}
+                                noOfLines={1}
                                 maxW="100%"
                                 >
                                 <Highlighter
@@ -84,7 +84,7 @@ const ContractCard = React.memo(({
                     </div>
                     <div style={{width: "100%", overflow: "hidden", position: "relative", height: 30}}>
                         <Text fontSize="0.7rem"
-                            isTruncated={true}
+                            noOfLines={1}
                             color="gray.500"
                             >
                             <Highlighter

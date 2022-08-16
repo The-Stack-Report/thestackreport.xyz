@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, {Component} from 'react'
 
 class AnchorLink extends Component {
@@ -9,6 +10,9 @@ class AnchorLink extends Component {
     require('./smoothscroll').polyfill()
   }
   smoothScroll(e) {
+    if(_.has(this.props, "onSelectCallback")) {
+      this.props.onSelectCallback()
+    }
     e.preventDefault()
     let offset = () => 0
     if (typeof this.props.offset !== 'undefined') {
@@ -28,7 +32,7 @@ class AnchorLink extends Component {
     if (this.props.onClick) {this.props.onClick(e)}
   }
   render() {
-    const { offset, ...rest } = this.props;
+    const { offset, onSelectCallback, ...rest } = this.props;
     return (
       <a {...rest} onClick={this.smoothScroll} />
     )

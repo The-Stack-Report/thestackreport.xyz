@@ -10,7 +10,8 @@ import {
     Button,
     Text,
     Box,
-    Divider
+    Divider,
+    Code
 } from "@chakra-ui/react"
 import _ from "lodash"
 import dayjs from "dayjs"
@@ -40,6 +41,13 @@ var markdownComponents = {
                 >
             <DataBlockDynamic block_key={block_key} autoPlayOnLoad={false} />
             </Box>
+        )
+    },
+    "code": (props) => {
+        return (
+            <Code>
+                {props.children}
+            </Code>
         )
     },
     "chart": (props) => {

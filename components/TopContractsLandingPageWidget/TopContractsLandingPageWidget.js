@@ -57,7 +57,7 @@ const TopContractsLandingPageWidget = ({
                             position="relative"
                             >
                             <Text
-                                isTruncated
+                                noOfLines={1}
                                 fontSize="1.5rem"
                                 color="gray.500"
                                 fontWeight="light"

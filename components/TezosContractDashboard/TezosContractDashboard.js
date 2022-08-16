@@ -94,6 +94,8 @@ const TezosContractDashboard = ({
     var sentByDay = _.get(dailyStats, "sentByDay", [])
     if(_.isArray(sentByDay) && sentByDay.length === 0) sentByDay = false
 
+    console.log(dailyStats)
+
     return (
         <div className='tezos-contract-dashboard'>
             <InputGroup
@@ -234,10 +236,34 @@ const TezosContractDashboard = ({
                     textMd={flowDescription}
                     />
             <Box minHeight="4rem" />
-            {xtzEntrypointsStats && (
+
+            <Text id="xtz-statistics"
+                as="h2"
+                >
+                Contract XTZ statistics
+            </Text>
+            {xtzEntrypointsStats ? (
                 <EntrypointsXtzStats
                     contract={contract}
                     xtzEntrypointsStats={xtzEntrypointsStats} />
+            ) : (
+                <Text
+                    paddingTop="2rem"
+                    paddingBottom="2rem"
+                    textAlign="center"
+                    fontStyle="italic"
+                    >
+                    {_.get(dailyStats, "xtz_to_contract", false) == -1 ? (
+                        <>
+                        No XTZ statistics available for this contract. 
+                        </>
+                    ) : (
+                        <>
+                        Contract has {_.get(dailyStats, "xtz_to_contract", false)} xtz in and {_.get(dailyStats, "xtz_from_contract", false)} xtz out.
+                        Nothing to display.
+                        </>
+                    )}
+                </Text>
             )}
             <Box minHeight="8rem" />
         </div>

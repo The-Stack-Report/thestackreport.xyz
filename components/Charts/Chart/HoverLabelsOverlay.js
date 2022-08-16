@@ -141,7 +141,7 @@ const HoverLabelsOverlay = ({
                                 display="flex"
                                 >
                                 <Text
-                                    isTruncated
+                                    noOfLines={1}
                                     minWidth="100px"
                                     fontSize="0.7rem"
                                     padding="3px"

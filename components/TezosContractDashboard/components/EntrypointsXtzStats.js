@@ -23,6 +23,15 @@ xtzScale = chroma.scale([
     "rgb(220,220,220)"
 ])
 
+function sortColsByTotal(cols, data) {
+    return _.sortBy(cols.map(c => {
+        return {
+            c: c,
+            total: _.sum(data.map(p => _.get(p, c, 0)))
+        }
+    }), "total").map(c => c.c).reverse()
+}
+
 const EntrypointsXtzStats = ({
     contract,
     xtzEntrypointsStats
@@ -30,10 +39,10 @@ const EntrypointsXtzStats = ({
 
     var allCols = _.keys(_.first(xtzEntrypointsStats))
 
-    var medianCols = allCols.filter(p => p.endsWith("median"))
-    var meanCols = allCols.filter(p => p.endsWith("mean"))
-    var sumCols = allCols.filter(p => p.endsWith("sum"))
-    var maxColumns = allCols.filter(p => p.endsWith("max"))
+    var medianCols = sortColsByTotal(allCols.filter(p => p.endsWith("median")), xtzEntrypointsStats)
+    var meanCols = sortColsByTotal(allCols.filter(p => p.endsWith("mean")), xtzEntrypointsStats)
+    var sumCols = sortColsByTotal(allCols.filter(p => p.endsWith("sum")), xtzEntrypointsStats)
+    var maxColumns = sortColsByTotal(allCols.filter(p => p.endsWith("max")), xtzEntrypointsStats)
 
     var address = _.get(contract, "address", 'no-address')
     var alias = _.get(contract, "tzkt_account_data.alias", address)

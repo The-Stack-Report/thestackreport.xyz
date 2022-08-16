@@ -27,7 +27,6 @@ function xtzStatsPrepFunc(rawText) {
 
 function xtzUrl(address) {
     var url = `https://the-stack-report.ams3.digitaloceanspaces.com/datasets/tezos/contracts_daily_stats/${address}-entrypoints-daily-xtz-stats.csv`
-    console.log("fetch url: ", url)
     return url
 }
 
@@ -41,6 +40,10 @@ var ContractXtzChart = ({
             return resp.text()
         }
     })
+
+    const [metaData, setMetaData] = useState(false)
+    const [loadingMeta, setLoadingMeta] = useState(false)
+
     var preparedData = useMemo(() => {
         if(_.isString(data)) {
             return xtzStatsPrepFunc(data)
@@ -48,10 +51,43 @@ var ContractXtzChart = ({
             return false
         }
     }, [data])
+
+    useEffect(() => {
+        if(metaData === false && loadingMeta === false) {
+            setLoadingMeta(true)
+            fetch(`/api/contract?address=${address}`)
+                .then(resp => {
+                    if(resp.status === 200) {
+                        return resp.json()
+
+                    }
+                })
+                .then(metaDataResp => {
+                    setMetaData(metaDataResp)
+                })
+        }
+        
+    }, [metaData, loadingMeta, address])
+
+
+    if(isLoading === true || !_.isObject(metaData)) {
+        return (
+            <div style={{height: 200}}>
+                Loading {address}
+            </div>
+        )
+    }
+
+    var contract = metaData
+    
+
+    
     return (
         <div>
             {preparedData ? (
                 <ChartRenderer
+                    address={address}
+                    contract={contract}
                     data={preparedData}
                     view={view}
                     chartProps={chartProps}
@@ -65,29 +101,37 @@ var ContractXtzChart = ({
 }
 
 const ChartRenderer = ({
+    address,
     data,
+    contract,
     view,
     chartProps
 }) => {
     var defaultCols = _.keys(_.first(data)).filter(c => c.endsWith("sum"))
     var color = "black"
 
-
     var _props = {
 
     }
 
     var cols = defaultCols
-    console.log(chartProps)
     if(_.has(chartProps, "initialColumnToggles")) {
         cols = chartProps.initialColumnToggles
     }
+
+    cols = _.sortBy(cols.map(c => {
+        return {
+            c: c,
+            total: _.sum(data.map(p => _.get(p, c, 0)))
+        }
+    }), "total").map(c => c.c).reverse()
 
     _props = {
         ..._props,
         ...chartProps
     }
     return (
+        <>
         <Chart
             data={data}
             columns={cols}
@@ -98,6 +142,20 @@ const ChartRenderer = ({
             yAxisTickLabel="xtz"
             {..._props}
             />
+        <Text
+            fontSize="0.7rem"
+            textAlign="right"
+            marginBottom="1rem"
+            color="gray.500"
+            >
+            Dashboard:{" "}
+        <WrappedLink href={`/dashboards/tezos/contracts/${address}#xtz-statistics`}>
+            
+            {_.get(contract, "tzkt_account_data.alias", address)}
+            
+        </WrappedLink>
+        </Text>
+        </>
     )
 }
 
