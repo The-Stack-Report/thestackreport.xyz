@@ -19,6 +19,7 @@ import _ from "lodash"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"
 import { getUrl } from "utils/serverCache"
 import prepareDf from "utils/data/prepareDf"
+import InPageNavigator from "components/InPageNavigator"
 
 
 var sections = [
@@ -38,6 +39,10 @@ var sections = [
 
 var sectionsAsDict = {}
 
+sections.forEach(section => {
+    sectionsAsDict[section.id] = section
+})
+
 const ContractPage = ({
     error,
     errorMessage = "error-message-undefined",
@@ -54,8 +59,11 @@ const ContractPage = ({
                 <title>{`Dashboard - ${alias}`}</title>
                 <meta name="description" content="Dashboard page." />
             </Head>
-            <Box overflow="hidden">
-            <Container maxW="container.xl" paddingTop="8rem">
+            <InPageNavigator
+                sections={sections}
+                contentOffset={"8rem"}
+                >
+            <Container maxW="container.xl" paddingTop="7rem" id="page-top">
                 {error ? (
                     <React.Fragment>
                         <Text>{errorMessage}</Text>
@@ -102,6 +110,7 @@ const ContractPage = ({
                                     contract={contract_meta}
                                     dailyStats={dailyStats}
                                     xtzEntrypointsStats={xtzEntrypointsStats}
+                                    sectionsAsDict={sectionsAsDict}
                                     />
                             ) : (
                                 <Center
@@ -113,7 +122,7 @@ const ContractPage = ({
                     </React.Fragment>
                 )}
             </Container>
-            </Box>
+            </InPageNavigator>
         </PageLayout>
     )
 }

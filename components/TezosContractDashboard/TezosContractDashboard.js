@@ -72,7 +72,8 @@ A common pattern is for example an NFT marketplace contract which is being calle
 const TezosContractDashboard = ({
     contract,
     dailyStats,
-    xtzEntrypointsStats
+    xtzEntrypointsStats,
+    sectionsAsDict
 }) => {
     var cols = _.sortBy(dailyStats.entrypoints, "count").reverse().map(p => p.entrypoint)
 
@@ -93,8 +94,6 @@ const TezosContractDashboard = ({
 
     var sentByDay = _.get(dailyStats, "sentByDay", [])
     if(_.isArray(sentByDay) && sentByDay.length === 0) sentByDay = false
-
-    console.log(dailyStats)
 
     return (
         <div className='tezos-contract-dashboard'>
@@ -122,6 +121,7 @@ const TezosContractDashboard = ({
                 >
                 {`Dashboard displays historic contract data, refreshing daily. Showing data up to: ${xDomain[1].format("MMMM D, YYYY")}`}
             </Text>
+            <Box id={sectionsAsDict["contract-usage"].id} />
             <ContractStatsCarousel
                 contract={contract}
                 dailyStats={dailyStats}
@@ -224,6 +224,7 @@ const TezosContractDashboard = ({
             )}
             <Divider />
             <Box minHeight="6rem" />
+            <Box id={sectionsAsDict["contract-transaction-flow"].id} />
             <ContractTransactionFlow
                 contract={{
                     ...contract,
@@ -237,7 +238,7 @@ const TezosContractDashboard = ({
                     />
             <Box minHeight="4rem" />
 
-            <Text id="xtz-statistics"
+            <Text id={sectionsAsDict["contract-xtz-statistics"].id}
                 as="h2"
                 >
                 Contract XTZ statistics
