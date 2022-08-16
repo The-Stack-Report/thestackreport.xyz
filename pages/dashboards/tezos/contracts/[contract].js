@@ -20,6 +20,24 @@ import prepareContractDailyStats from "utils/data/contracts/prepareContractDaily
 import { getUrl } from "utils/serverCache"
 import prepareDf from "utils/data/prepareDf"
 
+
+var sections = [
+    {
+        title: "Contract usage",
+        id: "contract-usage"
+    },
+    {
+        title: "Transaction flow",
+        id: "contract-transaction-flow"
+    },
+    {
+        title: "XTZ statistics",
+        id: "contract-xtz-statistics"
+    }
+]
+
+var sectionsAsDict = {}
+
 const ContractPage = ({
     error,
     errorMessage = "error-message-undefined",

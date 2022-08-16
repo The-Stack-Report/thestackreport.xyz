@@ -47,7 +47,7 @@ const TopMenu = ({
 
     var menuOpacity = menuOffset > 0 ? 0.5 : 1
     if(onLoad === false) {
-        menuOpacity = 0.01
+        menuOpacity = 0
     }
 
     var usingSectionIndex = currentSectionIndex
@@ -74,7 +74,7 @@ const TopMenu = ({
                 }}
                 position="relative"
                 zIndex="205"
-                opacity={menuOffset > 0 ? 0.5 : 1}
+                opacity={menuOpacity}
                 >
                 <HamburgerIcon
                     position="absolute"
@@ -100,14 +100,6 @@ const TopMenu = ({
                     {_.get(currentSection, "title", "-")}
                 </Text>
             </Container>
-        </Box>
-        </>
-    )
-    return (
-        <>
-        
-            
-                
             <Box height={0} overflow="visible" position="relative" zIndex="-1" top="0px">
             <Box position="absolute"
                     height="300px"
@@ -197,6 +189,7 @@ const TopMenu = ({
                 </Box>
             </SlideFade>
             </Box>
+        </Box>
         </>
     )
 }
