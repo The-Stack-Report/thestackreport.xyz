@@ -22,11 +22,9 @@ const TopMenu = ({
     const [menuDimensions, setMenuDimensions] = useState(false)
     const { isOpen, onToggle, onClose } = useDisclosure()
     const [onLoad, setOnLoad] = useState(false)
-  
-    var currentSection = useMemo(() => {
-        var sectionsWithIndex = [{title: "Contents"}].concat(sections)
-        return _.get(sectionsWithIndex, currentSectionIndex, false)
-    }, [sections, currentSectionIndex])
+
+
+   
 
 
     useEffect(() => {
@@ -49,8 +47,15 @@ const TopMenu = ({
 
     var menuOpacity = menuOffset > 0 ? 0.5 : 1
     if(onLoad === false) {
-        menuOpacity = 0
+        menuOpacity = 0.01
     }
+
+    var usingSectionIndex = currentSectionIndex
+    if(onLoad === false) {
+        usingSectionIndex = 0
+    }
+    var sectionsWithIndex = [{title: "Contents"}].concat(sections)
+    var currentSection = _.get(sectionsWithIndex, usingSectionIndex, false)
 
     return (
         <>
@@ -69,7 +74,7 @@ const TopMenu = ({
                 }}
                 position="relative"
                 zIndex="205"
-                opacity={menuOpacity}
+                opacity={menuOffset > 0 ? 0.5 : 1}
                 >
                 <HamburgerIcon
                     position="absolute"
@@ -92,9 +97,17 @@ const TopMenu = ({
                     <Text as="span" color="gray.500" fontStyle="italic">
                         Current section:{" "}
                     </Text>
-                    {currentSection.title}
+                    {_.get(currentSection, "title", "-")}
                 </Text>
             </Container>
+        </Box>
+        </>
+    )
+    return (
+        <>
+        
+            
+                
             <Box height={0} overflow="visible" position="relative" zIndex="-1" top="0px">
             <Box position="absolute"
                     height="300px"
@@ -184,7 +197,6 @@ const TopMenu = ({
                 </Box>
             </SlideFade>
             </Box>
-        </Box>
         </>
     )
 }
