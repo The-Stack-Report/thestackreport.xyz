@@ -87,7 +87,11 @@ const InPageNavigator = ({
                 scrollPosition={scrollPosition}
                 />
         )}
-        <Box marginTop={contentContainerOffset} paddingTop={contentPadding}>
+        <Box
+            marginTop={contentContainerOffset}
+            paddingTop={contentPadding}
+            overflow="hidden"
+            >
             {children}
         </Box>
         </>
