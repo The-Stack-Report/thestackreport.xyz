@@ -10,6 +10,7 @@ import {
 import Chart from "components/Charts/Chart"
 import _ from "lodash"
 import chroma from "chroma-js"
+import MarkdownWrapper from "components/MarkdownWrapper"
 
 var xtzScale = chroma.scale([
     "rgb(10,35,190)",
@@ -31,6 +32,23 @@ function sortColsByTotal(cols, data) {
         }
     }), "total").map(c => c.c).reverse()
 }
+
+const sumChartDescription = _.trim(`
+Daily *sum* of xtz exchanged, split by in/out and contract entrypoint. 
+`)
+
+const medianChartDescription = _.trim(`
+*Median* xtz value in and out per contract entrypoint call, per day. 
+`)
+
+const meanChartDescription = _.trim(`
+The *mean* (or average) of xtz value in and out per contract entrypoint call, per day. 
+`)
+
+const maxChartDescription = _.trim(`
+*Max* xtz value in and out per contract call, per day. Look at this chart to find when the largest transactions in terms of xtz exchanged occurred.
+`)
+
 
 const EntrypointsXtzStats = ({
     contract,
@@ -80,6 +98,9 @@ const EntrypointsXtzStats = ({
                 color={xtzScale}
                 yAxisTickLabel="xtz"
                 height={300}
+                />
+            <MarkdownWrapper
+                markdownText={medianChartDescription}
                 />
             <Box minHeight="4rem" />
             <Chart
