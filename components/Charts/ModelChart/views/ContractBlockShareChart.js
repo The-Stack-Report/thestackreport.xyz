@@ -109,8 +109,8 @@ const ContractBlockShareChart = ({
                             height={200}
                             timelineBrush={true}
                             badgesLegend={true}
-                            noDataTooltipPlaceholder={"No calls for date: "}
-                            badgesLegendText = "Nr of calls to entrypoints"
+                            noDataTooltipPlaceholder={"No share percentage for date: "}
+                            badgesLegendText="Block space by"
                             yAxisTickLabel={"%"}
                             yTickCount={2}
 
@@ -148,8 +148,8 @@ const ContractBlockShareChart = ({
                             height={200}
                             timelineBrush={true}
                             badgesLegend={true}
-                            noDataTooltipPlaceholder={"No calls for date: "}
-                            badgesLegendText = "Nr of calls to entrypoints"
+                            noDataTooltipPlaceholder={"No baker fee percentage for date: "}
+                            badgesLegendText = "Baker fee share"
                             yAxisTickLabel={"%"}
                             yTickCount={2}
                             {..._props}
