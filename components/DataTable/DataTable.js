@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import {
     Box,
     Text,
@@ -14,7 +14,7 @@ import _ from "lodash"
 
 const DataTable = ({
     data,
-    columns,
+    columns = false,
     columnNames = false,
     customColumns = {}
 }) => {

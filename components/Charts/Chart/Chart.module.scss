@@ -1,6 +1,9 @@
 .chart {
     position: relative;
     user-select: none;
+    svg {
+        overflow: visible;
+    }
     .tooltip-group {
         transition: transform 0.2s;
         .value-mark {

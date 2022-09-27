@@ -24,6 +24,7 @@ import BadgesLegend from "components/Charts/components/BadgesLegend"
 import chroma from "chroma-js"
 import AccordionExplainer from "components/AccordionExplainer"
 import ContractTransactionFlow from "components/ContractTransactionFlow"
+import StatsByEntrypoint from "./components/StatsByEntrypoint"
 
 const grayScale = chroma.scale([
     "rgb(0,0,0)",
@@ -94,6 +95,15 @@ const TezosContractDashboard = ({
 
     var sentByDay = _.get(dailyStats, "sentByDay", [])
     if(_.isArray(sentByDay) && sentByDay.length === 0) sentByDay = false
+
+    var tableKeys = [
+        "sum",
+        "max",
+        "median",
+        "mean"
+    ]
+
+
 
     return (
         <div className='tezos-contract-dashboard'>
@@ -267,6 +277,16 @@ const TezosContractDashboard = ({
                 </Text>
             )}
             <Box minHeight="8rem" />
+            {false && (
+              <>
+                <StatsByEntrypoint
+                    contract={contract}
+                    dailyStats={dailyStats}
+                    />
+                <Box minHeight="8rem" />
+              </>  
+            )}
+            
         </div>
     )
 }

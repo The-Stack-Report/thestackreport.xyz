@@ -1,6 +1,18 @@
 import _ from "lodash"
 import React from "react"
 
+
+var axisRoundingMultiples = [
+	{
+		multiple: 1_000_000,
+		text: "M"
+	},
+	{
+		multiple: 1_000_000_000,
+		text: "B"
+	}
+]
+
 const AxisRight = ({
 	chart,
 	yScale,
@@ -9,6 +21,14 @@ const AxisRight = ({
 	yAxisTickLabel = "",
 	dimValues
 }) => {
+	var domainTop = yScale.domain()[1]
+
+	var topMultiple = axisRoundingMultiples.filter(m => m.multiple < domainTop)
+	topMultiple = _.last(topMultiple)
+
+	var multipleRounding = _.get(topMultiple, "multiple", 1)
+	var multipleText = _.get(topMultiple, "text", "")
+
 	return (
 		<g transform={`translate(${chart.width}, 0)`} >
 			{yScale.ticks(ticks).map((t, t_i, t_a) => {
@@ -18,6 +38,13 @@ const AxisRight = ({
 				if(labelsPosition === "inside" && dimValues && t_i < t_a.length - 1) {
 					tickLabelOpacity = 0.1
 				}
+				var roundedTickValue = t
+
+				if (multipleRounding !== 0) {
+					roundedTickValue = _.round(t / multipleRounding, 1)
+				}
+				roundedTickValue = roundedTickValue.toLocaleString()
+				var tickLabelString = `${roundedTickValue}${multipleText} ${yAxisTickLabel}`
 				return (
 					<g transform={`translate(0, ${chart.height - yScale(t)})`}
 						key={t_i}
@@ -29,9 +56,7 @@ const AxisRight = ({
 									y={-5}
 									fontSize="0.8rem"
 									>
-									{t.toLocaleString()}
-									{" "}
-									{yAxisTickLabel}
+									{tickLabelString}
 								</text>
 								<line
 									x1={5}
@@ -52,9 +77,7 @@ const AxisRight = ({
 									textAnchor="end"
 									opacity={tickLabelOpacity}
 									>
-									{t.toLocaleString()}
-									{" "}
-									{yAxisTickLabel}
+									{tickLabelString}
 								</text>
 							</React.Fragment>
 						)}
