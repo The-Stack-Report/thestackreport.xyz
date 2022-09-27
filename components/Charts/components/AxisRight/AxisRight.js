@@ -40,7 +40,7 @@ const AxisRight = ({
 				}
 				var roundedTickValue = t
 
-				if (multipleRounding !== 0) {
+				if (multipleRounding !== 1) {
 					roundedTickValue = _.round(t / multipleRounding, 1)
 				}
 				roundedTickValue = roundedTickValue.toLocaleString()

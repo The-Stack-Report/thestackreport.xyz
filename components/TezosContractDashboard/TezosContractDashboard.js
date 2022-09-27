@@ -25,49 +25,19 @@ import chroma from "chroma-js"
 import AccordionExplainer from "components/AccordionExplainer"
 import ContractTransactionFlow from "components/ContractTransactionFlow"
 import StatsByEntrypoint from "./components/StatsByEntrypoint"
+import PatternDivider from "components/PatternDivider"
+
+import contractCallsChartDescription from "./content/contractCallsChartDescription"
+import usageChartDescription from "./content/usageChartDescription"
+import sentTransactionsDescription from "./content/sentTransactionsDescription"
+import flowDescription from "./content/flowDescription"
+import bakerFeesChartDescription from "./content/bakerFeesChartDescription"
+import blockSpaceShareDescription from "./content/blockSpaceShareDescription"
 
 const grayScale = chroma.scale([
     "rgb(0,0,0)",
     "rgb(150,150,150)"
 ])
-
-const contractCallsChartDescription = _.trim(`
-Tezos *smart contracts* are programs that can run on the Tezos blockchain.
-Developers can implement any amount of *entrypoints* which can be *called* through adding a transaction to the chain.
-
-The above chart shows the amount of transactions per day that successfully *called* an entrypoint of the smart contract.
-
-
-`)
-
-const usageChartDescription = _.trim(`
-Contracts can be called by any type of account on the Tezos blockchain. There are currently two main types of accounts: 'wallet' accounts and 'contract' accounts.
-
-When a wallet account calls a smart contract, this usually comes from an interaction with a dApp interface which is then approved by the user in their Wallet app.
-In the case of a smart contract calling another smart contract, this usually comes from the smart contract code executing some sort of function.
-
-The above chart shows the number of *wallets* calling the contract per day 
-and the number of *contracts* calling the contract per day.
-
-For more explanation on account types, see: [opentezos.operations](https://opentezos.com/tezos-basics/operations/)
-
-
-`)
-
-const sentTransactionsDescription = _.trim(`
-When smart contract entrypoints are called, the smart contract code can generate new transactions targetting other wallets or smart contract entrypoints.
-The above chart displays these historic transactions for the top 100 accounts/entrypoints being targetted.
-`)
-
-const flowDescription = _.trim(`
-The above visual shows three elements combined. The first table contains the top accounts (both wallets and other contracts) that generate transactions targetting this contract.
-
-The central pie chart displays the distribution of entrypoints being called by those accounts.
-
-Calling an entrypoint triggers the smart contract code to run. This might trigger new transactions coming from that smart contract code. These transactions can have other targets again.
-
-A common pattern is for example an NFT marketplace contract which is being called by various wallets and generates transactions that are then targetting the NFT contract. 
-`)
 
 
 const TezosContractDashboard = ({
@@ -103,7 +73,7 @@ const TezosContractDashboard = ({
         "mean"
     ]
 
-
+    console.log(dailyStats)
 
     return (
         <div className='tezos-contract-dashboard'>
@@ -138,7 +108,7 @@ const TezosContractDashboard = ({
                 />
             <Text
                 fontWeight="bold"
-                marginTop="2rem"
+                marginTop="3rem"
                 as="h1"
                 >
                 Contract calls per entrypoint
@@ -166,7 +136,7 @@ const TezosContractDashboard = ({
            
             {_.isArray(usage) && (
                 <>
-                <Divider />
+                <PatternDivider />
                 <Text
                     fontWeight="bold"
                     marginTop="2rem"
@@ -200,10 +170,9 @@ const TezosContractDashboard = ({
                     />
                 </>
             )}
-
             {_.isArray(sentByDay) && (
                 <>
-                <Divider />
+                <PatternDivider />
                 <Text
                     fontWeight="bold"
                     marginTop="2rem"
@@ -232,8 +201,7 @@ const TezosContractDashboard = ({
                     />
                 </>
             )}
-            <Divider />
-            <Box minHeight="6rem" />
+            <PatternDivider />
             <Box id={sectionsAsDict["contract-transaction-flow"].id} />
             <ContractTransactionFlow
                 contract={{
@@ -247,16 +215,135 @@ const TezosContractDashboard = ({
                     textMd={flowDescription}
                     />
             <Box minHeight="4rem" />
+            <PatternDivider />
+            
+            {_.has(dailyStats.blockSpaceStatsByDay[0], "contract_call_share_percentage") ? (
+                <>
+                <Box id={sectionsAsDict["baker-fees"].id} />
+                <Text
+                    fontWeight="bold"
+                    marginTop="2rem"
+                    as="h1"
+                    >
+                    Baker fees
+                </Text>
+                <Chart
+                    name=" "
+                    data={dailyStats.blockSpaceStatsByDay}
+                    dataHash={contract_address}
+                    type="line"
+                    columns={[
+                        "baker_fee_xtz_sum"
+                    ]}
+                    height={200}
+                    yTickCount={2}
+                    color={grayScale}
+                    yAxisTickLabel={"xtz"}
+                    timelineBrush={true}
+                    badgesLegend={true}
+                    badgesLegendText = "Total xtz paid as baker fee."
+                    />
+                <Chart
+                    name=" "
+                    data={dailyStats.blockSpaceStatsByDay}
+                    dataHash={contract_address}
+                    type="line"
+                    columns={[
+                        "baker_fee_xtz_median"
+                    ]}
+                    height={200}
+                    yTickCount={2}
+                    color={grayScale}
+                    yAxisTickLabel={"xtz"}
+                    timelineBrush={true}
+                    badgesLegend={true}
+                    badgesLegendText = "Median xtz paid as baker fee."
+                    />
+                <Chart
+                    name=" "
+                    data={dailyStats.blockSpaceStatsByDay}
+                    dataHash={contract_address}
+                    type="line"
+                    columns={[
+                        "baker_fee_xtz_max"
+                    ]}
+                    height={200}
+                    yTickCount={2}
+                    color={grayScale}
+                    yAxisTickLabel={"xtz"}
+                    timelineBrush={true}
+                    badgesLegend={true}
+                    badgesLegendText = "Max xtz paid as baker fee."
+                    />
+                <AccordionExplainer
+                    title="About baker fee statistics."
+                    textMd={bakerFeesChartDescription}
+                    />
 
+                    
+                <PatternDivider />
+                <Box id={sectionsAsDict["block-share"].id} />
+                <Text
+                    fontWeight="bold"
+                    marginTop="2rem"
+                    as="h1"
+                    >
+                    Block share
+                </Text>
+                <Chart
+                    name=" "
+                    data={dailyStats.blockSpaceStatsByDay}
+                    dataHash={contract_address}
+                    type="line"
+                    columns={[
+                        "contract_call_share_percentage",
+                        "transaction_share_percentage"
+                    ]}
+                    height={200}
+                    yTickCount={2}
+                    color={grayScale}
+                    yAxisTickLabel={"%"}
+                    timelineBrush={true}
+                    badgesLegend={true}
+                    />
+                <Chart
+                    name=" "
+                    data={dailyStats.blockSpaceStatsByDay}
+                    dataHash={contract_address}
+                    type="line"
+                    columns={[
+                        "baker_fee_share_percentage"
+                    ]}
+                    height={200}
+                    yTickCount={2}
+                    color={grayScale}
+                    yAxisTickLabel={"%"}
+                    timelineBrush={true}
+                    badgesLegend={true}
+                    />
+                <AccordionExplainer
+                    title="About block space statistics."
+                    textMd={blockSpaceShareDescription}
+                    />
+
+                </>
+            ) : (
+                <Text>Block share data not calculated yet for contract.</Text>
+            )}
+            
+            <PatternDivider />
             <Text id={sectionsAsDict["contract-xtz-statistics"].id}
                 as="h2"
                 >
                 Contract XTZ statistics
             </Text>
             {xtzEntrypointsStats ? (
+                <>
+                
                 <EntrypointsXtzStats
                     contract={contract}
                     xtzEntrypointsStats={xtzEntrypointsStats} />
+                </>
             ) : (
                 <Text
                     paddingTop="2rem"

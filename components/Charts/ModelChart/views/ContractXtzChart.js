@@ -14,7 +14,6 @@ import _ from "lodash"
 
 function xtzStatsPrepFunc(rawText) {
     var rawDf = d3.csvParse(rawText)
-    console.log(rawDf)
     var nrCols = _.keys(_.first(rawDf)).filter(c => c !== "date")
     var preppedData = prepareDf(
         rawDf,

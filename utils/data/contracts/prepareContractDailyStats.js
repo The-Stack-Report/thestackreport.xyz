@@ -29,6 +29,14 @@ function prepareContractDailyStats(dailyStatsRaw, contract) {
 
     var usageStats = false
 
+    var blockSpaceStatsByDay = dailyStatsRaw.by_day.map(p => {
+        var blockSpaceSource = _.get(p, "block_space", {})
+        return {
+            ...blockSpaceSource,
+            date: p.date
+        }
+    })
+
     if(usage_by_day) {
         usageStats = prepareUsageStats(usage_by_day)
     }
@@ -81,6 +89,7 @@ function prepareContractDailyStats(dailyStatsRaw, contract) {
         ...dailyStatsRaw,
         entrypointsTotals: entrypointsStats.totals,
         byDay: entrypointsStats.byDay,
+        blockSpaceStatsByDay: blockSpaceStatsByDay,
         dataDomain: [0, maxVal],
         entrypoints: entrypoints,
         usageByDay: usageStats,

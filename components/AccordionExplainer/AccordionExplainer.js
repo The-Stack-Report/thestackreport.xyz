@@ -21,14 +21,15 @@ const AccordionExplainer = ({
     textMd = ""
 }) => {
     return (
-        <Accordion allowToggle marginTop="1rem" marginBottom="2rem">
+        <Accordion allowToggle marginTop="1rem" marginBottom="2rem" border="0px solid transparent">
                 <AccordionItem>
                     <h3>
                         <AccordionButton>
-                            <Box flex='1' textAlign="left" fontWeight="bold" fontSize="0.8rem">
-                                {title}<Text fontWeight="light" color="gray.500" as="span">{` (click to expand)`}</Text>
+                        <AccordionIcon />
+                            <Box flex='1' textAlign="right" fontWeight="bold" fontSize="0.8rem">
+                                {title}<Text fontWeight="light" color="gray.500" as="span" paddingRight="0.5rem">{` (click to expand) `}</Text>
                             </Box>
-                            <AccordionIcon />
+                            
                         </AccordionButton>
                     </h3>
                     <AccordionPanel pb={4}>

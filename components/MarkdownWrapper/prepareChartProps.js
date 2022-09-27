@@ -9,6 +9,7 @@ function prepareChartProps(props) {
     var endDate = _.get(props, "end_date", false)
 
     chartProps["endDate"] = endDate
+
     if(startDate && endDate) {
         startDate = dayjs(startDate)
         endDate = dayjs(endDate)

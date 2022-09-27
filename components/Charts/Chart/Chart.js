@@ -71,6 +71,7 @@ const Chart = React.memo((props) => {
         yDomain = "auto",
         yAxisTickLabel = "",
         yScaleType = "linear",
+        yTickCount = 5,
         width = "dynamic",
         xAxisLabel= "x-axis",
         noDataTooltipPlaceholder = "No data for date",
@@ -92,6 +93,8 @@ const Chart = React.memo((props) => {
         overlay = [],
         endDate = false
     } = props
+    
+    
     const _data = useMemo(() => {
         return data.map(p => {
             return {
@@ -588,6 +591,7 @@ const Chart = React.memo((props) => {
                                     xScale={xScale}
                                     yScale={yScale}
                                     chart={chart}
+                                    yTickCount={yTickCount}
                                     />
                                 <DataColumns {...dataColumnsProps} />
                                 <HoverTooltip
@@ -607,6 +611,7 @@ const Chart = React.memo((props) => {
                                     labelsPosition={xAxisLabelsPosition}
                                     yAxisTickLabel={yAxisTickLabel}
                                     dimValues={overlay === "weekly_trend"}
+                                    ticks={yTickCount}
                                     />
                                 <AxisBottom
                                     xScale={xScale}

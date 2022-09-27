@@ -32,6 +32,15 @@ var sections = [
         id: "contract-transaction-flow"
     },
     {
+        title: "Baker fees",
+        id: "baker-fees"
+    },
+    {
+        title: "Block share",
+        id: "block-share"
+    },
+    
+    {
         title: "XTZ statistics",
         id: "contract-xtz-statistics"
     }

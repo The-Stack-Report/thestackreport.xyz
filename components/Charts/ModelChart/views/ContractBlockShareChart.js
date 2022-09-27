@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import useFetch from "react-fetch-hook"
+import _ from "lodash"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"
 import Chart from "components/Charts/Chart"
 import { gridScale, grayScale } from "utils/colorScales"
@@ -10,8 +11,7 @@ import {
     Text
 } from "@chakra-ui/react"
 
-
-var ContractUsageChart = ({
+const ContractBlockShareChart = ({
     address,
     view,
     chartProps
@@ -50,19 +50,15 @@ var ContractUsageChart = ({
         ...metaData,
         ..._contract
     }
-    
-    const sortPosition = _.get(contract, "sort_positions.by_calls_past_14_days", false)
-    var color = "black"
-    if(_.isNumber(sortPosition)) {
-        color = gridScale(_.clamp(sortPosition / 100, 0, 1))
-    }
-
-    var cols = _.sortBy(contract.entrypoints, "count").reverse().map(p => p.entrypoint)
 
     var xDomain = [
         _.first(contract.byDay),
         _.last(contract.byDay)
     ].map(d => dayjs(d.date))
+
+    if(_.has(chartProps, "endDate") && chartProps.endDate) {
+        xDomain[1] = dayjs(chartProps.endDate)
+    }
 
     var _props = {
         xDomain: xDomain
@@ -74,8 +70,7 @@ var ContractUsageChart = ({
         ...chartProps
     }
 
-    var usage = _.get(contract, "usageByDay", [])
-    if(_.isArray(usage) && usage.length === 0) usage = false
+    console.log(chartProps, _props)
 
     return (
         <div>
@@ -83,9 +78,8 @@ var ContractUsageChart = ({
                 <p>Loading data for {address}</p>
             ) : (
                 <>
-                
-                {view === "entrypoints-daily" && (
-                    <>
+                    {view === "transaction-share" && (
+                        <>
                         <Text
                             fontWeight="bold"
                             fontSize="0.8rem"
@@ -94,7 +88,7 @@ var ContractUsageChart = ({
                             as="span"
                             fontWeight="light"
                             >
-                            Entrypoints called{" "}
+                            Block share in transactions{" "}
                             </Text>
                             <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
                             {_.get(contract, "tzkt_account_data.alias", address)}
@@ -102,76 +96,70 @@ var ContractUsageChart = ({
                         </Text>
                         <Chart
                             name=" "
-                            data={contract.byDay}
+                            data={contract.blockSpaceStatsByDay}
                             dataHash={address}
-                            type="area"
-                            columns={cols}
+                            type="line"
+                            columns={[
+                                "contract_call_share_percentage",
+                                "transaction_share_percentage"
+                            ]}
                             xKey={"date"}
                             width={"dynamic"}
-                            color={color}
-                            height={300}
+                            color={grayScale}
+                            height={200}
                             timelineBrush={true}
                             badgesLegend={true}
                             noDataTooltipPlaceholder={"No calls for date: "}
                             badgesLegendText = "Nr of calls to entrypoints"
+                            yAxisTickLabel={"%"}
+                            yTickCount={2}
+
                             {..._props}
                             />
-                    </>
-                )}
-                {view === "accounts-active-daily" && (
-                    <>
-                    <Text
-                        fontWeight="bold"
-
-                        fontSize="0.8rem"
-                        >
+                        </>
+                    )}
+                    {view === "fee-share" && (
+                        <>
                         <Text
-                        as="span"
-                        fontWeight="light"
-                        >
-                        Accounts using{" "}
+                            fontWeight="bold"
+                            fontSize="0.8rem"
+                            >
+                            <Text
+                            as="span"
+                            fontWeight="light"
+                            >
+                            Block share in baker fees{" "}
+                            </Text>
+                            <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
+                            {_.get(contract, "tzkt_account_data.alias", address)}
+                            </WrappedLink>
                         </Text>
-                        <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
-                        {_.get(contract, "tzkt_account_data.alias", address)}
-                        </WrappedLink>
-                    </Text>
-                    <Chart
-                        name=" "
-                        data={usage}
-                        dataHash={address}
-                        type="line"
-                        columns={[
-                            "wallets_sending_transactions",
-                            "contracts_sending_transactions"
-                        ]}
-                        color={grayScale}
-                        xKey="date"
-                        height={250}
-                        timelineBrush={true}
-                        badgesLegend={true}
-                        noDataTooltipPlaceholder={"No accounts active for date: "}
-                        badgesLegendText = "Nr of accounts active, split by wallet/contract."
-                        {..._props}
-                        />
-                    </>
-                )}
-                <Text
-                        fontSize="0.7rem"
-                        textAlign="right"
-                        marginBottom="1rem"
-                        color="gray.500"
-                        >
-                        Dashboard:{" "}
-                <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
-                    
-                    {_.get(contract, "tzkt_account_data.alias", address)}
-                    
-                </WrappedLink>
-                </Text>
+                        <Chart
+                            name=" "
+                            data={contract.blockSpaceStatsByDay}
+                            dataHash={address}
+                            type="line"
+                            columns={[
+                                "baker_fee_share_percentage"
+                            ]}
+                            xKey={"date"}
+                            width={"dynamic"}
+                            color={grayScale}
+                            height={200}
+                            timelineBrush={true}
+                            badgesLegend={true}
+                            noDataTooltipPlaceholder={"No calls for date: "}
+                            badgesLegendText = "Nr of calls to entrypoints"
+                            yAxisTickLabel={"%"}
+                            yTickCount={2}
+                            {..._props}
+                            />
+                        </>
+                    )}
                 </>
             )}
         </div>
     )
 }
 
-export default ContractUsageChart
+export default ContractBlockShareChart

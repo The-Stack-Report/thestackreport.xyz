@@ -37,7 +37,7 @@ const HoverLabelsOverlay = ({
 
     var boxWidth = 300
 
-    
+    var yDomainMax = yScale.domain()[1]
 
     var columnsToShow = columns.map((col, col_i) => {
         var colVal = _.get(hoveredData, col, false)
@@ -124,8 +124,8 @@ const HoverLabelsOverlay = ({
                         if(colValue > 1000) {
                             colValueRounded = _.round(colValueRounded)
                         }
-                        var colValueLabel = ""
-                        if(_.isNumber(colValue)) {
+                        var colValueLabel = `${colValueRounded}`
+                        if(_.isNumber(colValue) && yDomainMax > 1) {
                             colValueLabel = colValue.toLocaleString()
                             if(colValue !== colValueRounded) {
                                 colValueLabel = `~${colValueRounded.toLocaleString()}`
