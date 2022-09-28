@@ -44,7 +44,8 @@ const sortOptions = [
 ]
 
 function searchTezosContractsApi(search, sortKey) {
-    return fetch(`/api/contracts?search_term=${search}&sort_key=${sortKey}`).then(resp => {
+    var windowLocation = _.get(window, "location", 'no-window-location')
+    return fetch(`/api/contracts?search_term=${search}&sort_key=${sortKey}&from_domain=${windowLocation}`).then(resp => {
         if(resp.status === 200) {
             return resp.json()
         } else {
@@ -89,7 +90,6 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
             setSearchResults(false)
             var search_term_param = getUrlParam("search_term")
             if(!_.isNull(search_term_param)) {
-                console.log("removing param")
                 removeQueryParamsFromRouter(router, ["search_term"])
 
             }
