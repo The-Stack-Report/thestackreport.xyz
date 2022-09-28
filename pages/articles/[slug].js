@@ -60,6 +60,10 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                 <meta name="twitter:creator" content="@thestackreport" />
                 <meta name="twitter:description" content={_.get(attrs, "description", "not-found")} />
                 <meta name="twitter:image" content={bannerImgSrc} />
+
+                <meta name="og:title" content={_.get(attrs, "Title", "Not-found")} />
+                <meta name="og:image" content={bannerImgSrc} />
+                <meta name="og:description" content={_.get(attrs, "description", "not-found")} />
             </Head>
             <Box overflow="hidden">
                 {error ? (
