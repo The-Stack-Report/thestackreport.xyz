@@ -49,7 +49,7 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
         <PageLayout>
             <Head>
                 <title>{_.get(attrs, "Title", "Not-found")}</title>
-                <meta name="description" content={_.get(attrs, "description", "not-found")} />
+                <meta name="description" content={_.get(attrs, "meta_description", "not-found")} />
                 <script type="application/ld+json"
                     dangerouslySetInnerHTML={{__html: JSON.stringify(googleNewsJson)}}
                     />
@@ -58,12 +58,12 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                 <meta name="twitter:site" content="@thestackreport" />
                 <meta name="twitter:title" content={_.get(attrs, "Title", "Not-found")} />
                 <meta name="twitter:creator" content="@thestackreport" />
-                <meta name="twitter:description" content={_.get(attrs, "description", "not-found")} />
+                <meta name="twitter:description" content={_.get(attrs, "meta_description", "not-found")} />
                 <meta name="twitter:image" content={bannerImgSrc} />
 
                 <meta name="og:title" content={_.get(attrs, "Title", "Not-found")} />
                 <meta name="og:image" content={bannerImgSrc} />
-                <meta name="og:description" content={_.get(attrs, "description", "not-found")} />
+                <meta name="og:description" content={_.get(attrs, "meta_description", "not-found")} />
             </Head>
             <Box overflow="hidden">
                 {error ? (

@@ -70,8 +70,6 @@ const ContractBlockShareChart = ({
         ...chartProps
     }
 
-    console.log(chartProps, _props)
-
     return (
         <div>
             {isLoading ? (
