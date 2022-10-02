@@ -45,6 +45,7 @@ export default async function handler(req, res) {
         domain: from_domain,
         action: "search contract API",
         value: _.toString(search_term),
+        category: "search",
         ts: new Date()
     })
 

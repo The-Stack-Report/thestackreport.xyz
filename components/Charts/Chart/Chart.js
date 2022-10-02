@@ -43,10 +43,14 @@ import chroma from "chroma-js"
 import DataColumns from "./DataColumns"
 import TimelineBrush from "./TimelineBrush"
 import BadgesLegend from "components/Charts/components/BadgesLegend"
+import ChartNotes from "./overlays/ChartNotes"
 import { snapToEndOfDay } from "utils/snapFunctions"
 import { exportAsImage } from "utils/exportAsImage"
 import isTouchEnabled from "utils/isTouchEnabled"
 import WeeklyTrend from "./overlays/WeeklyTrend"
+import isBetween from "dayjs/plugin/isBetween"
+
+dayjs.extend(isBetween)
 
 function dateKeyVal(val) {
     return dayjs.isDayjs(val) ? val : dayjs(val)
@@ -85,7 +89,8 @@ const Chart = React.memo((props) => {
     
         timelineBrush = false,
         timelineHeight = 30,
-    
+        custom_note = false,
+        notes = false,
         columnToggles = false,
         badgesLegend = false,
         badgesLegendText = " ",
@@ -93,8 +98,7 @@ const Chart = React.memo((props) => {
         overlay = [],
         endDate = false
     } = props
-    
-    
+        
     const _data = useMemo(() => {
         return data.map(p => {
             return {
@@ -427,6 +431,39 @@ const Chart = React.memo((props) => {
         
     }, [timelineHeight, _yDomain, _yDomainFiltered, yScaleType])
 
+
+
+    /**
+     * Prepare chart notes
+     */
+
+    const allChartNotes = useMemo(() => {
+        var allNotes = []
+        if(custom_note) {
+            if(_.isArray(custom_note)) {
+                allNotes = allNotes.concat(custom_note)
+            } else {
+                allNotes.push(custom_note)
+            }
+        }
+        if(_.isArray(notes)) {
+            allNotes = allNotes.concat(notes)
+        }
+        return allNotes
+    }, [custom_note, notes, _xDomainFiltered])
+    
+    const chartNotesInXRange = useMemo(() => {
+        
+        return allChartNotes.filter(note => {
+            if(_.has(note, "date") && dayjs.isDayjs(note.date)) {
+                return note.date.isBetween(_xDomainFiltered[0], _xDomainFiltered[1]) 
+            } else {
+                return false
+            }
+            
+        })
+    }, [ allChartNotes])
+
     useEffect(() => {
         if(brushZoomInitialized === false) {
             setBrushZoomInitialized(true)
@@ -535,9 +572,27 @@ const Chart = React.memo((props) => {
                     marginBottom: _.get(_containerMargins, "bottom"),
                     marginRight: _.get(_containerMargins, "right"),
                 }}
+                paddingTop={allChartNotes.length > 0 ? "10px" : "0px"}
                 >
                 {_.isNumber(_width) && (
                     <>
+                    <Box position="absolute" left="0px" right="0px"
+                        style={{
+                            marginLeft: _.get(_margins, "left"),
+                            marginTop: _.get(_margins, "top"),
+                            marginBottom: _.get(_margins, "bottom"),
+                            marginRight: _.get(_margins, "right")
+                        }}
+                        zIndex={-1}
+                        opacity={hovered ? 0.2 : 1}
+                        >
+                        <ChartNotes
+                                notes={chartNotesInXRange}
+                                xScale={xScale}
+                                yScale={yScale}
+                                chart={chart}
+                                />
+                    </Box>
                     <Box
                         pointerEvents="none"
                         style={{
@@ -571,7 +626,25 @@ const Chart = React.memo((props) => {
                             yScale={yScale}
                             colColors={colColors}
                             />
+                        
                     </Box>
+                    <svg width={_width} height={_height}
+                        style={{
+                            position: "absolute",
+                            zIndex: -3
+                        }}
+                        >
+                        <g transform={`translate(${_margins.left}, ${margins.top})`}>
+                            <g style={{pointerEvents: "none"}}>
+                            <Grid
+                                xScale={xScale}
+                                yScale={yScale}
+                                chart={chart}
+                                yTickCount={yTickCount}
+                                />
+                            </g>
+                        </g>
+                    </svg>
                     <svg width={_width} height={_height}>
                         
                         <g transform={`translate(${_margins.left}, ${margins.top})`}>
@@ -587,12 +660,7 @@ const Chart = React.memo((props) => {
                             
                             
                             
-                                <Grid
-                                    xScale={xScale}
-                                    yScale={yScale}
-                                    chart={chart}
-                                    yTickCount={yTickCount}
-                                    />
+                                
                                 <DataColumns {...dataColumnsProps} />
                                 <HoverTooltip
                                     data={_data}

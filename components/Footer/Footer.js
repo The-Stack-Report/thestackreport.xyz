@@ -46,8 +46,8 @@ const Footer = () => {
                             Categories
                         </WrappedLink>
                         <br />
-                        <WrappedLink href="/data_blocks" >
-                            {"Charts & Visuals"}
+                        <WrappedLink href="/dashboards/tezos" >
+                            {"Dashboards"}
                         </WrappedLink>
                         <br />
                         <WrappedLink href="/datasets" >

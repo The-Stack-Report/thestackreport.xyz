@@ -30,7 +30,7 @@ const FeaturedArticleBanner = ({ article }) => {
         bannerImgSrc = placeholderImg
     }
     return (
-        <div style={{position: "relative", borderBottom: "1px solid black"}}>
+        <div style={{position: "relative", borderBottom: "1px solid black", userSelect: "none"}}>
             <div style={{
                 minHeight: 400
             }}>
@@ -93,6 +93,7 @@ const FeaturedArticleBanner = ({ article }) => {
                                     md: "2rem",
                                     lg: "3rem"
                                 }}
+                                userSelect="initial"
                                 >
                                 {title}
                             </Link>

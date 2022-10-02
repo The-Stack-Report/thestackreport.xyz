@@ -2,6 +2,7 @@ import '../styles/globals.css'
 import { ChakraProvider } from '@chakra-ui/react'
 import { extendTheme } from '@chakra-ui/react'
 import PlausibleProvider from 'next-plausible'
+import { WalletContextProvider } from "components/Wallet"
 import _ from 'lodash'
 
 const colors = {
@@ -101,22 +102,28 @@ const theme = extendTheme({
 
 function MyApp({ Component, pageProps }) {
   console.log("app render Component: ", _.get(Component, "name"))
+
+  var pageContent = (
+    <ChakraProvider theme={theme}>
+      <WalletContextProvider>
+        <Component {...pageProps} />
+      </WalletContextProvider>
+    </ChakraProvider>
+  )
   if(process.env.NEXT_PUBLIC_ANALYTICS == "true") {
     return (
       <PlausibleProvider
         domain="thestackreport.xyz"
         >
-      <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
-      </ChakraProvider>
+        {pageContent}
       </PlausibleProvider>
     )
   } else {
     console.log("render without wrapping.")
     return (
-      <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
-      </ChakraProvider>
+        <>
+          {pageContent}
+        </>
     )
   }
   

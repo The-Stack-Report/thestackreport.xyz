@@ -1,0 +1,53 @@
+@keyframes slideAnim {
+    0% {
+        left: -10px;
+        opacity: 0;
+    }
+    10% {
+        left: 0px;
+        opacity: 1;
+    }
+    90% {
+        left: 0px;
+        opacity: 1;
+    }
+    100% {
+        left: 10px;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeoutAnim {
+    0% {
+        left: 0px;
+        opacity: 1;
+    }
+    85% {
+        left: 0px;
+        opacity: 1;
+    }
+    100% {
+        left: 50px;
+        opacity: 0;
+    }
+}
+
+.wallet-menu-widget {
+    overflow: hidden;
+    .connect-label-icon {
+        animation-name: slideAnim;
+        animation-duration: 3s;
+        transition: left 0s;
+        animation-iteration-count: infinite;
+    }
+
+    .disconnect-success-message {
+        position: relative;
+        animation-name: fadeoutAnim;
+        animation-duration: 4s;
+        animation-iteration-count: 1;
+        left: 50px;
+        opacity: 0;
+        border-radius: 0.25rem;
+    }
+}

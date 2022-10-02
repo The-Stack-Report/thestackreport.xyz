@@ -6,6 +6,9 @@ import Link from 'next/link'
 import {
     Text
 } from "@chakra-ui/react"
+import {
+    WalletMenuWidget
+} from "components/Wallet"
 
 
 const MainMenu = () => {
@@ -29,6 +32,9 @@ const MainMenu = () => {
             </div>
             <div className={styles["ticker-container"]}>
                 <Ticker />
+            </div>
+            <div className={styles["wallet-menu-widget-container"]}>
+                <WalletMenuWidget />
             </div>
         </div>
     )

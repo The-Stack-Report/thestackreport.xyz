@@ -33,6 +33,25 @@ function prepareChartProps(props) {
 
     }
 
+    if(_.has(props, "custom_note")) {
+        var customNoteParsed = props.custom_note
+        console.log(customNoteParsed)
+
+        customNoteParsed = JSON.parse(customNoteParsed)
+
+        if(_.isArray(customNoteParsed)) {
+            customNoteParsed = customNoteParsed.map(note => {
+                return {
+                    ...note,
+                    date: dayjs(note.date)
+                }
+            })
+        } else {
+            customNoteParsed['date'] = dayjs(customNoteParsed['date'])
+        }
+        chartProps["custom_note"] = customNoteParsed
+    }
+
     return chartProps
 }
 

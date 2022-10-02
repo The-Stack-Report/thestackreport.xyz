@@ -1,5 +1,4 @@
 .main-menu {
-    font-weight: 200;
     border-bottom: 1px solid rgba(200,200,200,1);
     background: rgba(255,255,255,1);
     position: absolute;
@@ -27,6 +26,12 @@
         max-width: 100%;
         overflow: hidden;
         border-top:  1px solid rgba(200,200,200,1);
+    }
+
+    .wallet-menu-widget-container {
+        height: 0px;
+        overflow: visible;
+        position: relative;
     }
 }
 
