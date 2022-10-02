@@ -450,7 +450,7 @@ const Chart = React.memo((props) => {
             allNotes = allNotes.concat(notes)
         }
         return allNotes
-    }, [custom_note, notes, _xDomainFiltered])
+    }, [custom_note, notes])
     
     const chartNotesInXRange = useMemo(() => {
         
@@ -462,7 +462,7 @@ const Chart = React.memo((props) => {
             }
             
         })
-    }, [ allChartNotes])
+    }, [ allChartNotes, _xDomainFiltered])
 
     useEffect(() => {
         if(brushZoomInitialized === false) {

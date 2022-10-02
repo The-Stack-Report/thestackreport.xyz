@@ -3,12 +3,9 @@ import PageLayout from "components/PageLayout"
 import {
     Container
 } from "@chakra-ui/layout"
-import {
-    Box,
-    Heading
-} from "@chakra-ui/react"
 import { WALLET_CONNECTION } from "constants/feature_flags"
 import AccountInformation from "components/AccountInformation"
+import WrappedLink from "components/WrappedLink"
 
 
 const ConnectedAccountPage = () => {
