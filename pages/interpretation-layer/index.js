@@ -8,10 +8,9 @@ import {
     Heading,
     Text
 } from "@chakra-ui/react"
-import { CMS_URL } from 'constants/cms'
 import _ from "lodash"
 import MarkdownWrapper from "components/MarkdownWrapper"
-import { interpretationLayerContent } from "./interpretation-layer-content"
+import { interpretationLayerContent } from "content/interpretation-layer-content"
 
 const InterpretationLayerPage = ({ pageContent }) => {
     return (
