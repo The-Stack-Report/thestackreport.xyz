@@ -14,7 +14,9 @@ import {
 } from "constants/cms"
 
 const ArticleCard = ({
-    article
+    article,
+    height="14rem",
+    marginBottom="0.5rem"
 }) => {
     const attrs = article.attributes
     const authors = _.get(attrs, "authors.data", false)
@@ -31,12 +33,12 @@ const ArticleCard = ({
             >
             <Box key={article.id}
                 border={"1px solid black"}
-                marginBottom="0.5rem"
+                marginBottom={marginBottom}
                 cursor={"pointer"}
                 _hover={{
                     top: 0
                 }}
-                height={"14rem"}
+                height={height}
                 position="relative"
                 role="group"
                 >

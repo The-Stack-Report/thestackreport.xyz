@@ -11,6 +11,7 @@ import { CMS_URL } from 'constants/cms'
 import _ from "lodash"
 import WrappedLink from "components/WrappedLink"
 import dayjs from "dayjs"
+import ArticleCard from "components/ArticleCard"
 
 const CategoriesPage = ({ categories }) => {
     return (
@@ -51,6 +52,8 @@ const CategoriesPage = ({ categories }) => {
 
                         articles = _.sortBy(articles, "published").reverse()
 
+                        var categoryTitle = attrs.Category
+
                         return (
                             <Box
                                 key={category.id}
@@ -62,7 +65,7 @@ const CategoriesPage = ({ categories }) => {
                                     fontWeight="bold"
                                     marginBottom="0.5rem"
                                     >
-                                    {attrs.Category}
+                                    {categoryTitle}
                                 </Heading>
                                 <Box
                                     paddingLeft="1rem"
@@ -72,6 +75,14 @@ const CategoriesPage = ({ categories }) => {
                                 {articles.length > 0 ? (
                                     <div>
                                     {articles.map(article => {
+
+                                        if (categoryTitle === "Deep dives") {
+                                            return (
+                                                <Box key={article.id} marginBottom="0rem">
+                                                <ArticleCard article={article} height="10rem" marginBottom="-1rem" />
+                                                </Box>
+                                            )
+                                        }
                                         return (
                                             <Box marginBottom="1rem"
                                                 key={article.id}
