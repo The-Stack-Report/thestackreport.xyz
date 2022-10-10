@@ -113,7 +113,7 @@ export async function getServerSideProps(context) {
         const categoriesResp = await fetch(CMS_URL + "/categories?populate=*")
         const categories = await categoriesResp.json()
 
-        var categoriesList = _.get(categories, "data", [])
+        var categoriesList = _.get(categories, "data", []).reverse()
 
 
         return {

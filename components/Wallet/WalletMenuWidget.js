@@ -37,11 +37,6 @@ const WalletMenuWidget = () => {
         width: "100%"
     }
     
-    if(WALLET_CONNECTION === false) {
-        return (
-            <></>
-        )
-    }
 
     var displayName = accountName
     if(accountNameDisplayMode === "address") {
@@ -54,8 +49,12 @@ const WalletMenuWidget = () => {
 
     console.log(walletContext)
 
+    console.log(WALLET_CONNECTION)
+
     return (
-        <Box className={styles["wallet-menu-widget"]} >
+        <>
+        {WALLET_CONNECTION && (
+            <Box className={styles["wallet-menu-widget"]} >
             {walletContext.connectionState === ACCOUNT_ACTIVE ? (
                 <>
                 <Box {...containerBoxProps}>
@@ -284,6 +283,9 @@ const WalletMenuWidget = () => {
                 </>
             )}
         </Box>
+        )}
+        </>
+        
     )
 }
 

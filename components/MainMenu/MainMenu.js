@@ -9,9 +9,11 @@ import {
 import {
     WalletMenuWidget
 } from "components/Wallet"
+import { WALLET_CONNECTION } from "constants/feature_flags"
 
 
 const MainMenu = () => {
+    console.log("Main menu wallet connection: ", WALLET_CONNECTION)
     return (
         <div className={styles["main-menu"]}>
             <h1>
@@ -34,7 +36,9 @@ const MainMenu = () => {
                 <Ticker />
             </div>
             <div className={styles["wallet-menu-widget-container"]}>
-                <WalletMenuWidget />
+                {WALLET_CONNECTION && (
+                    <WalletMenuWidget />
+                )}
             </div>
         </div>
     )

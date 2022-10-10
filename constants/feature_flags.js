@@ -1,12 +1,14 @@
 // Boolean toggles to quickly toggle on/off specific website features.
 
 
-const ENVIRONMENT = process.env.ENVIRONMENT
+const NEXT_PUBLIC_ENVIRONMENT = process.env.NEXT_PUBLIC_ENVIRONMENT
 
-console.log("Environment: ", ENVIRONMENT)
+console.log("NEXT_PUBLIC_ENVIRONMENT: ", NEXT_PUBLIC_ENVIRONMENT)
+console.log("NEXT_PUBLIC_ENVIRONMENT === 'development': ", NEXT_PUBLIC_ENVIRONMENT === "development")
 
-export const WALLET_CONNECTION = ENVIRONMENT === "production" ? false : true
+export const WALLET_CONNECTION = NEXT_PUBLIC_ENVIRONMENT === "development" ? true : false
+console.log("WALLET_CONNECTION: ", WALLET_CONNECTION)
 
-export const INTERPRETATION_LAYER = ENVIRONMENT === "production" ? false : true
+export const INTERPRETATION_LAYER = NEXT_PUBLIC_ENVIRONMENT === "development" ? true : false
 
-export const INTERPRETATION_LAYER_CHART_NOTES = ENVIRONMENT === "production" ? false : true
+export const INTERPRETATION_LAYER_CHART_NOTES = NEXT_PUBLIC_ENVIRONMENT === "development" ? true : false
