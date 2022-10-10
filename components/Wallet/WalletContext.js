@@ -153,7 +153,7 @@ export const WalletContextProvider = ({ children }) => {
 
             })
         }
-    }, [activeAccount, signInState])
+    }, [activeAccount, signInState, permissions])
 
     /**
      * Disconnect timer to temporarily show a disconnect notification

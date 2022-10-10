@@ -34,7 +34,7 @@ const EditableControls = ({ setIsEditing, revertNote }) => {
 
     useEffect(() => {
         setIsEditing(isEditing)
-    }, [isEditing])
+    }, [isEditing, setIsEditing])
 
     return isEditing ? (
         <Box
@@ -70,13 +70,15 @@ const ChartNote = ({ note }) => {
     const [editedNoteText, setEditedNoteText] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
 
-    const isEditable = useMemo(() => {
-        // get current wallet account
-        // check if wallet account is authorized to access interpretation layer
-        // check if wallet account is owner of current note
-        return true
-        return false
-    })
+    // const isEditable = useMemo(() => {
+    //     // get current wallet account
+    //     // check if wallet account is authorized to access interpretation layer
+    //     // check if wallet account is owner of current note
+    //     return true
+    //     return false
+    // })
+
+    const isEditable = false
 
     var editableValue = useMemo(() => {
         if (editedNoteText !== false) {
@@ -160,7 +162,6 @@ const ChartNote = ({ note }) => {
                     position="absolute"
                     top={`-12px`}
                     left="0rem"
-                    left="right"
                     fontWeight="bold"
                     fontSize="0.6rem"
                     color="black"
