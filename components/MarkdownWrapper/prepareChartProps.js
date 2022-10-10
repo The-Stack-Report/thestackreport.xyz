@@ -48,7 +48,15 @@ function prepareChartProps(props) {
             })
         } else {
             customNoteParsed['date'] = dayjs(customNoteParsed['date'])
+            customNoteParsed = [customNoteParsed]
         }
+
+        customNoteParsed = customNoteParsed.map(note => {
+            return {
+                ...note,
+                noteSource: "custom_markdown"
+            }
+        })
         chartProps["custom_note"] = customNoteParsed
     }
 

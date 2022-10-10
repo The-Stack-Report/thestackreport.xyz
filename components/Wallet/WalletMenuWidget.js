@@ -32,11 +32,9 @@ const WalletMenuWidget = () => {
     var accountName = _.get(walletContext, "displayName", '-')
 
     var containerBoxProps = {
-        paddingTop: "0.25rem",
+        justifyContent: "end",
         display: "flex",
-        width: "100%",
-        alignItems: "end",
-        textAlign: "right"
+        width: "100%"
     }
     
     if(WALLET_CONNECTION === false) {
@@ -49,18 +47,15 @@ const WalletMenuWidget = () => {
     if(accountNameDisplayMode === "address") {
         displayName = walletContext.address
     }
+    var isSafari = false
+    if (typeof window !== "undefined") {
+        isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    }
+
+    console.log(walletContext)
 
     return (
-        <Box
-            
-            position="absolute"
-            top="0px"
-            right="3px"
-            left="3px"
-            className={styles["wallet-menu-widget"]}
-            
-            >
-            
+        <Box className={styles["wallet-menu-widget"]} >
             {walletContext.connectionState === ACCOUNT_ACTIVE ? (
                 <>
                 <Box {...containerBoxProps}>
@@ -122,12 +117,44 @@ const WalletMenuWidget = () => {
                 <RepeatIcon
                     marginTop="-0.2rem"
                     marginLeft="-7px"
-                    
                     />
 
                 </Text>
                 </Box>
-                <Box {...containerBoxProps}>
+                {walletContext.signInState === "init" && (
+                    <Box {...containerBoxProps} paddingTop="0.5rem">
+                        <Button
+                            background="white"
+                            color="black"
+                            width="fluid"
+                            fontSize="0.8rem"
+                            padding="0.25rem"
+                            paddingLeft="0.8rem"
+                            paddingRight="0.8rem"
+                            border="0px solid transparent"
+                            borderRadius="0.25rem"
+                            size="sm"
+                            onPointerDown={() => {
+                                walletContext.setSignInState("ready-for-signature-request")
+                            }}
+                            >
+                            Get signature
+                        </Button>
+                    </Box>
+                )}
+                {_.includes(["ready-for-signature-request", "triggered"], walletContext.signInState) && (
+                    <Box {...containerBoxProps} paddingTop="0.25rem">
+                        <Text
+                            color="black"
+                            background="rgba(255,255,255,0.8)"
+                            padding="0.25rem"
+                            fontSize="0.8rem"
+                            >
+                            Waiting for wallet response
+                        </Text>
+                    </Box>
+                )}
+                <Box {...containerBoxProps} paddingTop="0.25rem">
                 <Button
                     size="small"
                     onPointerDown={() => {
@@ -153,46 +180,62 @@ const WalletMenuWidget = () => {
                     <LinkIcon marginLeft="0.6rem" />
                 </Button>
                 </Box>
+                <Box {...containerBoxProps}>
+                {(walletContext.signInState === "sign-in-error") && (
+                        <Text
+                            background="rgb(220,20,10)"
+                            width="fluid"
+                            color="white"
+                            fontSize="0.8rem"
+                            fontWeight="bold"
+                            marginLeft="auto"
+                            paddingLeft="0.25rem"
+                            className={styles["sign-in-error-message"]}
+                            >
+                            Sign in error.
+                        </Text>
+                    )}
+                </Box>
                 </>
             ) : (
                 <>
                 <Box {...containerBoxProps} >
-                    <Box width="fluid" marginLeft="auto">
-                    <WrappedLink href="/interpretation-layer"
-                        display="inline-block"
-                        textDecoration="none"
-                        _hover={{
-                            background: "transparent",
-                            color: "white",
-                            textDecoration: "underline",
-                            borderRadius: "0.25rem"
-                        }}
-                        borderRadius="0.25rem"
-                        >
-                        <Text
-                            color="white"
-                            fontSize="0.8rem"
-                            position="relative"
-                            top="-0px"
-                            left="-5px"
-                            background="rgba(0,0,0,0.5)"
-                            padding="0.14rem"
-                            paddingLeft="1rem"
-                            paddingRight="1rem"
-                            borderRadius="0.25rem"
-                            overflow="hidden"
-                            userSelect="none"
-                            >
-                            {"Interpretation layer "}
-                            <ArrowForwardIcon
+                        <Box>
+                            <WrappedLink href="/interpretation-layer"
+                                display="inline-block"
+                                textDecoration="none"
+                                _hover={{
+                                    background: "transparent",
+                                    color: "white",
+                                    textDecoration: "underline",
+                                    borderRadius: "0.25rem"
+                                }}
+                                borderRadius="0.25rem"
+                                >
+                            <Text
+                                color="white"
+                                fontSize="0.8rem"
                                 position="relative"
-                                top="-1px"
-                                className={styles["connect-label-icon"]}
-                                />
-                        </Text>
-                        </WrappedLink>
+                                left="-5px"
+                                background="rgba(0,0,0,0.5)"
+                                padding="0.14rem"
+                                paddingLeft="1rem"
+                                paddingRight="1rem"
+                                borderRadius="0.25rem"
+                                overflow="hidden"
+                                userSelect="none"
+                                >
+                                {"Interpretation layer "}
+                                <ArrowForwardIcon
+                                    position="relative"
+                                    top="-1px"
+                                    className={styles["connect-label-icon"]}
+                                    />
+                            </Text>
+                            </WrappedLink>
 
-                    </Box>
+                        </Box>
+                    <Box>
                     <Button
                         size="small"
                         onPointerDown={() => {
@@ -206,14 +249,22 @@ const WalletMenuWidget = () => {
                         width="fluid"
                         border="0px solid transparent"
                         borderRadius="0.25rem"
+                        marginBottom="0px"
+                        outline="none"
+                        outlineOffset="0px"
+                        verticalAlign="top"
+                        overflow="visible"
+
+                        marginTop={isSafari ? "0.15rem" : "0rem"}
                         >
                         Connect wallet{" "}
                         <LinkIcon
                             marginLeft="0.6rem"
                             />
                     </Button>
+                    </Box>
                 </Box>
-                <Box {...containerBoxProps}>
+                <Box {...containerBoxProps} paddingTop={isSafari ? "0.25rem" : "0rem"}>
                     {(walletContext.disconnectSuccessful) && (
                         <Text
                             background="rgb(10,205,10)"

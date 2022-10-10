@@ -34,6 +34,7 @@
 
 .wallet-menu-widget {
     overflow: hidden;
+    padding: 5px;
     .connect-label-icon {
         animation-name: slideAnim;
         animation-duration: 3s;
@@ -48,6 +49,10 @@
         animation-iteration-count: 1;
         left: 50px;
         opacity: 0;
+        border-radius: 0.25rem;
+    }
+
+    .sign-in-error-message {
         border-radius: 0.25rem;
     }
 }

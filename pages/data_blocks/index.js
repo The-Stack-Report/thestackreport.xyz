@@ -4,13 +4,26 @@ import { Container } from '@chakra-ui/layout'
 import {
     Heading,
     Input,
-    Text
+    Text,
+    Box,
+    Button
 } from "@chakra-ui/react"
 import { connectToDatabase } from "utils/mongo_db"
 import _ from "lodash"
 import PageLayout from 'components/PageLayout'
 import BlocksGrid from "components/BlocksGrid"
 import useDebounce from "utils/useDebounce"
+import MarkdownWrapper from "components/MarkdownWrapper"
+import WrappedLink from "components/WrappedLink"
+
+const replacementMessage = _.trim(`
+The Data Blocks were an experiment in pre-rendered charts but is currently discontinued.
+Instead, a new more scalable and more creative approach for social sharing of charts and metrics is being developed.
+
+In the mean time, check out the [dashboards](/dashboards/tezos) for the latest data visualizations with continuously updating metrics.
+
+`)
+
 
 
 function searchBlocksApi(search) {
@@ -73,6 +86,14 @@ const DataBlocksCatalogPage = ({ blocks }) => {
                     >
                     Data blocks
                 </Heading>
+
+                <Box padding="1rem" boxShadow="md" border="1px solid rgb(220,220,220)" borderRadius="5px" marginBottom="2rem">
+                    <MarkdownWrapper markdownText={replacementMessage} />
+
+                    <WrappedLink href="/dashboards/tezos">
+                        <Button>Dashboards</Button>
+                    </WrappedLink>
+                </Box>
                 <Input
                     placeholder="search visuals"
                     type="text"

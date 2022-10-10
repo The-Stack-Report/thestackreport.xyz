@@ -35,7 +35,7 @@ end_date="2021-11-01"
 model="contract"
 _key="KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"
 view="entrypoints-daily"
-custom_note='[{"note":"Second #Objkt4Objkt event", "date": "2021-09-10"}, {"note": "first #Objkt4objkt event.", "date": "2021-04-25"}]'
+custom_note='[{"note":"Second #Objkt4Objkt event", "date": "2021-09-10"}, {"note":"New marketplace contract", "date": "2021-06-29"}, {"note": "first #Objkt4objkt event.", "date": "2021-04-25"}]'
 end_date="2021-11-01"
 />
 </div>

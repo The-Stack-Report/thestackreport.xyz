@@ -30,6 +30,8 @@ export function createRequestPermissions({
         logWalletEvent,
 
         setActiveAccount,
+        setSignInState,
+        setPermissions,
         setConnectionState
     }) {
     return function requestPermissions() {
@@ -43,6 +45,7 @@ export function createRequestPermissions({
         })
 
         _requestPermissions(dAppClient).then(resp => {
+            console.log("wallet request permissions:")
             console.log(resp)
             if(resp.connectionError) {
                 setConnectionState(CONNECTION_ERROR)
@@ -69,6 +72,8 @@ export function createRequestPermissions({
                 dAppClient.getActiveAccount().then(activeAccount => {
                     if(_.isObject(activeAccount) && _.has(activeAccount, "address")) {
                         setActiveAccount(activeAccount)
+                        setSignInState("ready-for-signature-request")
+                        setPermissions(resp.permissions)
                         setConnectionState(ACCOUNT_ACTIVE)
 
                         logWalletEvent({

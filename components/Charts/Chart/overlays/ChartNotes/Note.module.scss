@@ -1,0 +1,9 @@
+.note-group {
+    .note-position-container {
+        transition: top 0.1s;
+    }
+    .note-source-label {
+        transition: top 0.1s;
+        z-index: -1;
+    }
+}

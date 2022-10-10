@@ -128,6 +128,8 @@ const TezosContractDashboard = ({
                 badgesLegend={true}
                 noDataTooltipPlaceholder={"No calls for date: "}
                 badgesLegendText = "Nr of calls to entrypoints"
+                noteEditingEnabled={true}
+                chartId={`${contract_address}-daily-entrypoint-calls`}
                 />
             <AccordionExplainer
                 title={"About smart contract entrypoints"}

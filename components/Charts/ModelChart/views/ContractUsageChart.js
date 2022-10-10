@@ -89,6 +89,7 @@ var ContractUsageChart = ({
                         <Text
                             fontWeight="bold"
                             fontSize="0.8rem"
+                            paddingBottom="2rem"
                             >
                             <Text
                             as="span"
@@ -114,6 +115,8 @@ var ContractUsageChart = ({
                             badgesLegend={true}
                             noDataTooltipPlaceholder={"No calls for date: "}
                             badgesLegendText = "Nr of calls to entrypoints"
+                            noteEditingEnabled={true}
+                            chartId={`${address}-daily-entrypoint-calls`}
                             {..._props}
                             />
                     </>

@@ -3,6 +3,7 @@
     user-select: none;
     svg {
         overflow: visible;
+        pointer-events: none;
     }
     .tooltip-group {
         transition: transform 0.2s;

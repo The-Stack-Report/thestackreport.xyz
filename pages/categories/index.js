@@ -42,7 +42,15 @@ const CategoriesPage = ({ categories }) => {
                     >
                     {categories.map((category) => {
                         const attrs = category.attributes
-                        const articles = _.get(attrs, "articles.data", [])
+                        var articles = _.get(attrs, "articles.data", []).map((article) => {
+                            return {
+                                ...article,
+                                published: _.get(article, "attribures.published", false)
+                            }
+                        })
+
+                        articles = _.sortBy(articles, "published").reverse()
+
                         return (
                             <Box
                                 key={category.id}
@@ -104,9 +112,13 @@ export async function getServerSideProps(context) {
     try {
         const categoriesResp = await fetch(CMS_URL + "/categories?populate=*")
         const categories = await categoriesResp.json()
+
+        var categoriesList = _.get(categories, "data", [])
+
+
         return {
             props: {
-                categories: _.get(categories, "data", [])
+                categories: categoriesList
             }
         }
     } catch(err) {

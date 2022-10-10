@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react"
+import React, { useState, useEffect, useRef, useMemo, useContext } from "react"
 import {
     Box,
     Button,
@@ -16,8 +16,10 @@ import _ from "lodash"
 import {
     dataInDateRange
 } from "utils/dataRangeUtils"
+import { ChartContext } from "components/Charts/Chart/Chart"
 
 const PATTERN_ID = 'brush_pattern';
+
 
 const selectedBrushStyle = {
     fill: `url(#${PATTERN_ID})`,
@@ -35,6 +37,7 @@ const TimelineBrush = ({
     xScaleFull,
     height= 30
 }) => {
+    const chartContext = useContext(ChartContext)
     const brushRef = useRef(null)
 
     const [touchEnabled, setTouchEnabled] = useState("initialized")
@@ -115,7 +118,7 @@ const TimelineBrush = ({
     }
     return (
         <Box>
-            <svg width={width} height={height}>
+            <svg width={width} height={height} style={{pointerEvents: "initial"}} >
                 <g transform={`translate(${margins.left}, 0)`}>
                     <PatternLines
                         id={PATTERN_ID}
@@ -144,8 +147,21 @@ const TimelineBrush = ({
                             height={yBrushMax}
                             handleSize={8}
                             margin={brushMargins}
+                            onBrushStart={() => {
+                                chartContext.setControllingZoomBrush(true)
+                            }}
+                            onBrushEnd={() => {
+                                chartContext.setControllingZoomBrush(false)
+                            }}
                             onChange={onBrushChange}
-                            onPointerDown={() => setFilteredData(dataColumnsProps.data)}
+                            onPointerDown={() => {
+                                setFilteredData(dataColumnsProps.data)
+                                chartContext.setControllingZoomBrush(true)
+
+                            }}
+                            onPointerUp={() => {
+                                chartContext.setControllingZoomBrush(false)
+                            }}
                             initialBrushPosition={initialBrushPosition}
                             selectedBoxStyle={selectedBrushStyle}
                             useWindowMoveEvents
@@ -206,6 +222,7 @@ const TimelineBrush = ({
                         brushRef.current.reset();
                     }
                     }}
+                    pointerEvents="initial"
                     size="small"
                     padding="0.3rem"
                     fontSize="0.8rem"

@@ -49,6 +49,8 @@ import { exportAsImage } from "utils/exportAsImage"
 import isTouchEnabled from "utils/isTouchEnabled"
 import WeeklyTrend from "./overlays/WeeklyTrend"
 import isBetween from "dayjs/plugin/isBetween"
+import NotesXAxisOverlay from "components/Charts/components/NotesXAxisOverlay"
+import { RecoilRoot } from "recoil"
 
 dayjs.extend(isBetween)
 
@@ -63,6 +65,7 @@ export const ChartContext = createContext()
 const Chart = React.memo((props) => {
     const {
         name = "Chart",
+        chartId = false,
         data = [],
         dataHash = "",
         columns = [],
@@ -96,6 +99,7 @@ const Chart = React.memo((props) => {
         badgesLegendText = " ",
         children,
         overlay = [],
+        noteEditingEnabled= false,
         endDate = false
     } = props
         
@@ -114,6 +118,12 @@ const Chart = React.memo((props) => {
     const [brushMoved, setBrushMoved] = useState(false)
     const [brushZoomInitialized, setBrushZoomInitialized] = useState(false)
     const [columnsToggled, setColumnsToggled] = useState(initialColumnToggles)
+    const [selectedNote, setSelectedNote] = useState(false)
+    const [newNotes, setNewNotes] = useState([])
+    const [newNotePreview, setNewNotePreview] = useState(false)
+    const [controllingZoomBrush, setControllingZoomBrush] = useState(false)
+    const [editedNotes, setEditedNotes] = useState({})
+    const [editingNote, setEditingNote] = useState(false)
 
     const windowSize = useWindowSize()
 
@@ -449,8 +459,21 @@ const Chart = React.memo((props) => {
         if(_.isArray(notes)) {
             allNotes = allNotes.concat(notes)
         }
+
+        if(newNotes) {
+            allNotes = allNotes.concat(newNotes)
+        }
+        if(newNotePreview) {
+            allNotes.push(newNotePreview)
+        }
+        allNotes.forEach((n, n_i) => {
+            if (!_.has(n, "id")) {
+                n.id = `temp-id-${n_i}`
+            }
+        })
+
         return allNotes
-    }, [custom_note, notes])
+    }, [custom_note, notes, newNotes, newNotePreview])
     
     const chartNotesInXRange = useMemo(() => {
         
@@ -545,6 +568,7 @@ const Chart = React.memo((props) => {
     const hovered = hoveredXValue !== false
 
     return (
+        <RecoilRoot>
         <ChartContext.Provider value={{
                 colColors: colColors,
                 hovered: hovered,
@@ -562,7 +586,17 @@ const Chart = React.memo((props) => {
                             newColsToggled
                         )
                     }
-                }
+                },
+                addNote: (newNoteParams) => {
+                    setNewNotes(newNotes.concat([newNoteParams]))
+                },
+                setNewNotePreview,
+                controllingZoomBrush,
+                setControllingZoomBrush,
+                editedNotes,
+                setEditedNotes,
+                editingNote,
+                setEditingNote
             }}>
             <Box className={styles["chart"]}
                 ref={containerRef}
@@ -572,7 +606,9 @@ const Chart = React.memo((props) => {
                     marginBottom: _.get(_containerMargins, "bottom"),
                     marginRight: _.get(_containerMargins, "right"),
                 }}
-                paddingTop={allChartNotes.length > 0 ? "10px" : "0px"}
+                pointerEvents="none"
+                zIndex={10}
+                paddingTop="10px"
                 >
                 {_.isNumber(_width) && (
                     <>
@@ -587,11 +623,12 @@ const Chart = React.memo((props) => {
                         opacity={hovered ? 0.2 : 1}
                         >
                         <ChartNotes
-                                notes={chartNotesInXRange}
-                                xScale={xScale}
-                                yScale={yScale}
-                                chart={chart}
-                                />
+                            editedNotes={editedNotes}
+                            notes={chartNotesInXRange}
+                            xScale={xScale}
+                            yScale={yScale}
+                            chart={chart}
+                            />
                     </Box>
                     <Box
                         pointerEvents="none"
@@ -604,7 +641,6 @@ const Chart = React.memo((props) => {
                         position="absolute"
                         left="0px"
                         right="0px"
-                        zIndex={100}
                         >
                         {children}
                         {badgesLegend && (
@@ -627,11 +663,12 @@ const Chart = React.memo((props) => {
                             colColors={colColors}
                             />
                         
+                        
                     </Box>
                     <svg width={_width} height={_height}
                         style={{
                             position: "absolute",
-                            zIndex: -3
+                            zIndex: -20
                         }}
                         >
                         <g transform={`translate(${_margins.left}, ${margins.top})`}>
@@ -709,6 +746,16 @@ const Chart = React.memo((props) => {
                                 setHoveredXValue={setHoveredXValue}
                                 snapFunction={hoverSnapFunction}
                                 />
+                            {noteEditingEnabled === true && (
+                                <NotesXAxisOverlay
+                                    chart={chart}
+                                    margins={_margins}
+                                    xScale={xScale}
+                                    xValueType={xValueType}
+                                    snapFunction={hoverSnapFunction}
+                                    />
+                            )}
+                            
                         </g>
                     </svg>
                     {timelineBrush && (
@@ -757,6 +804,7 @@ const Chart = React.memo((props) => {
             )}
             
         </ChartContext.Provider>
+        </RecoilRoot>
     )
 })
 

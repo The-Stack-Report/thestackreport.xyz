@@ -12,7 +12,7 @@ const BadgesLegend = ({
     columns,
     colColors = false,
     labelText = "Nr of calls to entrypoints",
-    boxPositionTop="-20px",
+    boxPositionTop="-8px",
     width="500px"
 }) => {
     const areaChartContext = useContext(AreaChartContext)
@@ -47,6 +47,8 @@ const BadgesLegend = ({
             >
             <Text fontSize="0.5rem" fontWeight="bold" textTransform="uppercase"
                 marginBottom="-5px"
+                position="relative"
+                zIndex={-10}
                 >
                 {labelText}
             </Text>
