@@ -166,6 +166,7 @@ const DataColumns = ({
                 } else if(_type === "boxplot") {
                     return (
                         <BoxPlot
+                            key={`boxplot-${c_i}`}
                             data={data}
                             prefix={c}
                             xScale={xScale}

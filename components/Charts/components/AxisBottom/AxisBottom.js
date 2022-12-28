@@ -23,7 +23,7 @@ const AxisBottom = ({
 			{xScale.ticks(ticks).map((t, t_i) => {
 				if(_.isNumber(t)) {
 					return (
-						<g transform={`translate(${xScale(t)}, 0)`}>
+						<g key={`tick-${t_i}`} transform={`translate(${xScale(t)}, 0)`}>
 							<text
 								alignmentBaseline="hanging"
 								x={5}
