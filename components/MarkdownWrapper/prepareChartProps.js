@@ -35,7 +35,6 @@ function prepareChartProps(props) {
 
     if(_.has(props, "custom_note")) {
         var customNoteParsed = props.custom_note
-        console.log(customNoteParsed)
 
         customNoteParsed = JSON.parse(customNoteParsed)
 

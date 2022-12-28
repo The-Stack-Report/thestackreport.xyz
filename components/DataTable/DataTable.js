@@ -11,14 +11,25 @@ import {
     Tbody
 } from "@chakra-ui/react"
 import _ from "lodash"
+import dayjs from "dayjs"
+import WrappedLink from "components/WrappedLink"
+import Link from 'next/link'
 
 const DataTable = ({
     data,
     columns = false,
     columnNames = false,
-    customColumns = {}
+    customColumns = {},
+    rowLink = false,
+    rowProps = {}
 }) => {
     const borderStyle = "1px solid rgb(220,220,220)"
+
+    var _columns = columns
+    if(!_.isArray(_columns)) {
+        _columns = Object.keys(data[0])
+    }
+    console.log(_columns)
 
     return (
         <Box
@@ -28,7 +39,7 @@ const DataTable = ({
                 <Table size="sm">
                     <Thead>
                         <Tr>
-                            {columns.map((col, col_i) => {
+                            {_columns.map((col, col_i) => {
                                 var colName = _.get(columnNames, col_i, col)
                                 return (
                                     <Th
@@ -42,11 +53,27 @@ const DataTable = ({
                     </Thead>
                     <Tbody>
                         {data.map((row, row_i, rows) => {
-                            return (
+
+                            var _rowProps = rowProps
+
+                            if(rowLink) {
+                                _rowProps = {
+                                    ..._rowProps,
+                                    cursor: "pointer",
+                                    _hover: {
+                                        background: "black",
+                                        color: "white"
+                                    }
+                                }
+                            }
+
+
+                            var colBody = (
                                 <Tr
                                     key={row_i}
+                                    {..._rowProps}
                                     >
-                                    {columns.map((col, col_i, cols) => {
+                                    {_columns.map((col, col_i, cols) => {
                                         var colContentGenerator = _.get(customColumns, col)
                                         var colContent = _.get(row, col, "not-found")
                                         if(colContentGenerator) {
@@ -54,7 +81,20 @@ const DataTable = ({
                                         }
                                         if(_.isNumber(colContent)) {
                                             colContent = colContent.toLocaleString()
+                                        } else if(dayjs.isDayjs(colContent)) {
+                                            colContent = colContent.format("MMMM D, YYYY h:mm A")
+                                        } else if(_.isArray(colContent)) {
+                                            colContent = colContent.join(", ")
+                                        } else if (React.isValidElement(colContent)) {
+                                            colContent = colContent
+                                        } else if(_.isObject(colContent)) {
+                                            console.log(colContent)
+                                            colContent = JSON.stringify(colContent)
                                         }
+
+
+
+                                        console.log(colContent)
                                         return (
                                             <Td
                                                 key={col_i}
@@ -66,6 +106,21 @@ const DataTable = ({
                                     })}
                                 </Tr>
                             )
+
+                            if(rowLink) {
+                                var link = rowLink(row)
+                                return (
+                                    <Link href={link} key={row_i} passHref={true}>
+                                        {colBody}
+                                    </Link>
+                                )
+                            } else {
+                                return (
+                                    <>
+                                    {colBody}
+                                    </>
+                                )
+                            }
                         })}
                     </Tbody>
                 </Table>

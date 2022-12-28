@@ -18,15 +18,24 @@ import MarkdownWrapper from "components/MarkdownWrapper"
 
 const AccordionExplainer = ({
     title = "",
-    textMd = ""
+    textMd = "",
+    textAlign = "right"
 }) => {
     return (
-        <Accordion allowToggle marginTop="1rem" marginBottom="2rem" border="0px solid transparent">
+        <Accordion
+            allowToggle
+            marginTop="1rem"
+            marginBottom="2rem"
+            border="0px solid transparent"
+            onChange={() => {
+                console.log("Toggled accordion: ", title)
+            }}
+            >
                 <AccordionItem>
                     <h3>
                         <AccordionButton>
                         <AccordionIcon />
-                            <Box flex='1' textAlign="right" fontWeight="bold" fontSize="0.8rem">
+                            <Box flex='1' textAlign={textAlign} fontWeight="bold" fontSize="0.8rem">
                                 {title}<Text fontWeight="light" color="gray.500" as="span" paddingRight="0.5rem">{` (click to expand) `}</Text>
                             </Box>
                             

@@ -4,81 +4,40 @@ import {
     Text,
     Editable,
     EditableInput,
-    EditableTextarea,
     EditablePreview,
-    useColorModeValue,
-    IconButton,
     Input,
-    useDisclosure,
-    useEditableControls,
-    ButtonGroup,
-    SlideFade,
-    Tooltip
 } from "@chakra-ui/react"
-import {
-    CheckIcon,
-    CloseIcon,
-    DeleteIcon
-} from "@chakra-ui/icons"
+
 import _ from "lodash"
 import styles from "./Note.module.scss"
 import { ChartContext } from "components/Charts/Chart/Chart"
+import { WalletContext } from "components/Wallet/WalletContext"
+import EditableControls from "./EditableControls"
 
-const EditableControls = ({ setIsEditing, revertNote }) => {
-    const {
-        isEditing,
-        getSubmitButtonProps,
-        getCancelButtonProps,
-        getEditButtonProps
-    } = useEditableControls()
 
-    useEffect(() => {
-        setIsEditing(isEditing)
-    }, [isEditing, setIsEditing])
-
-    return isEditing ? (
-        <Box
-            position="absolute"
-            width="140px"
-            left="5px"
-            top="0px"
-            pointerEvents="initial"
-            background="white"
-            border="0px solid transparent"
-            padding="0px"
-            zIndex={100}
-            borderRadius="2px"
-            >
-            <ButtonGroup justifyContent="end" size="xs" w="full" spacing={2} paddingLeft="5px" paddingRight="5px">
-                <Tooltip label="Save" fontSize="0.7rem">
-                <IconButton height="22px" padding="0px" marginBottom="0px" variant="outline" fontSize="0.6rem" background="white" size="xs" icon={<CheckIcon />} {...getSubmitButtonProps()} />
-                </Tooltip>
-                <Tooltip label="Revert" fontSize="0.7rem">
-                <IconButton height="22px" padding="0px" marginBottom="0px" variant="outline" fontSize="0.6rem" background="white" size="xs" icon={<CloseIcon />} {...getCancelButtonProps()} />
-                </Tooltip>
-                <Tooltip label="Delete" fontSize="0.7rem">
-                <IconButton height="22px" padding="0px" marginBottom="0px" variant="outline" fontSize="0.6rem" background="white" size="xs" icon={<DeleteIcon />} />
-                </Tooltip>
-            </ButtonGroup>
-        </Box>
-    ) : null
-}
-
+/**
+ * Chart note
+ */
 const ChartNote = ({ note }) => {
     const chartContext = useContext(ChartContext)
+    const walletContext = useContext(WalletContext)
     const [hovered, setHovered] = useState(false)
     const [editedNoteText, setEditedNoteText] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
 
-    // const isEditable = useMemo(() => {
-    //     // get current wallet account
-    //     // check if wallet account is authorized to access interpretation layer
-    //     // check if wallet account is owner of current note
-    //     return true
-    //     return false
-    // })
+    const isEditable = useMemo(() => {
+        const currentAccount = _.get(walletContext, "address", "no-logged-in-address")
+        const noteOwner = _.get(note, "owner", "no-note-owner-set")
+        return currentAccount === noteOwner
+    }, [note, walletContext])
 
-    const isEditable = false
+    const isStorable = useMemo(() => {
+        // Account has interpretation layer access token.
+        const hasBetaAccess = _.get(walletContext, "hasBetaAccess", false)
+
+        return isEditable && hasBetaAccess
+    }, [isEditable, walletContext])
+
 
     var editableValue = useMemo(() => {
         if (editedNoteText !== false) {
@@ -123,11 +82,9 @@ const ChartNote = ({ note }) => {
     if (noteEdited) {
         fontStyle = "italic"
     }
-    console.log(_.get(note, "id"), isEditing)
     if(isEditing) {
         groupZIndex = 100
     }
-    console.log(chartContext.editingNote)
 
     var otherNoteIsBeingEdited = useMemo(() => {
         if(chartContext.editingNote) {
@@ -144,11 +101,20 @@ const ChartNote = ({ note }) => {
 
     var characterLimit = 50
 
+    var noteBoxLeft = 0
+
+    var notePosition = note.position.x
+
+    if(note.labelAlignment==="end") {
+        // noteBoxLeft = -note.size.width
+        notePosition = note.position.x - note.size.width
+    }
+
     return (
         <Box role="group" className={styles['note-group']} opacity={groupOpacity}>
         <Box
             position="absolute"
-            left={`${note.position.x}px`}
+            left={`${notePosition}px`}
             top={topPos}
             zIndex={groupZIndex}
             className={styles["note-position-container"]}
@@ -188,6 +154,8 @@ const ChartNote = ({ note }) => {
                 
             <Box
                 width={`${note.size.width}px`}
+                position="relative"
+                left={noteBoxLeft}
                 height={note.size.height}
                 background="white"
                 border={`1px solid ${noteLineColor}`}
@@ -292,7 +260,7 @@ const ChartNote = ({ note }) => {
                             />
                         <Box
                             position="absolute"
-                            left="100%"
+                            left={note.labelAlignment==="end" ? `-150px` : `${note.size.width}px`}
                             top="0px"
                             >
                         <EditableControls
@@ -304,9 +272,88 @@ const ChartNote = ({ note }) => {
                                     chartContext.setEditingNote(false)
                                 }
                             }}
+                            isStorable={isStorable}
+                            noteType={noteType}
+                            
+                            storeCallback={() => {
+                                const accountAddress = _.get(walletContext, "address", false)
+                                const betaAccessContract = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.contractAddress", false)
+                                var betaAccessNft = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.tokens[0]", false)
+                                var betaAccessNft = _.toNumber(betaAccessNft)
+
+                                var accessToken = _.get(walletContext, "userAccessToken.accessToken", false)
+
+                                note.note = editedNoteText
+                                if(accountAddress && betaAccessContract && betaAccessNft && accessToken) {
+                                    var reqBody = {
+                                        "accountAddress": accountAddress,
+                                        "betaAccessContract": betaAccessContract,
+                                        "betaAccessToken": betaAccessNft,
+                                        "note": note
+                                    }
+
+                                    const bearerAuth = `Bearer ${accessToken}`
+
+
+                                    fetch("/api/chart_note", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            "authorization": bearerAuth,
+                                        },
+                                        body: JSON.stringify(reqBody)
+                                    }).then(resp => {
+                                        // Todo: Update cached note with db ID
+
+                                        if(resp.status === 200) {
+                                            resp.json().then(json => {
+                                                const dbId = _.get(json, "insertedId", false)
+                                                var updatedNote = {
+                                                    ...note,
+                                                    noteSource: "db",
+                                                    id: dbId
+                                                }
+                                                chartContext.setNewNotes(
+                                                    chartContext.newNotes.filter(n => n.id !== note.id)
+                                                )
+                                                chartContext.setApiNotes(
+                                                    chartContext.apiNotes.concat([updatedNote])
+                                                )
+                                            })
+                                        } else {
+                                            console.log("Error in storing note: ",resp)
+                                        }
+                                    })
+
+                                }
+
+                                // do post request for note
+                                // if successful, set noteType to "stored"
+                                // if unsuccessful, set noteType to "error"
+                                
+                            }}
                             revertNote={() => {
                                 
 
+                            }}
+                            deleteCallback={() => {
+                                console.log("Delete note: ", note)
+                                var accessToken = _.get(walletContext, "userAccessToken.accessToken", false)
+                                const bearerAuth = `Bearer ${accessToken}`
+                                fetch(`/api/chart_note?note_id=${note.id}`, {
+                                    method: "DELETE",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "authorization": bearerAuth,
+                                    }
+                                }).then(resp => {
+                                    console.log("Delete note response: ", resp)
+                                    if(resp.status === 200) {
+                                        chartContext.setNewNotes(chartContext.newNotes.filter(n => n.id !== note.id))
+                                        chartContext.setApiNotes(chartContext.apiNotes.filter(n => n.id !== note.id))
+                                    }
+                                    // Remove note from state 
+                                })
                             }}
                             />
                         </Box>
@@ -331,7 +378,7 @@ const ChartNote = ({ note }) => {
                     borderLeft={`2px solid ${noteLineColor}`}
                     background="transparent"
                     position="absolute"
-                    left="-1px"
+                    left={note.labelAlignment === "end" ? note.size.width : `-1px`}
                     top="-0px"
                     zIndex={-1}
                     _groupHover={{

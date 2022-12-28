@@ -12,6 +12,7 @@ import _ from "lodash"
 import { CMS_URL } from 'constants/cms'
 import CategoriesTags from "components/CategoriesTags"
 import PageLayout from 'components/PageLayout'
+import WrappedLink from "components/WrappedLink"
 
 
 
@@ -72,6 +73,11 @@ const ArticlesPage = ({ articles, categories }) => {
                         {categories && (
                             <CategoriesTags categories={categories} />
                         )}
+                        <Box fontSize="0.8rem" marginTop="2rem">
+                        <WrappedLink href="/categories">
+                            To categories overview
+                        </WrappedLink>
+                        </Box>
                         <Box height="4rem"/>
                     </GridItem>
                 </SimpleGrid>
@@ -88,7 +94,7 @@ export async function getServerSideProps(context) {
         if(articlesCache) {
 
         } else {
-            const articlesResp = await fetch(CMS_URL + "/articles?sort=Published:desc&populate=%2A")
+            const articlesResp = await fetch(CMS_URL + "/articles?pagination[pageSize]=1000&sort=Published:desc&populate=%2A")
             var articles = await articlesResp.json()
     
             

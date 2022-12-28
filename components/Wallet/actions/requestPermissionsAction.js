@@ -12,7 +12,6 @@ async function _requestPermissions(dAppClient) {
     var connectionError = false
     try {
         permissions = await dAppClient.requestPermissions()
-        console.log("Got permissions: ", permissions.address)
     } catch (error) {
         console.log("Got error: ", error)
         connectionError = error
@@ -45,8 +44,6 @@ export function createRequestPermissions({
         })
 
         _requestPermissions(dAppClient).then(resp => {
-            console.log("wallet request permissions:")
-            console.log(resp)
             if(resp.connectionError) {
                 setConnectionState(CONNECTION_ERROR)
 
@@ -56,8 +53,6 @@ export function createRequestPermissions({
                     value: _.toString(resp.connectionError),
                     sessionId: walletContextSessionId
                 })
-
-                
 
             } else {
                 setConnectionState(PERMISSIONS_GIVEN)

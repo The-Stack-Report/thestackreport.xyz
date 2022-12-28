@@ -50,7 +50,9 @@ import isTouchEnabled from "utils/isTouchEnabled"
 import WeeklyTrend from "./overlays/WeeklyTrend"
 import isBetween from "dayjs/plugin/isBetween"
 import NotesXAxisOverlay from "components/Charts/components/NotesXAxisOverlay"
+import NoteAlertMessages from "./overlays/ChartNotes/NoteAlertMessages"
 import { RecoilRoot } from "recoil"
+import NotesSettings from "./overlays/ChartNotes/NotesSettings"
 
 dayjs.extend(isBetween)
 
@@ -124,6 +126,12 @@ const Chart = React.memo((props) => {
     const [controllingZoomBrush, setControllingZoomBrush] = useState(false)
     const [editedNotes, setEditedNotes] = useState({})
     const [editingNote, setEditingNote] = useState(false)
+    const [apiNotes, setApiNotes] = useState(false)
+    const [noteLayers, setNoteLayers] = useState({
+        "curated": true,
+        "community": false,
+        "user": true
+    })
 
     const windowSize = useWindowSize()
 
@@ -162,8 +170,29 @@ const Chart = React.memo((props) => {
         };
     }, [handleResize]);
 
+    useEffect(() => {
+        if(apiNotes === false && _.isString(chartId)) {
+            fetch(`/api/chart_note?chart_id=${chartId}`)
+            .then(res => res.json())
+            .then(data => {
+                console.log("setting chart notes from api: ", data)
 
-    
+                var parsedData = []
+
+                if(_.isArray(data)) {
+                    parsedData = data.map(p => {
+                        return {
+                            ...p,
+                            date: dayjs(p.date),
+                            id: p._id,
+                            noteSource: "api"
+                        }
+                    })
+                }
+                setApiNotes(parsedData)
+            })
+        }
+    }, [apiNotes, chartId])
 
     const _columns = useMemo(() => {
         if(_.isArray(columns)) {
@@ -463,6 +492,10 @@ const Chart = React.memo((props) => {
         if(newNotes) {
             allNotes = allNotes.concat(newNotes)
         }
+        if(_.isArray(apiNotes)) {
+            allNotes = allNotes.concat(apiNotes)
+        }
+
         if(newNotePreview) {
             allNotes.push(newNotePreview)
         }
@@ -473,7 +506,7 @@ const Chart = React.memo((props) => {
         })
 
         return allNotes
-    }, [custom_note, notes, newNotes, newNotePreview])
+    }, [custom_note, notes, newNotes, newNotePreview, apiNotes])
     
     const chartNotesInXRange = useMemo(() => {
         
@@ -590,13 +623,19 @@ const Chart = React.memo((props) => {
                 addNote: (newNoteParams) => {
                     setNewNotes(newNotes.concat([newNoteParams]))
                 },
+                newNotes,
+                setNewNotes,
+                apiNotes,
+                setApiNotes,
                 setNewNotePreview,
                 controllingZoomBrush,
                 setControllingZoomBrush,
                 editedNotes,
                 setEditedNotes,
                 editingNote,
-                setEditingNote
+                setEditingNote,
+                noteLayers,
+                setNoteLayers,
             }}>
             <Box className={styles["chart"]}
                 ref={containerRef}
@@ -612,7 +651,10 @@ const Chart = React.memo((props) => {
                 >
                 {_.isNumber(_width) && (
                     <>
-                    <Box position="absolute" left="0px" right="0px"
+                    <Box
+                        position="absolute"
+                        left="0px"
+                        right="0px"
                         style={{
                             marginLeft: _.get(_margins, "left"),
                             marginTop: _.get(_margins, "top"),
@@ -628,8 +670,21 @@ const Chart = React.memo((props) => {
                             xScale={xScale}
                             yScale={yScale}
                             chart={chart}
+                            chartId={chartId}
                             />
                     </Box>
+                    {noteEditingEnabled && (
+                        <Box
+                            position="absolute"
+                            left="0px"
+                            right="0px"
+                            top="-20px"
+                            zIndex={10}
+                            >
+                            <NotesSettings />
+                        </Box>
+                    )}
+
                     <Box
                         pointerEvents="none"
                         style={{
@@ -749,6 +804,7 @@ const Chart = React.memo((props) => {
                             {noteEditingEnabled === true && (
                                 <NotesXAxisOverlay
                                     chart={chart}
+                                    chartId={chartId}
                                     margins={_margins}
                                     xScale={xScale}
                                     xValueType={xValueType}
@@ -803,6 +859,7 @@ const Chart = React.memo((props) => {
                 </Box>
             )}
             
+            <NoteAlertMessages />
         </ChartContext.Provider>
         </RecoilRoot>
     )

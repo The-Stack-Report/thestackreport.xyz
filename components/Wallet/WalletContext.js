@@ -17,6 +17,7 @@ import {
     createMessage,
     createMessagePayload
 } from "@stakenow/siwt"
+import jwt_decode from "jwt-decode";
 
 export const WalletContext = createContext()
 
@@ -52,6 +53,8 @@ export const WalletContextProvider = ({ children }) => {
     const [permissions, setPermissions] = useState(false)
     const [signedPayload, setSignedPayload] = useState(false)
     const [userAccessToken, setUserAccessToken] = useState(false)
+    const [hasBetaAccess, setHasBetaAccess] = useState(false)
+    const [decodedJwt, setDecodedJwt] = useState(false)
 
     /**
      * Check if a connection has been established already
@@ -89,9 +92,13 @@ export const WalletContextProvider = ({ children }) => {
             const address = _.get(activeAccount, 'address', false)
             if(address) {
                 fetch(`https://api.tzkt.io/v1/accounts/${address}/metadata`).then(resp => {
-                    return resp.json()
+                    if(resp.status === 200) {
+                        return resp.json()
+                    } else {
+                        setTzktAccountMeta({noMetaDataFound: true})
+                    }
+                    
                 }).then(respData => {
-                    console.log(respData)
                     setTzktAccountMeta(respData)
                 })
             } else {
@@ -113,7 +120,14 @@ export const WalletContextProvider = ({ children }) => {
                 pkh: address,
             })
             var dAppClient = getDAppClient()
-            console.log("Active account present & sign-in state initial. Sending sign in request payload.", messagePayload)
+            
+            if(permissions) {
+
+            } else {
+
+            }
+            
+            
             dAppClient.requestSignPayload(messagePayload).then(signedPayload => {
                 setSignInState("signature-received")
                 setSignedPayload(signedPayload)
@@ -125,7 +139,6 @@ export const WalletContextProvider = ({ children }) => {
                     signature: signedPayload.signature,
                 }
 
-                console.log("initializing fetch")
                 fetch("/api/verify_signature", {
                     method: "POST",
                     headers: {
@@ -135,8 +148,23 @@ export const WalletContextProvider = ({ children }) => {
                 }).then(resp => {
                     return resp.json()
                 }).then(respData => {
-                    console.log("response from signature validation")
-                    console.log(respData)
+
+                    const accessToken = _.get(respData, "accessToken", false)
+                    const idToken = _.get(respData, "idToken", false)
+                    const refreshToken = _.get(respData, "refreshToken", false)
+
+                    var decodedIdToken = jwt_decode(idToken)
+                    var decodedAccessToken = jwt_decode(accessToken)
+                    var decodedRefreshToken = jwt_decode(refreshToken)
+
+                    setHasBetaAccess(decodedIdToken?.beta_access?.passedTest)
+
+                    setDecodedJwt({
+                        decodedIdToken: decodedIdToken,
+                        decodedAccessToken: decodedAccessToken,
+                        decodedRefreshToken: decodedRefreshToken
+                    })
+
                     setSignInState("signature-validated")
                     setUserAccessToken(respData)
                         
@@ -180,6 +208,7 @@ export const WalletContextProvider = ({ children }) => {
         activeAccount,
         signInState,
         signedPayload,
+        hasBetaAccess: hasBetaAccess,
 
         setConnectionState,
         setActiveAccount,
@@ -188,8 +217,6 @@ export const WalletContextProvider = ({ children }) => {
         setDisconnectSuccessful,
         setSignInState,
         setPermissions
-        
-        
     }
 
     var requestPermissions = createRequestPermissions(actionGeneratorParams)
@@ -202,8 +229,6 @@ export const WalletContextProvider = ({ children }) => {
 
     var displayName = tzktAlias ? tzktAlias : address
 
-    console.log(tzktAccountMeta)
-
     var contextValue = {
         connectionState: connectionState,
         dAppClient: getDAppClient(),
@@ -214,6 +239,8 @@ export const WalletContextProvider = ({ children }) => {
         userAccessToken,
         signInState,
         signedPayload,
+        hasBetaAccess: hasBetaAccess,
+        decodedJwt,
 
         setSignInState,
         

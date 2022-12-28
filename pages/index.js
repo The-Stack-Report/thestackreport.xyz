@@ -4,11 +4,14 @@ import {
     SimpleGrid,
     Box,
     Text,
-    Heading
+    Heading,
+    Flex,
+    Center
 } from "@chakra-ui/react"
 import PageLayout from 'components/PageLayout'
 import FeaturedArticleBanner from "components/FeaturedArticleBanner"
 import ArticleList from "components/ArticleList"
+import ArticleCard from "components/ArticleCard"
 import DataBlock from "components/DataBlock"
 import { CMS_URL } from 'constants/cms'
 import _ from "lodash"
@@ -16,9 +19,11 @@ import { connectToDatabase } from "utils/mongo_db"
 import WrappedLink from "components/WrappedLink"
 import MarkdownWrapper from "components/MarkdownWrapper"
 import TopContractsLandingPageWidget from "components/TopContractsLandingPageWidget"
+import qs from "qs"
+import {filterPreviewMode} from "utils/articleFilters"
+import QuickLinksWidget from "components/QuickLinksWidget"
 
-
-const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
+const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStats }) => {
     const featured = _.get(landing, "attributes.featured.data", false)
     const aboutText = _.get(landing, "attributes.about_tsr", "")
     const googleArticlesCarouselJson = {
@@ -34,7 +39,7 @@ const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
     }
     const featuredId = _.get(featured, "id", false)
     var latestArticlesWithoutFeatured = latestArticles.filter(article => article.id !== featuredId).slice(0, 5)
-
+    console.log(latestWeeklies)
     return (
         <PageLayout>
             
@@ -48,14 +53,11 @@ const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
             <FeaturedArticleBanner
                 article={featured}
                 />
-            <Container maxW="container.xl" marginTop="4rem">
-                New!
-                <br />
-                <WrappedLink
-                    href="/dashboards/tezos"
-                    >
-                {`Dashboards >>>`}
-                </WrappedLink>
+            <Container maxW="container.xl" marginTop="4rem" userSelect={"none"}>
+                <QuickLinksWidget
+                    latestWeeklies={latestWeeklies}
+                    />
+                
             </Container>
             <Container maxW="container.xl" marginTop="4rem">
             <SimpleGrid columns={[1, 1, 2]} spacing={8}>
@@ -140,13 +142,37 @@ const LandingPage = ({ landing, latestArticles, topContractsStats }) => {
 }
 
 const landingPageContent = "/landing-page?populate=*"
-const recentArticlesApi = "/articles?sort=Published:desc&populate=%2A"
+
+const recentWeekliesQuery = qs.stringify({
+    filters: {
+        categories: {
+            Category: {
+                $eq: "Weekly"
+            }
+        }
+    }
+}, { encodeValuesOnly: true })
+
+var recentWeekliesApiUrl = `/articles?${recentWeekliesQuery}&pagination[pageSize]=1&sort=Published:desc&populate=%2A`
+
+const recentArticlesQuery = qs.stringify({
+    filters: {
+        categories: {
+            Category: {
+                $notContainsi: "Weekly"
+            }
+        }
+    }
+}, { encodeValuesOnly: true })
+
+var recentArticlesApiUrl = `/articles?${recentArticlesQuery}&sort=Published:desc&populate=%2A`
+
 const topContractsBlocks = ""
 
 var topContractsStatsCache = []
 
 export async function getServerSideProps(context) {
-
+    console.log(recentArticlesApiUrl)
     var returnProps = {
         landing: {},
         latestArticles: [],
@@ -160,20 +186,14 @@ export async function getServerSideProps(context) {
         const data = await resp.json()
         returnProps.landing = data.data
 
-        const articles_resp = await fetch(CMS_URL + recentArticlesApi)
+        const articles_resp = await fetch(CMS_URL + recentArticlesApiUrl)
         var recentArticles = await articles_resp.json()
         // Get data from response and filter out articles in preview mode
-        returnProps.latestArticles = _.get(recentArticles, "data", []).filter(
-            article => {
-                var previewMode = _.get(article, "attributes.preview", false)
-                var envIsDevelopment = process.env.ENVIRONMENT === "development"
-                if(envIsDevelopment) {
-                    return true
-                } else {
-                    return !previewMode
-                }
-            }
-        )
+        returnProps.latestArticles = _.get(recentArticles, "data", []).filter(filterPreviewMode)
+
+        const weeklies_resp = await fetch(CMS_URL + recentWeekliesApiUrl)
+        var recentWeeklies = await weeklies_resp.json()
+        returnProps.latestWeeklies = _.get(recentWeeklies, "data", []).filter(filterPreviewMode)
 
         const { db } = await connectToDatabase()
 

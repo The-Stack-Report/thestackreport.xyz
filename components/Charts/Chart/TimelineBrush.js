@@ -175,7 +175,7 @@ const TimelineBrush = ({
                 </g>
             </svg>
             {(touchEnabled === true && _.isArray(touchSliderValues)) && (
-                <Box padding="1rem">
+                <Box padding="1rem" pointerEvents="initial">
                     <RangeSlider
                         colorScheme="gray"
                         min={xDomainValues[0]}

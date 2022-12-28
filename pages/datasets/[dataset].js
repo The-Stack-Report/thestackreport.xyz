@@ -164,6 +164,7 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                                                     <Text
                                                         fontWeight="bold"
                                                         marginRight="1rem"
+                                                        fontSize="sm"
                                                         >
                                                     {_.get(col, "column", false)}
                                                     </Text>
@@ -171,6 +172,7 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                                                     <GridItem colSpan={2}>
                                                     <Box
                                                         paddingRight="2rem"
+                                                        fontSize="sm"
                                                         >
                                                         <MarkdownWrapper
                                                             markdownText={_.get(col, "description_md", "")}

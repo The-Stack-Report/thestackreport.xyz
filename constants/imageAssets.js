@@ -1,0 +1,1 @@
+export const INTERPRETATION_LAYER_VISUAL_URL = "https://the-stack-report.ams3.cdn.digitaloceanspaces.com/website_assets/decorations/TSR%20Interpretation%20Layer%20visual-colored.png"

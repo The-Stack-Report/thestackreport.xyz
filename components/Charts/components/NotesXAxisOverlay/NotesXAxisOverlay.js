@@ -4,6 +4,8 @@ import { findHoveredXValue } from "utils/chart-interactions"
 import dayjs from "dayjs"
 import { INTERPRETATION_LAYER_CHART_NOTES } from "constants/feature_flags"
 import { ChartContext } from "components/Charts/Chart/Chart"
+import { WalletContext } from "components/Wallet"
+import _ from "lodash"
 
 var newNoteCounter = 0
 
@@ -12,10 +14,12 @@ const NotesXAxisOverlay = ({
         xScale,
         xValueType = "number",
         chart,
+        chartId,
         margins,
         snapFunction = (val) => val
     }) => {
     const chartContext = useContext(ChartContext)
+    const walletContext = useContext(WalletContext)
     const[addNoteXValue, setAddNoteXValue] = useState(false)
     const height = 40
     const width = _.get(chart, "width", false)
@@ -34,8 +38,6 @@ const NotesXAxisOverlay = ({
             if(dayjs.isDayjs(x)) {
                 newNoteLabel += `: ${x.format("MMM D, YYYY")}`
             }
-
-            console.log(newNoteLabel)
             chartContext.setNewNotePreview({
                 date: x,
                 note: newNoteLabel,
@@ -82,7 +84,9 @@ const NotesXAxisOverlay = ({
                             date: addNoteXValue,
                             note: newNoteLabel,
                             noteSource: "initialized",
-                            id: `${newNoteLabel}-${newNoteCounter}`
+                            chartId: chartId,
+                            owner: _.get(walletContext, "address", false),
+                            id: `${newNoteLabel}-${newNoteCounter}-${dayjs().format("h:mm:ss")}`
                         })
                     }
                     

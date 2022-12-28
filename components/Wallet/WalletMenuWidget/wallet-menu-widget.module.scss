@@ -35,6 +35,10 @@
 .wallet-menu-widget {
     overflow: hidden;
     padding: 5px;
+    pointer-events: none;
+    button {
+        pointer-events: initial;
+    }
     .connect-label-icon {
         animation-name: slideAnim;
         animation-duration: 3s;

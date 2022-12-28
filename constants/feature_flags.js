@@ -9,6 +9,6 @@ console.log("NEXT_PUBLIC_ENVIRONMENT === 'development': ", NEXT_PUBLIC_ENVIRONME
 export const WALLET_CONNECTION = NEXT_PUBLIC_ENVIRONMENT === "development" ? true : false
 console.log("WALLET_CONNECTION: ", WALLET_CONNECTION)
 
-export const INTERPRETATION_LAYER = NEXT_PUBLIC_ENVIRONMENT === "development" ? true : false
+export const INTERPRETATION_LAYER = NEXT_PUBLIC_ENVIRONMENT === "development" ? true : true
 
 export const INTERPRETATION_LAYER_CHART_NOTES = NEXT_PUBLIC_ENVIRONMENT === "development" ? true : false

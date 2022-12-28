@@ -6,14 +6,11 @@ import Link from 'next/link'
 import {
     Text
 } from "@chakra-ui/react"
-import {
-    WalletMenuWidget
-} from "components/Wallet"
+import WalletMenuWidget from "components/Wallet/WalletMenuWidget"
 import { WALLET_CONNECTION } from "constants/feature_flags"
 
 
 const MainMenu = () => {
-    console.log("Main menu wallet connection: ", WALLET_CONNECTION)
     return (
         <div className={styles["main-menu"]}>
             <h1>

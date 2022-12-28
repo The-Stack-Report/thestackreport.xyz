@@ -6,10 +6,23 @@ import {
 } from "@chakra-ui/react"
 import _ from "lodash"
 
+function getBoxBounds(box) {
+    if(box.labelAlignment === "start") {
+        return [box.position.x, box.position.x + box.size.width]
+    } else if(box.labelAlignment === "end") {
+        return [box.position.x - box.size.width, box.position.x]
+    } else {
+        return [box.position.x, box.position.x + box.size.width]
+    }
+}
+
 function overlaps(box1, box2, padding=3) {
+    var box1bounds = getBoxBounds(box1)
+    var box2bounds = getBoxBounds(box2)
+
     return _.some([
-        _.inRange(box1.position.x - padding, box2.position.x, box2.position.x + box2.size.width),
-        _.inRange(box1.position.x + box1.size.width - padding, box2.position.x, box2.position.x + box2.size.width)
+        _.inRange(box1bounds[0] - padding, box2bounds[0], box2bounds[1]),
+        _.inRange(box1bounds[1] - padding, box2bounds[0], box2bounds[1])
     ])
 }
 
@@ -18,7 +31,7 @@ function checkNoteCollisions(inputNote, collisionNotes) {
     return _.some(collisionNotes.map(n => overlaps(inputNote, n)))
 }
 
-const ChartNotes = ({ notes, xScale, yScale, chart, editedNotes }) => {
+const ChartNotes = ({ notes, xScale, yScale, chart, editedNotes, chartId }) => {
 
 
     // TODO: Implement collision detection for notes
@@ -56,12 +69,25 @@ const ChartNotes = ({ notes, xScale, yScale, chart, editedNotes }) => {
 
         var noteHeight = 22
 
+        var xPos = xScale(note.date)
+
+        var xEndPos = xPos + noteWidth
+
+        var labelAlignment = "start"
+
+        if(xEndPos > chart.width) {
+            labelAlignment = "end"
+        }
+
+
+
         return {
             ...note,
             position: {
                 x: xScale(note.date),
                 y: yPos
             },
+            labelAlignment: labelAlignment,
             noteLineColor: "rgb(220,220,220)",
             notePadding: notePadding,
             size: {
@@ -94,7 +120,7 @@ const ChartNotes = ({ notes, xScale, yScale, chart, editedNotes }) => {
             <Box position="absolute">
             {notesWithPosition.map((note, note_i) => {
                 return (
-                    <Note note={note} key={note.id} />
+                    <Note note={note} key={note.id} chartId={chartId} />
                 )
             })}
             </Box>

@@ -4,20 +4,16 @@ import {
 } from "@chakra-ui/layout"
 import {
     Heading,
-    Table,
-    Thead,
-    Tbody,
-    Tfoot,
-    Tr,
-    Th,
-    Td,
-    Box
+    Text,
+    Box,
+    Divider
 } from "@chakra-ui/react"
 import { connectToDatabase } from "utils/mongo_db"
 import _ from "lodash"
 import Link from 'next/link'
 import dayjs from "dayjs"
 import PageLayout from "components/PageLayout"
+import DataTable from "components/DataTable"
 
 const tableCols = [
     "key",
@@ -26,6 +22,22 @@ const tableCols = [
 ]
 
 const DatasetsCatalogPage = ({ datasets }) => {
+    // const recentDatasets = datasets.filter(dataset => dataset.date)
+    var datasetsWithUploadDt = datasets.map(dataset => {
+        return {
+            ...dataset,
+            upload_dt: dayjs(dataset.upload_date)
+        }
+    })
+    var today = dayjs()
+    var todayMin30 = today.subtract(30, "day")
+
+    console.log(datasets)
+
+    var recentDatasets = datasetsWithUploadDt.filter(dataset => dataset.upload_dt.isAfter(todayMin30))
+
+    var olderDatasets = datasetsWithUploadDt.filter(dataset => !dataset.upload_dt.isAfter(todayMin30))
+
     return (
         <PageLayout>
             <Head>
@@ -42,63 +54,50 @@ const DatasetsCatalogPage = ({ datasets }) => {
                     }}
                     marginBottom="2rem"
                     >
-                    Datasets
+                    Dataset catalog
                 </Heading>
-                <Table>
-                    <Thead>
-                        <Tr>
-                            {tableCols.map(col => {
-                                return (
-                                    <Th key={col}>
-                                        {col}
-                                    </Th>
-                                )
-                            })}
-                        </Tr>
-                    </Thead>
-                    <Tbody>
-                    {datasets.map(dataset => {
-                        return (
-                            <Link
-                                href={`/datasets/${dataset.key}`}
-                                key={dataset._id}
-                                passHref={true}
-                                >
-                            <Tr
-                                _hover={{
-                                    cursor: "pointer",
-                                    background: "black",
-                                    color: "teal.500"
-                                }}
-                                >
-                                {tableCols.map((col, col_i) => {
-                                    var colVal = _.get(dataset, col, "")
-                                    colVal = colVal.replace("https://the-stack-report.ams3.cdn.digitaloceanspaces.com", "...")
-                                    if(col === "upload_date") {
-                                        colVal = dayjs(colVal).format("MMMM D, YYYY h:mm A")
-                                    }
-                                    return (
-                                        <Th
-                                            key={col}
-                                            style={{
-                                                maxWidth: 0,
-                                                width: col_i === 0 ? "40%" : "30%",
-                                                overflow: "hidden",
-                                                textOverflow: "ellipsis",
-                                                whiteSpace: "nowrap"
-                                            }}
-                                            >
-                                            {colVal}
-                                        </Th>
-                                    )
-                                })}
-                                
-                            </Tr>
-                            </Link>
-                        )
-                    })}
-                    </Tbody>
-                </Table>
+                <Heading
+                    as="h2"
+                    marginTop={{
+                        base: "2rem",
+                        md: "4rem"
+                    }}
+                    marginBottom="2rem"
+                    fontSize="1.5rem"
+                    >
+                    Recent datasets
+                </Heading>
+                <Text
+                    fontSize="sm"
+                    marginBottom="1rem"
+                    >
+                    Updated or uploaded datasets within the last 30 days.
+                </Text>
+                <DataTable
+                    data={recentDatasets}
+                    columns={[ "key", "upload_date" ]}
+                    rowLink={(row) => `/datasets/${row.key}`}
+                    />
+                <Box height={{base: "2rem", md: "4rem"}} />
+                <Divider />
+                <Heading
+                    as="h2"
+                    marginTop={{
+                        base: "2rem",
+                        md: "4rem"
+                    }}
+                    marginBottom="2rem"
+                    fontSize="1.5rem"
+                    >
+                    Old datasets
+                </Heading>
+                <DataTable
+                    data={olderDatasets}
+                    columns={[ "key", "upload_date" ]}
+                    rowLink={(row) => `/datasets/${row.key}`}
+                    rowProps={{color: "gray.500"}}
+                    />
+                
                 <Box height={{base: "2rem", md: "4rem"}} />
             </Container>
         </PageLayout>

@@ -6,17 +6,22 @@ import {
     queryAccessControl,
     generateIdToken
 } from "@stakenow/siwt"
+import {
+    BETA_ACCESS_TOKEN_CONTRACT
+} from "constants/contracts"
+
 
 const handler = nextConnect()
+
 
 handler.post(async (req, res) => {
     console.log("post request to validate signature")
     const { message, signature, pk, pkh } = req.body
 
-
     try {
         const isValidSignature = verifySignature(message, pk, signature)
         if(isValidSignature) {
+            console.log("signature is valid")
             const claims = {
                 iss: "https://thestackreport.xyz",
                 aud: ["https://thestackreport.xyz"]
@@ -25,9 +30,14 @@ handler.post(async (req, res) => {
             const accessToken = generateAccessToken({ pkh, claims })
     
             const refreshToken = generateRefreshToken(pkh)
+
+            console.log("generated access token and refresh token")
     
-            const access = queryAccessControl({
-                contractAddress: "KT1LHHLso8zQWQWg1HUukajdxxbkGfNoHjh6",
+            console.log("generating access control queries")
+
+            const beta_access = await queryAccessControl({
+                contractAddress: BETA_ACCESS_TOKEN_CONTRACT,
+                network: "mainnet",
                 parameters: {
                     pkh,
                 },
@@ -40,7 +50,7 @@ handler.post(async (req, res) => {
             const idToken = generateIdToken({
                 claims,
                 userInfo: {
-                    ...access
+                    beta_access: beta_access,
                 }
             })
 
