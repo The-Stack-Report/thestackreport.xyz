@@ -29,7 +29,6 @@ const DataTable = ({
     if(!_.isArray(_columns)) {
         _columns = Object.keys(data[0])
     }
-    console.log(_columns)
 
     return (
         <Box
@@ -88,13 +87,9 @@ const DataTable = ({
                                         } else if (React.isValidElement(colContent)) {
                                             colContent = colContent
                                         } else if(_.isObject(colContent)) {
-                                            console.log(colContent)
                                             colContent = JSON.stringify(colContent)
                                         }
 
-
-
-                                        console.log(colContent)
                                         return (
                                             <Td
                                                 key={col_i}
@@ -116,9 +111,9 @@ const DataTable = ({
                                 )
                             } else {
                                 return (
-                                    <>
+                                    <React.Fragment key={row_i}>
                                     {colBody}
-                                    </>
+                                    </React.Fragment>
                                 )
                             }
                         })}

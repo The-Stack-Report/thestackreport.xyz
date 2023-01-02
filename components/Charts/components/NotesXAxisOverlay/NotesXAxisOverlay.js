@@ -84,6 +84,7 @@ const NotesXAxisOverlay = ({
                             date: addNoteXValue,
                             note: newNoteLabel,
                             noteSource: "initialized",
+                            visibility: "private",
                             chartId: chartId,
                             owner: _.get(walletContext, "address", false),
                             id: `${newNoteLabel}-${newNoteCounter}-${dayjs().format("h:mm:ss")}`

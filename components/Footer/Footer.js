@@ -54,10 +54,6 @@ const Footer = () => {
                             {"Datasets"}
                         </WrappedLink>
                         <br />
-                        <WrappedLink href="/interpretation-layer" >
-                            {"Interpretation"}
-                        </WrappedLink>
-                        <br />
                         <WrappedLink href="/about" >
                             About
                         </WrappedLink>

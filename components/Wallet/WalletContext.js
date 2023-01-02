@@ -63,7 +63,6 @@ export const WalletContextProvider = ({ children }) => {
         if(connectionState === INITIAL) {
             var dAppClient = getDAppClient()
             dAppClient.getActiveAccount().then(activeAccount => {
-                console.log("initial account: ", activeAccount)
                 if(_.isObject(activeAccount) && _.has(activeAccount, "address")) {
                     setActiveAccount(activeAccount)
                     setConnectionState(ACCOUNT_ACTIVE)
@@ -74,7 +73,7 @@ export const WalletContextProvider = ({ children }) => {
                         value: _.get(activeAccount, "address", "no-address")
                     })
                 } else {
-                    console.log("No active account: ", activeAccount)
+                    // console.log("No active account: ", activeAccount)
                 }
                 
             }).catch(err => {

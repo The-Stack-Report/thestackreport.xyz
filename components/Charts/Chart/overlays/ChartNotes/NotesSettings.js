@@ -72,15 +72,15 @@ const NotesSettings = () => {
                             Community
                         </Checkbox>
                         <Checkbox pointerEvents="initial" size="sm" textAlign="right"
-                            isChecked={chartContext.noteLayers.user}
+                            isChecked={chartContext.noteLayers.private}
                             onChange={() => {
                                 chartContext.setNoteLayers({
                                     ...chartContext.noteLayers,
-                                    user: !chartContext.noteLayers.user
+                                    private: !chartContext.noteLayers.private
                                 })
                             }}
                             >
-                            Yours
+                            Private
                         </Checkbox>
                     </HStack>
                 </Box>

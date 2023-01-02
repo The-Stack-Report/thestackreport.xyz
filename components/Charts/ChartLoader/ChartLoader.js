@@ -67,8 +67,18 @@ const ChartLoader = ({
         showState = "loading-data"
     } else if(data && dataLoading === false) {
     }
+
+    var noteEditingEnabled = false
+    var chartId = false
+    if(_.has(chart, "slug")) {
+        noteEditingEnabled = true
+        chartId = chart.slug
+    }
+
     var chartProps = {
-        data: data
+        data: data,
+        chartId: chartId,
+        noteEditingEnabled: noteEditingEnabled
     }
 
     chartCMSProps.forEach(prop => {

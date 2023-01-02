@@ -17,7 +17,6 @@ import MarkdownWrapper from "components/MarkdownWrapper"
 
 const ChartPage = ({ chart }) => {
     const richDescription = _.get(chart, "rich_description", false)
-    console.log(richDescription)
     return (
         <PageLayout>
             <Head>
@@ -54,6 +53,7 @@ const ChartPage = ({ chart }) => {
                     <ChartLoader
                         chart={chart}
                         timelineBrush={true}
+                        showChartNotes={true}
                         />
                 )}
                 {_.isString(richDescription) && (

@@ -14,6 +14,7 @@ import { interpretationLayerContent, interpretationLayerFAQ } from "content/inte
 import AccordionExplainer from "components/AccordionExplainer"
 import BannerImage from "components/BannerImage"
 import { INTERPRETATION_LAYER_VISUAL_URL } from "constants/imageAssets"
+import { INTERPRETATION_LAYER_CHART_NOTES } from "constants/feature_flags"
 
 var placeholderContent = `
 <div style="padding:0px;margin-bottom:20px; overflow: hidden">
@@ -45,6 +46,14 @@ var videoPlaceholder = `
 
 `
 
+var pageContentText = interpretationLayerContent
+var pageFAQ = interpretationLayerFAQ
+
+if(INTERPRETATION_LAYER_CHART_NOTES === false) {
+    pageContentText = placeholderContent
+    pageFAQ = []
+}
+
 var placeholderFAQ = []
 
 const InterpretationLayerPage = ({ pageContent }) => {
@@ -66,8 +75,8 @@ const InterpretationLayerPage = ({ pageContent }) => {
                     Interpretation Layer
                 </Heading>
                 <Box maxW="container.md" paddingBottom="4rem">
-                    <MarkdownWrapper markdownText={placeholderContent} />
-                    {placeholderFAQ.map((faq, i) => {
+                    <MarkdownWrapper markdownText={pageContentText} />
+                    {pageFAQ.map((faq, i) => {
                         return (
                             <AccordionExplainer
                                 key={i}

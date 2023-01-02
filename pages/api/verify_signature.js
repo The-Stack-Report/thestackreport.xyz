@@ -7,7 +7,7 @@ import {
     generateIdToken
 } from "@stakenow/siwt"
 import {
-    BETA_ACCESS_TOKEN_CONTRACT
+    INTERPRETATION_LAYER_CONTRACT
 } from "constants/contracts"
 
 
@@ -36,7 +36,7 @@ handler.post(async (req, res) => {
             console.log("generating access control queries")
 
             const beta_access = await queryAccessControl({
-                contractAddress: BETA_ACCESS_TOKEN_CONTRACT,
+                contractAddress: INTERPRETATION_LAYER_CONTRACT,
                 network: "mainnet",
                 parameters: {
                     pkh,
@@ -53,8 +53,6 @@ handler.post(async (req, res) => {
                     beta_access: beta_access,
                 }
             })
-
-            console.log("returning access token")
     
             return res.status(200).json({
                 accessToken,

@@ -7,7 +7,8 @@ import {
     Input,
     InputGroup,
     InputRightAddon,
-    Image
+    Image,
+    SimpleGrid
 } from "@chakra-ui/react"
 import {
     Container
@@ -20,9 +21,6 @@ import _ from "lodash"
 
 const AccountInformation = ({ account }) => {
     const walletContext = useContext(WalletContext)
-
-    console.log(walletContext)
-
     
     const address = _.get(walletContext, "address", 'no-address')
 
@@ -35,12 +33,7 @@ const AccountInformation = ({ account }) => {
     const betaAccessContract = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.contractAddress", false)
     var betaAccessToken = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.tokens[0]", false)
     var betaAccessToken = _.toNumber(betaAccessToken)
-
-    console.log(betaAccessContract, betaAccessToken)
-
-    var tokenImgPreview = `https://assets.objkt.media/file/assets-003/${betaAccessContract}/${betaAccessToken}/thumb288`
-
-    tokenImgPreview = "https://the-stack-report.ams3.digitaloceanspaces.com/website_assets/tests/tsr-access-pass-test.png"
+    var accessTokens = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.tokens", [])
 
     return (
         <Container paddingBottom="8rem">
@@ -81,21 +74,29 @@ const AccountInformation = ({ account }) => {
                 {hasBetaAccess ? (
                     <>
                     <Text>
-                        You have access to the <WrappedLink href="/interpretation-layer">Interpretation Layer</WrappedLink> based on your ownership of the following token:
+                        You have access to the <WrappedLink href="/interpretation-layer">Interpretation Layer</WrappedLink> based on your ownership of the following {accessTokens.length > 1 ? "cards" : "card"}:
                     </Text>
-                    <Box borderRadius="0.25rem" marginTop="1rem" marginBottom="1rem">
-                    <WrappedLink
-                        href={`https://objkt.com/asset/${betaAccessContract}/${betaAccessToken}`}
-                        >
-                    <Image
-                        borderRadius="0.25rem"
-                        src={tokenImgPreview}
-                        maxWidth="200px"
-                        width="100%"
-                        alt="Beta access token"
-                        />
-                    </WrappedLink>
-                    </Box>
+                    <SimpleGrid minChildWidth={`200px`} >
+                        {accessTokens.map(accessToken => {
+                            var imgPreviewSrc = `https://assets.objkt.media/file/assets-003/${betaAccessContract}/${accessToken}/thumb288`
+                            return (
+                                <Box key={accessToken} borderRadius="0.25rem" marginTop="1rem" marginBottom="1rem" marginRight="1rem">
+                                    <WrappedLink
+                                        href={`https://objkt.com/asset/${betaAccessContract}/${accessToken}`}
+                                        >
+                                    <Image
+                                        borderRadius="0.25rem"
+                                        src={imgPreviewSrc}
+                                        maxWidth="200px"
+                                        width="100%"
+                                        alt="Beta access token"
+                                        />
+                                    </WrappedLink>
+                                </Box>
+                            )
+                        })}
+                        
+                    </SimpleGrid>
                     </>
                 ) : (
                     <Text>

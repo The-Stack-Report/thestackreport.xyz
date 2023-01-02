@@ -13,7 +13,7 @@ import { ObjectId } from "mongodb"
 
 require("dotenv").config()
 
-const BETA_ACCESS_TOKEN_CONTRACT = process.env.BETA_ACCESS_TOKEN_CONTRACT
+const INTERPRETATION_LAYER_CONTRACT = process.env.INTERPRETATION_LAYER_CONTRACT
 
 
 const limiter = rateLimit({
@@ -40,7 +40,7 @@ async function checkBetaAccess(req) {
         console.log("accessToken: ", accessToken)
         if(pkh) {
             const beta_access = await queryAccessControl({
-                contractAddress: BETA_ACCESS_TOKEN_CONTRACT,
+                contractAddress: INTERPRETATION_LAYER_CONTRACT,
                 network: "mainnet",
                 parameters: {
                     pkh,
@@ -67,29 +67,74 @@ async function checkBetaAccess(req) {
 
 
 handler.get(async (req, res) => {
+    console.log("requested chart notes.")
+    console.log("getting db connection from middleware")
+
     const db = req.db
+    console.log("Got db")
 
-    if(req.query.id) {
+    var userAccount = false
+    var authorizationheader = _.get(req, "headers.authorization", false)
+    if(authorizationheader) {
+        const accessToken = req.headers.authorization.split(" ")[1]
+        const pkh = verifyAccessToken(accessToken)
+
+        console.log("user account address: ", pkh)
+        if(pkh) {
+            userAccount = pkh
+        }
+    } else {
+        console.log("No authorization header")
+    }
+    var queryId = _.get(req, "query.id", false)
+    var queryChartId = _.get(req, "query.chart_id", false)
+
+    console.log(`queryId: ${queryId}`)
+    console.log(`queryChartId: ${queryChartId}`)
+    console.log(`user account: ${userAccount}`)
+
+    if(queryId) {
         // TODO: Return chart note with id
-
-        
+        res.status(200).json({message: "TODO: Return chart note with id"})
     } else if(req.query.chart_id) {
-        // TODO: Return all chart notes for chart_id
-        var chart_id = req.query.chart_id
+        
+        console.log("Getting notes for: ", queryChartId)
 
-        console.log("Getting notes for: ", chart_id)
+        try {
+            const collection = db.collection("chart_notes")
 
-        const collection = db.collection("chart_notes")
+            var notes = await collection.find({ 
+                chartId: queryChartId,
+                visibility: { $in: ["curated", "community"] },
+                deleted: false
+            }).toArray()
+            console.log(`Found ${notes.length} curated/commmunity notes for chart ${queryChartId}`)
 
-        var notes = await collection.find({ 
-            chartId: chart_id,
-            deleted: false
-        }).toArray()
+            var privateNotes = []
 
-        console.log(`Found ${notes.length} notes for chart ${chart_id}`)
+            if(userAccount) {
+                console.log("Fetching private notes.")
+                var privateNotes = await collection.find({
+                    chartId: queryChartId,
+                    visibility: "private",
+                    owner: userAccount,
+                    deleted: false
+                }).toArray()
 
-        res.status(200).json(notes)
-        return
+                console.log(`Found ${privateNotes.length} private notes for chart ${queryChartId}`)
+            }
+
+
+
+            var returnNotes = notes.concat(privateNotes)
+
+            res.status(200).json(returnNotes)
+            return
+        } catch(e) {
+            console.log("Error getting chart notes: ", e)
+            res.status(500).json({message: "Error getting chart notes."})
+            return
+        }
 
     } else {
         // 
@@ -106,25 +151,30 @@ handler.post(async (req, res) => {
     const db = req.db
     const collection = db.collection("chart_notes")
 
-    console.log("chart note post: ")
     let data = req.body
-    if(_.isString(data)) {
-        data = JSON.parse(data)
-    }
+    if(_.isString(data)) { data = JSON.parse(data) }
     
-
-    console.log("parsed body data: ")
-
     const accountAddress = _.get(data, "accountAddress", false)
     const betaAccessContract = _.get(data, "betaAccessContract", false)
     const betaAccessToken = _.get(data, "betaAccessToken", false)
     const note = _.get(data, "note", false)
+    console.log("Received note for post request:")
+    console.log(note)
 
     const noteId = _.get(note, "id", false)
     const noteText = _.get(note, "note", false)
     const chartId = _.get(note, "chartId", false)
     const noteDate = _.get(note, "date", false)
     const owner = _.get(note, "owner", false)
+    var visibility = _.get(note, "visibility", false)
+
+    var allowedVisibilityStates = ["private", "community"]
+    if(!_.includes(allowedVisibilityStates, visibility)) {
+        console.log("a disallowed visibility state was passed. setting to private.")
+        visibility = "private"
+    }
+
+
 
     console.log("Checking if note with id: ", noteId, " exists.")
 
@@ -175,17 +225,20 @@ handler.post(async (req, res) => {
         return
     }
 
-    console.log("All checks passed, inserting new chart note.")
+    console.log("All checks passed, inserting or updating chart note.")
 
     if (noteExists) {
         console.log("Note exists, updating text.")
         if(!_.isString(noteText)) {
+            console.log("Note text is not a string.", noteText)
             res.status(400).json({message: "Note text is not a string."})
             return
         } else if (noteText.length === 0) {
+            console.log("Note text is empty.")
             res.status(400).json({message: "Note text is empty."})
             return
         }
+        console.log("Trying to update note")
         try {
             console.log("Updating to text: ", noteText)
             const result = await collection.updateOne({
@@ -195,7 +248,8 @@ handler.post(async (req, res) => {
                     $set: {
                         note: noteText,
                         chartId: chartId,
-                        updatedAt: new Date()
+                        updatedAt: new Date(),
+                        visibility: visibility
                     }
                 })
         } catch(err) {
@@ -215,6 +269,7 @@ handler.post(async (req, res) => {
                 betaAccessContract: betaAccessContract,
                 betaAccessToken: betaAccessToken,
                 deleted: false,
+                visibility: visibility,
                 createdAt: new Date(),
                 updatedAt: new Date()
             })

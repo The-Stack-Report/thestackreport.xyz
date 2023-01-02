@@ -3,7 +3,8 @@ import React, {
     useRef,
     useEffect,
     useMemo,
-    createContext
+    createContext,
+    useContext
 } from "react"
 import _ from "lodash"
 import {
@@ -53,6 +54,7 @@ import NotesXAxisOverlay from "components/Charts/components/NotesXAxisOverlay"
 import NoteAlertMessages from "./overlays/ChartNotes/NoteAlertMessages"
 import { RecoilRoot } from "recoil"
 import NotesSettings from "./overlays/ChartNotes/NotesSettings"
+import { WalletContext } from "components/Wallet/WalletContext"
 
 dayjs.extend(isBetween)
 
@@ -102,7 +104,8 @@ const Chart = React.memo((props) => {
         children,
         overlay = [],
         noteEditingEnabled= false,
-        endDate = false
+        endDate = false,
+        showChartNotes = false
     } = props
         
     const _data = useMemo(() => {
@@ -127,11 +130,14 @@ const Chart = React.memo((props) => {
     const [editedNotes, setEditedNotes] = useState({})
     const [editingNote, setEditingNote] = useState(false)
     const [apiNotes, setApiNotes] = useState(false)
+    const [fetchedNotesWithAccessToken, setFetchedNotesWithAccessToken] = useState(false)
     const [noteLayers, setNoteLayers] = useState({
         "curated": true,
         "community": false,
-        "user": true
+        "private": true
     })
+
+    const walletContext = useContext(WalletContext)
 
     const windowSize = useWindowSize()
 
@@ -170,29 +176,54 @@ const Chart = React.memo((props) => {
         };
     }, [handleResize]);
 
+    var accessToken = useMemo(() => {
+        return _.get(walletContext, "userAccessToken.accessToken", false)
+    }, [walletContext])
+
+
     useEffect(() => {
-        if(apiNotes === false && _.isString(chartId)) {
-            fetch(`/api/chart_note?chart_id=${chartId}`)
-            .then(res => res.json())
-            .then(data => {
-                console.log("setting chart notes from api: ", data)
+        var headers = {}
 
-                var parsedData = []
-
-                if(_.isArray(data)) {
-                    parsedData = data.map(p => {
-                        return {
-                            ...p,
-                            date: dayjs(p.date),
-                            id: p._id,
-                            noteSource: "api"
-                        }
-                    })
-                }
-                setApiNotes(parsedData)
-            })
+        if(accessToken) {
+            headers["authorization"] = `Bearer ${accessToken}`
         }
-    }, [apiNotes, chartId])
+        var shouldFetch = (apiNotes === false && _.isString(chartId))
+        
+        if(accessToken && fetchedNotesWithAccessToken === false) {
+            shouldFetch = true
+            setFetchedNotesWithAccessToken(true)
+        }
+
+        var queryParams = {
+            method: "GET",
+            headers: headers
+        }
+        if(shouldFetch) {
+            fetch(`/api/chart_note?chart_id=${chartId}`, queryParams)
+                .then(res => res.json())
+                .then(data => {
+                    var parsedData = []
+
+                    if(_.isArray(data)) {
+                        parsedData = data.map(p => {
+                            return {
+                                ...p,
+                                date: dayjs(p.date),
+                                id: p._id,
+                                noteSource: "api"
+                            }
+                        })
+                    }
+                    setApiNotes(parsedData)
+                })
+            
+        }
+    }, [
+        apiNotes,
+        chartId,
+        accessToken,
+        fetchedNotesWithAccessToken
+    ])
 
     const _columns = useMemo(() => {
         if(_.isArray(columns)) {
@@ -507,18 +538,42 @@ const Chart = React.memo((props) => {
 
         return allNotes
     }, [custom_note, notes, newNotes, newNotePreview, apiNotes])
-    
-    const chartNotesInXRange = useMemo(() => {
-        
+
+    var notesInXRange = useMemo(() => {
         return allChartNotes.filter(note => {
             if(_.has(note, "date") && dayjs.isDayjs(note.date)) {
-                return note.date.isBetween(_xDomainFiltered[0], _xDomainFiltered[1]) 
+                return note.date.isBetween(_xDomainFiltered[0], _xDomainFiltered[1])
             } else {
                 return false
             }
-            
         })
-    }, [ allChartNotes, _xDomainFiltered])
+    }, [allChartNotes, _xDomainFiltered])
+
+    
+    const visibleChartNotes = useMemo(() => {
+        return notesInXRange.filter(note => {
+            var noteLayersVisible = _.toPairs(noteLayers).filter(p => p[1] === true).map(p => p[0])
+            noteLayersVisible.concat("initialized")
+            var noteSource = _.get(note, 'noteSource', false)
+            var previewNoteSourceStates = ["preview", "initialized"]
+            if(previewNoteSourceStates.includes(noteSource)) {
+                return true
+            }
+            if(_.get(note, "owner", 'no-owner') === _.get(walletContext, "address", 'no-wallet')) {
+                return true
+            }
+            if(_.get(note, "noteSource", false) === "custom_markdown") {
+                return true
+            }
+            return noteLayersVisible.includes(_.get(note, "visibility", false))
+        })
+    }, [ notesInXRange, noteLayers, walletContext])
+
+    const communityNotesInXRange = useMemo(() => {
+        return notesInXRange.filter(note => {
+            return _.get(note, "visibility", false) === "community"
+        })
+    }, [notesInXRange])
 
     useEffect(() => {
         if(brushZoomInitialized === false) {
@@ -600,6 +655,7 @@ const Chart = React.memo((props) => {
     const touchEnabled = isTouchEnabled()
     const hovered = hoveredXValue !== false
 
+
     return (
         <RecoilRoot>
         <ChartContext.Provider value={{
@@ -651,39 +707,46 @@ const Chart = React.memo((props) => {
                 >
                 {_.isNumber(_width) && (
                     <>
-                    <Box
-                        position="absolute"
-                        left="0px"
-                        right="0px"
-                        style={{
-                            marginLeft: _.get(_margins, "left"),
-                            marginTop: _.get(_margins, "top"),
-                            marginBottom: _.get(_margins, "bottom"),
-                            marginRight: _.get(_margins, "right")
-                        }}
-                        zIndex={-1}
-                        opacity={hovered ? 0.2 : 1}
-                        >
-                        <ChartNotes
-                            editedNotes={editedNotes}
-                            notes={chartNotesInXRange}
-                            xScale={xScale}
-                            yScale={yScale}
-                            chart={chart}
-                            chartId={chartId}
-                            />
-                    </Box>
-                    {noteEditingEnabled && (
-                        <Box
-                            position="absolute"
-                            left="0px"
-                            right="0px"
-                            top="-20px"
-                            zIndex={10}
-                            >
-                            <NotesSettings />
-                        </Box>
+                    {showChartNotes && (
+                        <>
+                            <Box
+                                position="absolute"
+                                left="0px"
+                                right="0px"
+                                style={{
+                                    marginLeft: _.get(_margins, "left"),
+                                    marginTop: _.get(_margins, "top"),
+                                    marginBottom: _.get(_margins, "bottom"),
+                                    marginRight: _.get(_margins, "right")
+                                }}
+                                zIndex={-1}
+                                opacity={hovered ? 0.2 : 1}
+                                >
+                                <ChartNotes
+                                    editedNotes={editedNotes}
+                                    notes={visibleChartNotes}
+                                    xScale={xScale}
+                                    yScale={yScale}
+                                    chart={chart}
+                                    chartId={chartId}
+                                    />
+                            </Box>
+                            <>
+                            {noteEditingEnabled && (
+                                <Box
+                                    position="absolute"
+                                    left="0px"
+                                    right={xAxisLabelsPosition === "outside" ? `100px` : "0px"}
+                                    top="-40px"
+                                    zIndex={10}
+                                    >
+                                    <NotesSettings />
+                                </Box>
+                            )}
+                            </>
+                        </>
                     )}
+                    
 
                     <Box
                         pointerEvents="none"

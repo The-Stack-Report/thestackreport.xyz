@@ -73,8 +73,6 @@ const TezosContractDashboard = ({
         "mean"
     ]
 
-    console.log(dailyStats)
-
     return (
         <div className='tezos-contract-dashboard'>
             <InputGroup
@@ -129,6 +127,7 @@ const TezosContractDashboard = ({
                 noDataTooltipPlaceholder={"No calls for date: "}
                 badgesLegendText = "Nr of calls to entrypoints"
                 noteEditingEnabled={true}
+                showChartNotes={true}
                 chartId={`${contract_address}-daily-entrypoint-calls`}
                 />
             <AccordionExplainer

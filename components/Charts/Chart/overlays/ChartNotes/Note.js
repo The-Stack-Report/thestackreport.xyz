@@ -31,12 +31,16 @@ const ChartNote = ({ note }) => {
         return currentAccount === noteOwner
     }, [note, walletContext])
 
+    const isCurated = useMemo(() => {
+        const noteVisibility = _.get(note, "visibility", false)
+        return noteVisibility === "curated"
+    }, [note])
+
     const isStorable = useMemo(() => {
         // Account has interpretation layer access token.
         const hasBetaAccess = _.get(walletContext, "hasBetaAccess", false)
-
-        return isEditable && hasBetaAccess
-    }, [isEditable, walletContext])
+        return isEditable && hasBetaAccess && !isCurated
+    }, [isEditable, walletContext, isCurated])
 
 
     var editableValue = useMemo(() => {
@@ -109,6 +113,8 @@ const ChartNote = ({ note }) => {
         // noteBoxLeft = -note.size.width
         notePosition = note.position.x - note.size.width
     }
+
+    var visibility = _.get(note, "visibility", "not-set")
 
     return (
         <Box role="group" className={styles['note-group']} opacity={groupOpacity}>
@@ -192,7 +198,7 @@ const ChartNote = ({ note }) => {
                         top: `${note.size.height}px`
                     }}
                     >
-                    SRC: {_.toUpper(noteType)}
+                    {_.toUpper(visibility)}
                 </Text>
                 
                 {isEditable ? (
@@ -201,16 +207,17 @@ const ChartNote = ({ note }) => {
                         value={editableValue}
                         borderRadius={0}
                         onChange={(newNoteValue) => {
-                            var trimmed = newNoteValue
-                            if (newNoteValue.length < characterLimit + 1) {
-                                setEditedNoteText(trimmed)
-                                if(_.has(note, "id")) {
-                                    var prevEditedNotesFromContext = _.cloneDeep(chartContext.editedNotes)
-                                    prevEditedNotesFromContext[note.id] = trimmed
-                                    chartContext.setEditedNotes(prevEditedNotesFromContext)
+                            if(!isCurated) {
+                                var trimmed = newNoteValue
+                                if (newNoteValue.length < characterLimit + 1) {
+                                    setEditedNoteText(trimmed)
+                                    if(_.has(note, "id")) {
+                                        var prevEditedNotesFromContext = _.cloneDeep(chartContext.editedNotes)
+                                        prevEditedNotesFromContext[note.id] = trimmed
+                                        chartContext.setEditedNotes(prevEditedNotesFromContext)
+                                    }
                                 }
                             }
-                            
                         }}
                         onSubmit={() => {
                             console.log("submitted")
@@ -260,10 +267,12 @@ const ChartNote = ({ note }) => {
                             />
                         <Box
                             position="absolute"
-                            left={note.labelAlignment==="end" ? `-150px` : `${note.size.width}px`}
+                            left="0px"
                             top="0px"
                             >
                         <EditableControls
+                            leftPos={note.labelAlignment==="end" ? `-150px` : `${note.size.width}px`}
+                            isCurated={isCurated}
                             setIsEditing={(_editing) => {
                                 setIsEditing(_editing)
                                 if(_editing) {
@@ -324,12 +333,7 @@ const ChartNote = ({ note }) => {
                                             console.log("Error in storing note: ",resp)
                                         }
                                     })
-
                                 }
-
-                                // do post request for note
-                                // if successful, set noteType to "stored"
-                                // if unsuccessful, set noteType to "error"
                                 
                             }}
                             revertNote={() => {
@@ -338,22 +342,83 @@ const ChartNote = ({ note }) => {
                             }}
                             deleteCallback={() => {
                                 console.log("Delete note: ", note)
+                                var noteSource = _.get(note, "noteSource", false)
+                                if(noteSource === "initialized") {
+                                    chartContext.setNewNotes(chartContext.newNotes.filter(n => n.id !== note.id))
+                                } else {
+                                    var accessToken = _.get(walletContext, "userAccessToken.accessToken", false)
+                                    const bearerAuth = `Bearer ${accessToken}`
+                                    fetch(`/api/chart_note?note_id=${note.id}`, {
+                                        method: "DELETE",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            "authorization": bearerAuth,
+                                        }
+                                    }).then(resp => {
+                                        console.log("Delete note response: ", resp)
+                                        if(resp.status === 200) {
+                                            chartContext.setNewNotes(chartContext.newNotes.filter(n => n.id !== note.id))
+                                            chartContext.setApiNotes(chartContext.apiNotes.filter(n => n.id !== note.id))
+                                        }
+                                        // Remove note from state 
+                                    })
+                                }
+                            }}
+                            communityToggleCallback={() => {
+                                const accountAddress = _.get(walletContext, "address", false)
+                                const betaAccessContract = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.contractAddress", false)
+                                var betaAccessNft = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.tokens[0]", false)
+                                var betaAccessNft = _.toNumber(betaAccessNft)
+
                                 var accessToken = _.get(walletContext, "userAccessToken.accessToken", false)
-                                const bearerAuth = `Bearer ${accessToken}`
-                                fetch(`/api/chart_note?note_id=${note.id}`, {
-                                    method: "DELETE",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                        "authorization": bearerAuth,
+
+                                if(note.visibility === "private") {
+                                    note.visibility = "community"
+                                } else {
+                                    note.visibility = "private"
+                                }
+
+                                if(accountAddress && betaAccessContract && betaAccessNft && accessToken) {
+                                    var reqBody = {
+                                        "accountAddress": accountAddress,
+                                        "betaAccessContract": betaAccessContract,
+                                        "betaAccessToken": betaAccessNft,
+                                        "note": note
                                     }
-                                }).then(resp => {
-                                    console.log("Delete note response: ", resp)
-                                    if(resp.status === 200) {
-                                        chartContext.setNewNotes(chartContext.newNotes.filter(n => n.id !== note.id))
-                                        chartContext.setApiNotes(chartContext.apiNotes.filter(n => n.id !== note.id))
-                                    }
-                                    // Remove note from state 
-                                })
+
+                                    const bearerAuth = `Bearer ${accessToken}`
+
+                                    console.log("posting note: ", reqBody)
+                                    fetch("/api/chart_note", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            "authorization": bearerAuth,
+                                        },
+                                        body: JSON.stringify(reqBody)
+                                    }).then(resp => {
+                                        // Todo: Update cached note with db ID
+
+                                        if(resp.status === 200) {
+                                            resp.json().then(json => {
+                                                const dbId = _.get(json, "insertedId", false)
+                                                var updatedNote = {
+                                                    ...note,
+                                                    noteSource: "db",
+                                                    id: dbId
+                                                }
+                                                chartContext.setNewNotes(
+                                                    chartContext.newNotes.filter(n => n.id !== note.id)
+                                                )
+                                                chartContext.setApiNotes(
+                                                    chartContext.apiNotes.concat([updatedNote])
+                                                )
+                                            })
+                                        } else {
+                                            console.log("Error in storing note: ",resp)
+                                        }
+                                    })
+                                }
                             }}
                             />
                         </Box>
