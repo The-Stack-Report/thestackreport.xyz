@@ -153,7 +153,7 @@ const recentWeekliesQuery = qs.stringify({
     }
 }, { encodeValuesOnly: true })
 
-var recentWeekliesApiUrl = `/articles?${recentWeekliesQuery}&pagination[pageSize]=1&sort=Published:desc&populate=%2A`
+var recentWeekliesApiUrl = `/articles?${recentWeekliesQuery}&pagination[pageSize]=5&sort=Published:desc&populate=%2A`
 
 const recentArticlesQuery = qs.stringify({
     filters: {

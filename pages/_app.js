@@ -100,15 +100,19 @@ const theme = extendTheme({
 })
 
 
-function MyApp({ Component, pageProps }) {
+function MyApp({
+  Component,
+  pageProps: { session, ...pageProps }
+}) {
   console.log("app render Component: ", _.get(Component, "name"))
 
   var pageContent = (
-    <ChakraProvider theme={theme}>
-      <WalletContextProvider>
-        <Component {...pageProps} />
-      </WalletContextProvider>
-    </ChakraProvider>
+    
+      <ChakraProvider theme={theme}>
+        <WalletContextProvider>
+          <Component {...pageProps} />
+        </WalletContextProvider>
+      </ChakraProvider>
   )
   if(process.env.NEXT_PUBLIC_ANALYTICS == "true") {
     return (

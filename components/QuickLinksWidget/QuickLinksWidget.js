@@ -140,7 +140,7 @@ const QuickLinksWidget = ({ latestWeeklies }) => {
                 </Box>
             </Box>
             </WrappedLink>
-                {latestWeeklies.map((weekly, weekly_i) => {
+                {latestWeeklies.slice(0, 1).map((weekly, weekly_i) => {
                     return (
                             <ArticleCard
                                 article={weekly}

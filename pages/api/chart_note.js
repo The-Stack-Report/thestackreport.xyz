@@ -282,18 +282,11 @@ handler.post(async (req, res) => {
             console.log(err)
             res.status(500).json({ message: "Error storing note in db" })
             return
-        }
-        
-        
-    }
-    
+        }   
+    }  
 })
 
-
-
 handler.delete(async (req, res) => {
-
-    
     const db = req.db
     const collection = db.collection("chart_notes")
     const note_id = req.query.note_id
@@ -311,7 +304,6 @@ handler.delete(async (req, res) => {
     // Todo: Check if is owner of note
 
     const note = await collection.findOne({ _id: new ObjectId(note_id) })
-    console.log(note)
 
     if(_.get(note, "owner", "owner-not-set") === pkh) {
         console.log("User is owner of note, deleting.")

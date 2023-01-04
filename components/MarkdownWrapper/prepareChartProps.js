@@ -2,7 +2,6 @@ import _ from "lodash"
 import dayjs from "dayjs"
 
 function prepareChartProps(props) {
-    console.log(props)
     var chartProps = {}
     var dateRange = false
 

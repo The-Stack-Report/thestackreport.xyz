@@ -4,7 +4,8 @@ import SocialsLinkBar from "components/socials/SocialsLinkBar"
 import Ticker from "components/Ticker"
 import Link from 'next/link'
 import {
-    Text
+    Text,
+    Button
 } from "@chakra-ui/react"
 import WalletMenuWidget from "components/Wallet/WalletMenuWidget"
 import { WALLET_CONNECTION } from "constants/feature_flags"

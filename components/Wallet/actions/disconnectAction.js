@@ -17,6 +17,8 @@ export function createDisconnect({
     return function disconnect() {
         var dAppClient = getDAppClient()
         var disconnectAccountAddress = _.get(activeAccount, "address", "no-address")
+
+        sessionStorage.removeItem("session-jwt")
         
         logWalletEvent({
             action: "disconnect-initiated",

@@ -1,5 +1,5 @@
 import _ from "lodash"
-import React, { createContext, useState, useEffect } from "react"
+import React, { createContext, useState, useEffect, useMemo } from "react"
 import { getDAppClient } from "utils/dAppClient"
 import { logEvent } from "utils/interactionLogging"
 import { v4 as uuidv4 } from 'uuid';
@@ -18,6 +18,9 @@ import {
     createMessagePayload
 } from "@stakenow/siwt"
 import jwt_decode from "jwt-decode";
+import { useSession } from "next-auth/react";
+import useSessionStorage from "utils/useSessionStorage";
+import CryptoJS from "crypto-js";
 
 export const WalletContext = createContext()
 
@@ -55,6 +58,23 @@ export const WalletContextProvider = ({ children }) => {
     const [userAccessToken, setUserAccessToken] = useState(false)
     const [hasBetaAccess, setHasBetaAccess] = useState(false)
     const [decodedJwt, setDecodedJwt] = useState(false)
+    const tsrSession = useSessionStorage("tsr-session")
+
+    const publicSessionSecret = useMemo(() => {
+        return process.env.NEXT_PUBLIC_SESSION_HASH
+    }, [])
+
+    var decodedTSRSession = useMemo(() => {
+        if(_.isString(tsrSession) && tsrSession.length > 0) {
+            var decryptedSession = CryptoJS.AES.decrypt(
+                tsrSession,
+                publicSessionSecret
+            )
+            return JSON.parse(
+                decryptedSession.toString(CryptoJS.enc.Utf8)
+            )
+        }
+    }, [tsrSession, publicSessionSecret])
 
     /**
      * Check if a connection has been established already
@@ -106,6 +126,32 @@ export const WalletContextProvider = ({ children }) => {
             
         }
     }, [activeAccount, tzktAccountMeta])
+
+    useEffect(() => {
+        if(decodedTSRSession) {
+            if(_.has(decodedTSRSession, "accessResp")) {
+                var accessResp = decodedTSRSession["accessResp"]
+                const accessToken = _.get(accessResp, "accessToken", false)
+                const idToken = _.get(accessResp, "idToken", false)
+                const refreshToken = _.get(accessResp, "refreshToken", false)
+
+                var decodedIdToken = jwt_decode(idToken)
+                var decodedAccessToken = jwt_decode(accessToken)
+                var decodedRefreshToken = jwt_decode(refreshToken)
+
+
+                setHasBetaAccess(decodedIdToken?.beta_access?.passedTest)
+                setDecodedJwt({
+                    decodedIdToken: decodedIdToken,
+                    decodedAccessToken: decodedAccessToken,
+                    decodedRefreshToken: decodedRefreshToken
+                })
+
+                setSignInState("signature-validated")
+                setUserAccessToken(accessResp)
+            }
+        }
+    }, [decodedTSRSession])
 
     /**
      * Send sign in message when active account
@@ -166,6 +212,13 @@ export const WalletContextProvider = ({ children }) => {
 
                     setSignInState("signature-validated")
                     setUserAccessToken(respData)
+
+                    sessionStorage.setItem("tsr-session",
+                        CryptoJS.AES.encrypt(JSON.stringify({
+                            accessResp: respData
+                        }), process.env.NEXT_PUBLIC_SESSION_HASH).toString()
+                    )
+
                         
                 }).catch(err => {
                     console.log("error in validating signature")
