@@ -5,9 +5,9 @@ const NEXT_PUBLIC_ENVIRONMENT = process.env.NEXT_PUBLIC_ENVIRONMENT
 
 export const WALLET_CONNECTION = NEXT_PUBLIC_ENVIRONMENT === "development" ? true : false
 
-export const INTERPRETATION_LAYER = NEXT_PUBLIC_ENVIRONMENT === "development" ? true : true
+export const INTERPRETATION_LAYER = NEXT_PUBLIC_ENVIRONMENT === "development" ? false : true
 
-export const INTERPRETATION_LAYER_CHART_NOTES = NEXT_PUBLIC_ENVIRONMENT === "development" ? true : false
+export const INTERPRETATION_LAYER_CHART_NOTES = NEXT_PUBLIC_ENVIRONMENT === "development" ? false : false
 
 if(NEXT_PUBLIC_ENVIRONMENT === "development") {
     console.log("Running in development mode")
