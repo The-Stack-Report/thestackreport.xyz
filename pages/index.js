@@ -39,10 +39,8 @@ const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStat
     }
     const featuredId = _.get(featured, "id", false)
     var latestArticlesWithoutFeatured = latestArticles.filter(article => article.id !== featuredId).slice(0, 5)
-    console.log(latestWeeklies)
     return (
         <PageLayout>
-            
             <Head>
                 <title>The Stack Report</title>
                 <meta name="description" content="Data driven reporting and visualisations from within the Tezos ecosystem." />
@@ -57,7 +55,6 @@ const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStat
                 <QuickLinksWidget
                     latestWeeklies={latestWeeklies}
                     />
-                
             </Container>
             <Container maxW="container.xl" marginTop="4rem">
             <SimpleGrid columns={[1, 1, 2]} spacing={8}>
@@ -172,7 +169,6 @@ const topContractsBlocks = ""
 var topContractsStatsCache = []
 
 export async function getServerSideProps(context) {
-    console.log(recentArticlesApiUrl)
     var returnProps = {
         landing: {},
         latestArticles: [],
