@@ -79,14 +79,17 @@ const AccountInformation = ({ account }) => {
                     <SimpleGrid minChildWidth={`200px`} >
                         {accessTokens.map(accessToken => {
                             var imgPreviewSrc = `https://assets.objkt.media/file/assets-003/${betaAccessContract}/${accessToken}/thumb288`
+                            var paddedTokenNr = accessToken.toString().padStart(4, '0')
+                            var cdnPreview = `https://the-stack-report.ams3.cdn.digitaloceanspaces.com/access_cards_2023/thumbnail_1k_card_${paddedTokenNr}.png`
+                            var objktTokenUrl = `https://objkt.com/asset/KT1LaCf37XyoR4eNCzMnw6Ccp5bfPFQrKYxe/${accessToken.toString()}`
                             return (
                                 <Box key={accessToken} borderRadius="0.25rem" marginTop="1rem" marginBottom="1rem" marginRight="1rem">
                                     <WrappedLink
-                                        href={`https://objkt.com/asset/${betaAccessContract}/${accessToken}`}
+                                        href={objktTokenUrl}
                                         >
                                     <Image
                                         borderRadius="0.25rem"
-                                        src={imgPreviewSrc}
+                                        src={cdnPreview}
                                         maxWidth="200px"
                                         width="100%"
                                         alt="Beta access token"
