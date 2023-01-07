@@ -39,7 +39,7 @@ var markdownComponents = {
                     md: "2rem"
                 }}
                 >
-            <DataBlockDynamic block_key={block_key} autoPlayOnLoad={false} />
+                <DataBlockDynamic block_key={block_key} autoPlayOnLoad={false} />
             </Box>
         )
     },
@@ -154,12 +154,12 @@ var markdownComponents = {
 const MarkdownWrapper = ({ markdownText }) => {
     return (
         <div className='markdown-wrapper'>
-        <ReactMarkdown
-            components={ChakraUIRenderer(markdownComponents)}
-            rehypePlugins={[rehypeRaw]}
-            >
-            {markdownText}
-        </ReactMarkdown>
+            <ReactMarkdown
+                components={ChakraUIRenderer(markdownComponents)}
+                rehypePlugins={[rehypeRaw]}
+                >
+                {markdownText}
+            </ReactMarkdown>
         </div>
     )
 }

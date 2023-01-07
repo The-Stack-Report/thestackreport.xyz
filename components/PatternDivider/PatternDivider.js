@@ -9,6 +9,7 @@ import {
     Bar
 } from "@visx/shape"
 import _ from "lodash"
+import CryptoJS from "crypto-js"
 
 const defaultMargin = {
     top: 0,
@@ -23,12 +24,11 @@ const PatternDivider = ({
     patternHeight = 10,
     color = 'rgb(200,200,200)'
 }) => {
-    const uniq_id = _.uniqueId()
     return (
         <Box marginTop={marginTop} marginBottom={marginBottom}>
             <svg width="100%" height={patternHeight}>
             <PatternLines
-                id={`pattern-line-divider-${uniq_id}`}
+                id={`pattern-line-divider`}
                 height={7}
                 width={7}
                 stroke={color}
@@ -36,7 +36,7 @@ const PatternDivider = ({
                 orientation={['diagonal']}
                 />
             <Bar
-                fill={`url(#pattern-line-divider-${uniq_id})`}
+                fill={`url(#pattern-line-divider)`}
                 height={patternHeight}
                 width={"100%"}
                 rx={patternHeight / 2}

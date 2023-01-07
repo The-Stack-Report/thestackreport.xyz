@@ -1,11 +1,12 @@
 import React from "react"
 import NextLink from "next/link"
-import { Box, Link } from "@chakra-ui/react"
+import { Box, Link, Text } from "@chakra-ui/react"
 
 const WrappedLink = ({
         href = "",
         children,
         inline=false,
+        passHref=false,
         textDecoration = false,
         ...props }) => {
     var linkProps = {}
@@ -16,15 +17,9 @@ const WrappedLink = ({
         <>
         <NextLink
             href={href}
-            passHref={true}
+            passHref={passHref}
             >
-            <Link
-                href={href}
-                {...linkProps}
-                {...props}
-                >
             {children}
-            </Link>
         </NextLink>
         {inline === false && (
             <>

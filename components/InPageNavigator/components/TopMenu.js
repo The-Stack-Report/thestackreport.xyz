@@ -22,6 +22,13 @@ const TopMenu = ({
     const [menuDimensions, setMenuDimensions] = useState(false)
     const { isOpen, onToggle, onClose } = useDisclosure()
     const [onLoad, setOnLoad] = useState(false)
+    const [isFrontEnd, setIsFrontEnd] = useState(false)
+
+    useEffect(() => {
+        if (typeof window !== "undefined" && isFrontEnd === false) {
+            setIsFrontEnd(true)
+        }
+    }, [isFrontEnd])
 
 
    
@@ -56,6 +63,10 @@ const TopMenu = ({
     }
     var sectionsWithIndex = [{title: "Contents"}].concat(sections)
     var currentSection = _.get(sectionsWithIndex, usingSectionIndex, false)
+
+    if(isFrontEnd === false) {
+        return null
+    }
 
     return (
         <>
@@ -111,7 +122,10 @@ const TopMenu = ({
                     zIndex="206"
                     pointerEvents="none"
                     />
-            <SlideFade direction="top" in={isOpen} offsetY={-100}
+            <SlideFade
+                direction="top"
+                in={isOpen}
+                offsetY={-100}
                 style={{pointerEvents: "none"}}
                 >
                 <Box

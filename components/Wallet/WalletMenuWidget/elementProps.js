@@ -3,6 +3,7 @@ export var connectedAccountLinkProps = {
     marginLeft: "auto",
     borderRadius: "0.25rem",
     pointerEvents: "initial",
+    textDecoration: "underline",
     _hover: {
         background: "black",
         color: "white",
@@ -20,6 +21,7 @@ export var displayNameTextProps = {
     border: "0px solid transparent",
     borderRadius: "0.25rem",
     textAlign: "right",
+    pointerEvents: "initial",
     _hover: {
         background: "black",
         color: "white",
@@ -58,7 +60,12 @@ export var getSignatureButtonProps = {
     width: "fluid",
     border: "0px solid transparent",
     borderRadius: "0.25rem",
-    color: "black"
+    color: "black",
+    _hover:{
+        background: "black",
+        color: "white",
+        borderRadius: "0.25rem"
+    }
 }
 
 export var disconnectButtonProps = {

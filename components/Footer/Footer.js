@@ -10,6 +10,8 @@ import WrappedLink from "components/WrappedLink"
 import SocialsLinkList from "components/socials/SocialsLinkList"
 
 const Footer = () => {
+
+    return null
     return (
         <div className={styles["footer"]}>
             <Container maxW="container.xl">

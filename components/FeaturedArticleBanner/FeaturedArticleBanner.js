@@ -41,6 +41,7 @@ const FeaturedArticleBanner = ({ article }) => {
                 layout="fill"
                 objectFit="cover"
                 unoptimized={true}
+                priority={true}
                 />
             </div>
             <div style={{position: "absolute", bottom: 20, left: 0, right: 0}}>

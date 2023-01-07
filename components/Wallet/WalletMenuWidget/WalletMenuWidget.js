@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useState, useEffect } from "react"
 import {
     WalletContext
 } from "components/Wallet"
@@ -37,6 +37,13 @@ import {
 const WalletMenuWidget = () => {
     const walletContext = useContext(WalletContext)
     const [accountNameDisplayMode, setAccountNameDisplayMode] = useState("account-name")
+    const [isFrontEnd, setIsFrontEnd] = useState(false)
+
+    useEffect(() => {
+        if (typeof window !== "undefined" && isFrontEnd === false) {
+            setIsFrontEnd(true)
+        }
+    }, [isFrontEnd])
 
     // console.log("wallet context in wallet menu widget:")
     // console.log(walletContext)
@@ -58,17 +65,25 @@ const WalletMenuWidget = () => {
     if (typeof window !== "undefined") {
         isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     }
+    if(isFrontEnd === false) {
+        return null
+    }
+    if(WALLET_CONNECTION === false) {
+        return null
+    }
+
 
     return (
-        <>
-        {WALLET_CONNECTION && (
-            <Box className={styles["wallet-menu-widget"]} >
+        <Box className={styles["wallet-menu-widget"]} >
             {walletContext.connectionState === ACCOUNT_ACTIVE ? (
                 <>
                 <Box {...containerBoxProps}>
-                <WrappedLink href="/connected-account" {...connectedAccountLinkProps}>
+                <WrappedLink
+                    href="/connected-account"
+                    {...connectedAccountLinkProps}
+                    >
                     <Text {...displayNameTextProps}>
-                        {displayName}
+                    {displayName}
                     </Text>
                 </WrappedLink>
                 <Text {...displayModeIconProps}
@@ -184,9 +199,6 @@ const WalletMenuWidget = () => {
                 </>
             )}
         </Box>
-        )}
-        </>
-        
     )
 }
 
