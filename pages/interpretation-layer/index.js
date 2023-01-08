@@ -74,7 +74,7 @@ const InterpretationLayerPage = ({ pageContent }) => {
                     >
                     Interpretation Layer
                 </Heading>
-                <Box maxW="container.md" paddingBottom="4rem">
+                <Box maxW="container.sm" paddingBottom="4rem">
                     <MarkdownWrapper markdownText={pageContentText} />
                     {pageFAQ.map((faq, i) => {
                         return (

@@ -15,6 +15,7 @@ import { connectToDatabase } from "utils/mongo_db"
 import PageLayout from "components/PageLayout"
 import TezosContractDashboard from "components/TezosContractDashboard"
 import WrappedLink from "components/WrappedLink"
+import StyledLink from "components/Links/StyledLink"
 import _ from "lodash"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"
 import { getUrl } from "utils/serverCache"
@@ -79,10 +80,14 @@ const ContractPage = ({
                         <Box height="0.5rem" />
                         <WrappedLink
                             href="/dashboards/tezos" 
-                            fontSize="0.7rem"
-                            paddingTop="0.5rem"
                             >
-                            Back to contract dashboards overview.
+                            <Text 
+                                fontSize="0.7rem"
+                                paddingTop="0.5rem"
+                                textDecoration="underline"
+                                >
+                                Back to contract dashboards overview.
+                            </Text>
                         </WrappedLink>
                     </React.Fragment>
                 ) : (
@@ -94,9 +99,9 @@ const ContractPage = ({
                                 md: "1rem"
                             }}
                             >
-                        <WrappedLink href="/dashboards/tezos" fontSize="0.7rem">
+                        <StyledLink href="/dashboards/tezos" fontSize="0.7rem">
                             To Tezos dashboards overview
-                        </WrappedLink>
+                        </StyledLink>
                         </Box>
                         
                         <Heading

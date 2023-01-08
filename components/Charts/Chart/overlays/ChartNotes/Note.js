@@ -398,9 +398,12 @@ const ChartNote = ({ note }) => {
                                         body: JSON.stringify(reqBody)
                                     }).then(resp => {
                                         // Todo: Update cached note with db ID
+                                        console.log("Updated note response: ", resp)
 
                                         if(resp.status === 200) {
                                             resp.json().then(json => {
+                                                // If note is new, update the note with the db ID
+                                                
                                                 const dbId = _.get(json, "insertedId", false)
                                                 var updatedNote = {
                                                     ...note,

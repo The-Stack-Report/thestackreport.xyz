@@ -16,7 +16,7 @@ import DataBlock from "components/DataBlock"
 import { CMS_URL } from 'constants/cms'
 import _ from "lodash"
 import { connectToDatabase } from "utils/mongo_db"
-import WrappedLink from "components/WrappedLink"
+import StyledLink from "components/Links/StyledLink"
 import MarkdownWrapper from "components/MarkdownWrapper"
 import TopContractsLandingPageWidget from "components/TopContractsLandingPageWidget"
 import qs from "qs"
@@ -69,13 +69,12 @@ const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStat
                     <ArticleList
                         articles={latestArticlesWithoutFeatured}
                         />
-                    <Text>{">> "}
-                    <WrappedLink
-                        href="/articles">
+                    <Text>
+                        {">> "}
+                        <StyledLink href="/articles">
                             All articles
-                        </WrappedLink>
+                        </StyledLink>
                     </Text>
-                    
                 </Box>
                 <Box>
                     <Text
@@ -92,9 +91,9 @@ const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStat
                         contracts={topContractsStats}
                         />
                     <Box paddingTop="2rem" paddingBottom="2rem">
-                        <WrappedLink href="/dashboards/tezos">
+                        <StyledLink href="/dashboards/tezos">
                             Search through all Tezos contract dashboards
-                        </WrappedLink>
+                        </StyledLink>
                     </Box>
                 </Box>
             </SimpleGrid>
@@ -111,6 +110,7 @@ const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStat
                     marginRight="-1px"
                     padding="0.5rem"
                     paddingTop="2rem"
+                    paddingBottom="2rem"
                     paddingRight="1rem"
                     >
                     <Box maxW="60rem">
@@ -124,11 +124,9 @@ const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStat
                         markdownText={aboutText}
                         />
                     <br />
-                    <WrappedLink
-                        href="/about"
-                        >
+                    <StyledLink href="/about" >
                         Read more
-                    </WrappedLink>
+                    </StyledLink>
                     <br />
                     </Box>
                 </Box>

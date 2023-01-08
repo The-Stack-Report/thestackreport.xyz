@@ -42,9 +42,10 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                         <Text>{errorMessage}</Text>
                         <WrappedLink
                             href="/datasets"
-                            fontSize="0.7rem"
                             >
+                            <Text fontSize="0.7rem" textDecoration="underline">
                             Back to datasets overview
+                            </Text>
                         </WrappedLink>
                     </React.Fragment>
                 ) : (
@@ -59,6 +60,7 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                             <WrappedLink
                                 href="/datasets"
                                 fontSize="0.7rem"
+                                marginTop="1rem"
                                 >
                                 To datasets overview
                             </WrappedLink>

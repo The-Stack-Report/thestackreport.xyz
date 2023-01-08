@@ -56,9 +56,9 @@ const ArticleCard = ({
                     loader={basicImgLoader}
                     src={bannerImgUrl}
                     alt={_.get(attrs, "Title", "no-title")}
-                    layout="fill"
-                    objectFit="cover"
+                    fill={true}
                     unoptimized={true}
+                    style={{objectFit: "cover"}}
                     />
                 </div>
                 {previewMode && (

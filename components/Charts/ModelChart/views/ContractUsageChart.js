@@ -166,9 +166,9 @@ var ContractUsageChart = ({
                         >
                         Dashboard:{" "}
                 <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
-                    
+                    <Text textDecoration="underline" as="span">
                     {_.get(contract, "tzkt_account_data.alias", address)}
-                    
+                    </Text>
                 </WrappedLink>
                 </Text>
                 </>

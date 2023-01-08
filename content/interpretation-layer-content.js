@@ -28,7 +28,7 @@ See below for a chart with a note placed on it.
 model="contract"
 _key="KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"
 view="entrypoints-daily"
-custom_note='{"note":"#Objkt4Objkt event", "date": "2021-09-10"}'
+custom_note='{"note":"First ever OBJKT4OBJKT", "date": "2021-04-25"}'
 end_date="2021-11-01"
 show_chart_notes="yes"
 />
@@ -72,6 +72,14 @@ export const interpretationLayerFAQ = [
     {
         question: "What is a chart note?",
         answer: "Chart notes are publicly visible *notes* that can be left behind by *community members* as well as the stack report team."
+    },
+    {
+        question: "How do I place a note on a chart?",
+        answer: "When you hover over the X Axis with the mouse cursor, you will see a preview of a note to be placed. Once you click, a new note will be instantiated in the front-end. Only after you press save on the note itself, the new note will be stored in the database."
+    },
+    {
+        question: "Where are Chart Notes stored?",
+        answer: "Chart notes are stored in a database maintained by The Stack Report. Currently they are not stored on the blockchain."
     },
     {
         question: "What are the Access Cards?",

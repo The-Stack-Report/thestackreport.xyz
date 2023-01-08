@@ -75,13 +75,20 @@ handler.get(async (req, res) => {
 
     var userAccount = false
     var authorizationheader = _.get(req, "headers.authorization", false)
+
+    var authorizationState = "none"
     if(authorizationheader) {
+        console.log("received authorization header: ", authorizationheader)
         const accessToken = req.headers.authorization.split(" ")[1]
+        console.log(`Access token: `, accessToken)
         const pkh = verifyAccessToken(accessToken)
 
         console.log("user account address: ", pkh)
         if(pkh) {
+            authorizationState = "success"
             userAccount = pkh
+        } else {
+            authorizationState = "failed"
         }
     } else {
         console.log("No authorization header")
@@ -128,7 +135,11 @@ handler.get(async (req, res) => {
 
             var returnNotes = notes.concat(privateNotes)
 
-            res.status(200).json(returnNotes)
+            res.status(200).json({
+                notes: returnNotes,
+                message: "Success",
+                authorizationState: authorizationState
+            })
             return
         } catch(e) {
             console.log("Error getting chart notes: ", e)
@@ -239,9 +250,10 @@ handler.post(async (req, res) => {
             return
         }
         console.log("Trying to update note")
+        var updateResult = false
         try {
             console.log("Updating to text: ", noteText)
-            const result = await collection.updateOne({
+            updateResult = await collection.updateOne({
                     _id: new ObjectId(noteId)
                 },
                 {
@@ -257,6 +269,8 @@ handler.post(async (req, res) => {
             res.status(500).json({message: "Error updating chart note."})
             return
         }
+        res.status(200).json({message: "Success", result: updateResult})
+        return
     } else {
         console.log("Inserting new note")
         try {

@@ -32,14 +32,17 @@ const FeaturedArticleBanner = ({ article }) => {
     return (
         <div style={{position: "relative", borderBottom: "1px solid black", userSelect: "none"}}>
             <div style={{
-                minHeight: 400
+                minHeight: 400,
+                position: "relative"
             }}>
             <Image
                 loader={basicImgLoader}
                 src={bannerImgSrc}
                 alt={`Image for featured article: ${title}`}
-                layout="fill"
-                objectFit="cover"
+                fill={true}
+                style={{
+                    objectFit: "cover",
+                }}
                 unoptimized={true}
                 priority={true}
                 />

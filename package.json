@@ -10,7 +10,7 @@
   "dependencies": {
     "@airgap/beacon-sdk": "^3.2.0",
     "@chakra-ui/icons": "^1.1.7",
-    "@chakra-ui/react": "^1.8.9",
+    "@chakra-ui/react": "^2.4.6",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@rehooks/component-size": "^1.0.3",

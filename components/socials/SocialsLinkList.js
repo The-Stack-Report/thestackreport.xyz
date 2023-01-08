@@ -4,40 +4,43 @@ import LinkedInIcon from "./icons/LinkedInIcon"
 import TezosIcon from "./icons/TezosIcon"
 import TwitterIcon from "./icons/TwitterIcon"
 import WrappedLink from "components/WrappedLink"
-import { Text } from "@chakra-ui/react"
+import StyledLink from "components/Links/StyledLink"
+import { Text, Box } from "@chakra-ui/react"
 import styles from "./SocialsLinkList.module.scss"
 
 const SocialsLinkList = () => {
     return (
         <div className={styles["socials-link-list"]}>
-            <WrappedLink
-                href="https://app.tezos.domains/domain/thestackreport.tez"
-                style={{display: "flex"}}
-                    >
+            <Box display="flex">
                 <TezosIcon />
-                thestackreport.tez
-            </WrappedLink>
-            <WrappedLink
-                href="https://twitter.com/thestackreport"
-                style={{display: "flex"}}
-                    >
+                <StyledLink href="https://app.tezos.domains/domain/thestackreport.tez" >
+                    thestackreport.tez
+                </StyledLink>
+            </Box>
+            <br />
+
+            <Box display="flex">
                 <TwitterIcon />
-                Twitter
-            </WrappedLink>
-            <WrappedLink
-                href="https://www.instagram.com/stackreport/"
-                style={{display: "flex"}}
-                    >
+                <StyledLink href="https://twitter.com/thestackreport" >
+                    Twitter
+                </StyledLink>
+            </Box>
+            <br />
+
+            <Box display="flex">
                 <InstagramIcon />
-                Instagram
-            </WrappedLink>
-            <WrappedLink
-                href="https://www.linkedin.com/company/the-stack-report/"
-                style={{display: "flex"}}
-                    >
+                <StyledLink href="https://www.instagram.com/stackreport/" >
+                    Instagram
+                </StyledLink>
+            </Box>
+            <br />
+
+            <Box display="flex">
                 <LinkedInIcon />
-                Linkedin
-            </WrappedLink>
+                <StyledLink href="https://www.linkedin.com/company/the-stack-report/" >
+                    Linkedin
+                </StyledLink>
+            </Box>
         </div>
     )
 }

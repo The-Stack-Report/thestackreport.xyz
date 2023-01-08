@@ -6,12 +6,10 @@ import {
     Box,
     Text
 } from "@chakra-ui/react"
-import WrappedLink from "components/WrappedLink"
+import StyledLink from "components/Links/StyledLink"
 import SocialsLinkList from "components/socials/SocialsLinkList"
 
 const Footer = () => {
-
-    return null
     return (
         <div className={styles["footer"]}>
             <Container maxW="container.xl">
@@ -40,25 +38,25 @@ const Footer = () => {
                             >
                             Pages
                         </Text>
-                        <WrappedLink href="/articles" >
+                        <StyledLink href="/articles" >
                             Articles
-                        </WrappedLink>
+                        </StyledLink>
                         <br />
-                        <WrappedLink href="/categories" >
+                        <StyledLink href="/categories" >
                             Categories
-                        </WrappedLink>
+                        </StyledLink>
                         <br />
-                        <WrappedLink href="/dashboards/tezos" >
-                            {"Dashboards"}
-                        </WrappedLink>
+                        <StyledLink href="/dashboards/tezos" >
+                            Dashboards
+                        </StyledLink>
                         <br />
-                        <WrappedLink href="/datasets" >
-                            {"Datasets"}
-                        </WrappedLink>
+                        <StyledLink href="/datasets" >
+                            Datasets
+                        </StyledLink>
                         <br />
-                        <WrappedLink href="/about" >
+                        <StyledLink href="/about" >
                             About
-                        </WrappedLink>
+                        </StyledLink>
                     </Box>
                     <Box>
                     <Text as="h2"
@@ -70,11 +68,11 @@ const Footer = () => {
                         <SocialsLinkList />
                     </Box>
                     <Box>
-                        <WrappedLink href="/about"
+                        <StyledLink href="/about"
                             fontWeight="bold"
                             >
                             About
-                        </WrappedLink>
+                        </StyledLink>
                         <Text
                             marginTop="1rem"
                             paddingRight={{

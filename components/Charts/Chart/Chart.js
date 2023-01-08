@@ -29,7 +29,8 @@ import HoverTooltip from "./HoverTooltip"
 import {
     Box,
     Text,
-    Button
+    Button,
+    Tooltip
 } from "@chakra-ui/react"
 import styles from "./Chart.module.scss"
 import { useDebouncedCallback } from 'use-debounce'
@@ -55,6 +56,7 @@ import NoteAlertMessages from "./overlays/ChartNotes/NoteAlertMessages"
 import { RecoilRoot } from "recoil"
 import NotesSettings from "./overlays/ChartNotes/NotesSettings"
 import { WalletContext } from "components/Wallet/WalletContext"
+import useChartNotes from "./overlays/ChartNotes/useChartNotes"
 
 dayjs.extend(isBetween)
 
@@ -136,6 +138,8 @@ const Chart = React.memo((props) => {
         "community": false,
         "private": true
     })
+    const chartNotesState = useChartNotes({chartId: chartId})
+    console.log(`chartNotesState`, chartNotesState)
 
     const walletContext = useContext(WalletContext)
 
@@ -188,24 +192,27 @@ const Chart = React.memo((props) => {
             headers["authorization"] = `Bearer ${accessToken}`
         }
         var shouldFetch = (apiNotes === false && _.isString(chartId))
-        
+        if(fetchedNotesWithAccessToken) {
+            shouldFetch = false
+        }
         if(accessToken && fetchedNotesWithAccessToken === false) {
             shouldFetch = true
             setFetchedNotesWithAccessToken(true)
         }
+        
 
         var queryParams = {
             method: "GET",
             headers: headers
         }
         if(shouldFetch) {
+            console.log(`Fetching notes for chart id: ${chartId} with params:`, queryParams)
             fetch(`/api/chart_note?chart_id=${chartId}`, queryParams)
                 .then(res => res.json())
                 .then(data => {
-                    var parsedData = []
-
-                    if(_.isArray(data)) {
-                        parsedData = data.map(p => {
+                    var parsedNotes = []
+                    if(_.has(data, "notes")) {
+                        parsedNotes = data.notes.map(p => {
                             return {
                                 ...p,
                                 date: dayjs(p.date),
@@ -214,7 +221,10 @@ const Chart = React.memo((props) => {
                             }
                         })
                     }
-                    setApiNotes(parsedData)
+
+                    console.log(data)
+
+                    setApiNotes(parsedNotes)
                 })
             
         }
@@ -549,7 +559,19 @@ const Chart = React.memo((props) => {
         })
     }, [allChartNotes, _xDomainFiltered])
 
-    
+    const communityNotesVisible = useMemo(() => {
+        return notesInXRange.filter(note => {
+            return _.get(note, "visibility", false) === "community"
+        })
+    }, [notesInXRange])
+
+    const communityNotesTotal = useMemo(() => {
+        return allChartNotes.filter(note => {
+            return _.get(note, "visibility", false) === "community"
+        })
+    }, [allChartNotes])
+
+
     const visibleChartNotes = useMemo(() => {
         return notesInXRange.filter(note => {
             var noteLayersVisible = _.toPairs(noteLayers).filter(p => p[1] === true).map(p => p[0])
@@ -559,21 +581,26 @@ const Chart = React.memo((props) => {
             if(previewNoteSourceStates.includes(noteSource)) {
                 return true
             }
-            if(_.get(note, "owner", 'no-owner') === _.get(walletContext, "address", 'no-wallet')) {
-                return true
-            }
+            // if(_.get(note, "owner", 'no-owner') === _.get(walletContext, "address", 'no-wallet')) {
+            //     if(noteLayers.private) {
+            //         return true
+            //     } else {
+            //         return false
+            //     }
+            // }
             if(_.get(note, "noteSource", false) === "custom_markdown") {
                 return true
             }
             return noteLayersVisible.includes(_.get(note, "visibility", false))
         })
-    }, [ notesInXRange, noteLayers, walletContext])
+    }, [ notesInXRange, noteLayers])
 
     const communityNotesInXRange = useMemo(() => {
         return notesInXRange.filter(note => {
             return _.get(note, "visibility", false) === "community"
         })
     }, [notesInXRange])
+
 
     useEffect(() => {
         if(brushZoomInitialized === false) {
@@ -733,15 +760,66 @@ const Chart = React.memo((props) => {
                             </Box>
                             <>
                             {noteEditingEnabled && (
+                                <>
+                                <Tooltip label="Show community notes." placement="top">
                                 <Box
                                     position="absolute"
-                                    left="0px"
-                                    right={xAxisLabelsPosition === "outside" ? `100px` : "0px"}
+                                    zIndex={-100}
+                                    top="13px"
+                                    left={`${_margins.left}px`}
+                                    width={`${chart.width}px`}
+                                    height="22px"
+                                    cursor="pointer"
+                                    background="transparent"
+                                    pointerEvents="initial"
+                                    border="1px solid transparent"
+                                    _hover={{
+                                        background: "rgba(0,0,0,0.02)",
+                                        border: "1px solid rgba(0,0,0,0.1)"
+                                    }}
+                                    onPointerDown={(e) => {
+                                        e.stopPropagation()
+                                        e.preventDefault()
+                                        setNoteLayers({
+                                            ...noteLayers,
+                                            community: !noteLayers.community
+                                        })
+                                    }}
+                                    
+                                    >
+                                    {communityNotesVisible.map((note, note_i) => {
+                                        var leftPos = xScale(note.date)
+                                        if(!noteLayers.community) {
+                                            return (
+                                                <Box
+                                                    key={note_i}
+                                                    width="4px"
+                                                    height="10px"
+                                                    borderRadius="2px"
+                                                    position="absolute"
+                                                    left={`${leftPos-2}px`}
+                                                    top="7px"
+                                                    background="gray.500"
+                                                    opacity={0.3}
+                                                    />
+                                            )
+                                        }
+                                        return null
+                                        
+                                    })}
+                                    
+                                </Box>
+                                </Tooltip>
+                                <Box
+                                    position="absolute"
+                                    left={`${chart.width + 20}px`}
                                     top="-40px"
                                     zIndex={10}
                                     >
                                     <NotesSettings />
                                 </Box>
+                                
+                                </>
                             )}
                             </>
                         </>

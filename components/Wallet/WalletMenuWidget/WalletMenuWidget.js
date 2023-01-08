@@ -81,6 +81,7 @@ const WalletMenuWidget = () => {
                 <WrappedLink
                     href="/connected-account"
                     {...connectedAccountLinkProps}
+                    renderAsText={false}
                     >
                     <Text {...displayNameTextProps}>
                     {displayName}
