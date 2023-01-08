@@ -7,6 +7,7 @@ import { gridScale, grayScale } from "utils/colorScales"
 import dayjs from "dayjs"
 
 import WrappedLink from "components/WrappedLink"
+import StyledLink from "components/Links/StyledLink"
 import {
     Text
 } from "@chakra-ui/react"
@@ -87,10 +88,10 @@ const ContractBlockShareChart = ({
                             fontWeight="light"
                             >
                             Block share in transactions{" "}
-                            </Text>
-                            <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
+                            <StyledLink href={`/dashboards/tezos/contracts/${address}`}>
                             {_.get(contract, "tzkt_account_data.alias", address)}
-                            </WrappedLink>
+                            </StyledLink>
+                            </Text>
                         </Text>
                         <Chart
                             name=" "

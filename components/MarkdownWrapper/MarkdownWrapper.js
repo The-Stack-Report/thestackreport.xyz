@@ -17,16 +17,7 @@ import _ from "lodash"
 import dayjs from "dayjs"
 import prepareChartProps from "./prepareChartProps"
 
-const ULMarkdown = (props) => {
-    return (
-        <UnorderedList marginBottom={"1rem"}>
-            {props.children}
-        </UnorderedList>
-    )
-}
-
 var markdownComponents = {
-    "ul": ULMarkdown,
     "data_block": (props) => {
         var block_key = _.get(props, "children[0]", false)
         if(block_key === false) {

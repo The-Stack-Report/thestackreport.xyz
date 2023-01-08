@@ -7,6 +7,7 @@ import { gridScale, grayScale } from "utils/colorScales"
 import dayjs from "dayjs"
 
 import WrappedLink from "components/WrappedLink"
+import StyledLink from "components/Links/StyledLink"
 import {
     Text
 } from "@chakra-ui/react"
@@ -83,14 +84,14 @@ const ContractBakerFeeChart = ({
                     fontSize="0.8rem"
                     >
                     <Text
-                    as="span"
-                    fontWeight="light"
-                    >
-                    Baker fees for{" "}
+                        as="span"
+                        fontWeight="light"
+                        >
+                        Baker fees for{" "}
+                        <StyledLink href={`/dashboards/tezos/contracts/${address}`}>
+                        {_.get(contract, "tzkt_account_data.alias", address)}
+                        </StyledLink>
                     </Text>
-                    <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
-                    {_.get(contract, "tzkt_account_data.alias", address)}
-                    </WrappedLink>
                 </Text>
                 <Chart
                     name=" "

@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react"
 import useFetch from "react-fetch-hook"
 import Chart from "components/Charts/Chart"
-import { gridScale, grayScale } from "utils/colorScales"
-import dayjs from "dayjs"
-
-import WrappedLink from "components/WrappedLink"
+import StyledLink from "components/Links/StyledLink"
 import {
     Text
 } from "@chakra-ui/react"
@@ -148,11 +145,9 @@ const ChartRenderer = ({
             color="gray.500"
             >
             Dashboard:{" "}
-        <WrappedLink href={`/dashboards/tezos/contracts/${address}#xtz-statistics`}>
-            
-            {_.get(contract, "tzkt_account_data.alias", address)}
-            
-        </WrappedLink>
+            <StyledLink href={`/dashboards/tezos/contracts/${address}#xtz-statistics`}>
+                {_.get(contract, "tzkt_account_data.alias", address)}
+            </StyledLink>
         </Text>
         </>
     )

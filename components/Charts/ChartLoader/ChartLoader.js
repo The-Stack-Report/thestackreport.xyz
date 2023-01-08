@@ -7,8 +7,7 @@ import _ from "lodash"
 import * as d3 from "d3"
 import prepareDf from "utils/data/prepareDf"
 import Chart from "components/Charts/Chart"
-import chroma from "chroma-js"
-import WrappedLink from "components/WrappedLink"
+import StyledLink from "components/Links/StyledLink"
 import { chartCMSProps } from "constants/cms"
 
 const ChartLoader = ({
@@ -133,9 +132,9 @@ const ChartLoader = ({
                         zIndex="100"
                         >
                         Chart:{" "}
-                        <WrappedLink href={`/charts/${_.get(chart, "slug", "not-found")}`}>
+                        <StyledLink href={`/charts/${_.get(chart, "slug", "not-found")}`}>
                             {`#${_.get(chart, "slug", "not-found")}`}
-                        </WrappedLink>
+                        </StyledLink>
                     </Text>
                 </Box>
             )}
