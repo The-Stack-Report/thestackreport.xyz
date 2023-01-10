@@ -285,143 +285,29 @@ const ChartNote = ({ note }) => {
                             noteType={noteType}
                             
                             storeCallback={() => {
-                                const accountAddress = _.get(walletContext, "address", false)
-                                const betaAccessContract = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.contractAddress", false)
-                                var betaAccessNft = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.tokens[0]", false)
-                                var betaAccessNft = _.toNumber(betaAccessNft)
-
-                                var accessToken = _.get(walletContext, "userAccessToken.accessToken", false)
-
-                                note.note = editedNoteText
-                                if(accountAddress && betaAccessContract && betaAccessNft && accessToken) {
-                                    var reqBody = {
-                                        "accountAddress": accountAddress,
-                                        "betaAccessContract": betaAccessContract,
-                                        "betaAccessToken": betaAccessNft,
-                                        "note": note
-                                    }
-
-                                    const bearerAuth = `Bearer ${accessToken}`
-
-
-                                    fetch("/api/chart_note", {
-                                        method: "POST",
-                                        headers: {
-                                            "Content-Type": "application/json",
-                                            "authorization": bearerAuth,
-                                        },
-                                        body: JSON.stringify(reqBody)
-                                    }).then(resp => {
-                                        // Todo: Update cached note with db ID
-
-                                        if(resp.status === 200) {
-                                            resp.json().then(json => {
-                                                const dbId = _.get(json, "insertedId", false)
-                                                var updatedNote = {
-                                                    ...note,
-                                                    noteSource: "db",
-                                                    id: dbId
-                                                }
-                                                chartContext.setNewNotes(
-                                                    chartContext.newNotes.filter(n => n.id !== note.id)
-                                                )
-                                                chartContext.setApiNotes(
-                                                    chartContext.apiNotes.concat([updatedNote])
-                                                )
-                                            })
-                                        } else {
-                                            console.log("Error in storing note: ",resp)
-                                        }
-                                    })
-                                }
-                                
+                                chartContext.postNote({
+                                    ...note,
+                                    note: editedNoteText
+                                })
                             }}
                             revertNote={() => {
                                 
 
                             }}
                             deleteCallback={() => {
-                                console.log("Delete note: ", note)
-                                var noteSource = _.get(note, "noteSource", false)
-                                if(noteSource === "initialized") {
-                                    chartContext.setNewNotes(chartContext.newNotes.filter(n => n.id !== note.id))
-                                } else {
-                                    var accessToken = _.get(walletContext, "userAccessToken.accessToken", false)
-                                    const bearerAuth = `Bearer ${accessToken}`
-                                    fetch(`/api/chart_note?note_id=${note.id}`, {
-                                        method: "DELETE",
-                                        headers: {
-                                            "Content-Type": "application/json",
-                                            "authorization": bearerAuth,
-                                        }
-                                    }).then(resp => {
-                                        console.log("Delete note response: ", resp)
-                                        if(resp.status === 200) {
-                                            chartContext.setNewNotes(chartContext.newNotes.filter(n => n.id !== note.id))
-                                            chartContext.setApiNotes(chartContext.apiNotes.filter(n => n.id !== note.id))
-                                        }
-                                        // Remove note from state 
-                                    })
-                                }
+                                chartContext.deleteNote(note)
                             }}
                             communityToggleCallback={() => {
-                                const accountAddress = _.get(walletContext, "address", false)
-                                const betaAccessContract = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.contractAddress", false)
-                                var betaAccessNft = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.tokens[0]", false)
-                                var betaAccessNft = _.toNumber(betaAccessNft)
-
-                                var accessToken = _.get(walletContext, "userAccessToken.accessToken", false)
-
-                                if(note.visibility === "private") {
-                                    note.visibility = "community"
+                                var newVisibilityState = _.cloneDeep(note.visibility)
+                                if(newVisibilityState === "private") {
+                                    newVisibilityState = "community"
                                 } else {
-                                    note.visibility = "private"
+                                    newVisibilityState = "private"
                                 }
-
-                                if(accountAddress && betaAccessContract && betaAccessNft && accessToken) {
-                                    var reqBody = {
-                                        "accountAddress": accountAddress,
-                                        "betaAccessContract": betaAccessContract,
-                                        "betaAccessToken": betaAccessNft,
-                                        "note": note
-                                    }
-
-                                    const bearerAuth = `Bearer ${accessToken}`
-
-                                    console.log("posting note: ", reqBody)
-                                    fetch("/api/chart_note", {
-                                        method: "POST",
-                                        headers: {
-                                            "Content-Type": "application/json",
-                                            "authorization": bearerAuth,
-                                        },
-                                        body: JSON.stringify(reqBody)
-                                    }).then(resp => {
-                                        // Todo: Update cached note with db ID
-                                        console.log("Updated note response: ", resp)
-
-                                        if(resp.status === 200) {
-                                            resp.json().then(json => {
-                                                // If note is new, update the note with the db ID
-                                                
-                                                const dbId = _.get(json, "insertedId", false)
-                                                var updatedNote = {
-                                                    ...note,
-                                                    noteSource: "db",
-                                                    id: dbId
-                                                }
-                                                chartContext.setNewNotes(
-                                                    chartContext.newNotes.filter(n => n.id !== note.id)
-                                                )
-                                                chartContext.setApiNotes(
-                                                    chartContext.apiNotes.concat([updatedNote])
-                                                )
-                                            })
-                                        } else {
-                                            console.log("Error in storing note: ",resp)
-                                        }
-                                    })
-                                }
+                                chartContext.postNote({
+                                    ...note,
+                                    visibility: newVisibilityState
+                                })
                             }}
                             />
                         </Box>

@@ -20,7 +20,6 @@ import {
 } from "components/Charts/constants/marginDefaults"
 import useWindowSize from "utils/useWindowSize"
 import { breakpoints } from "styles/breakpoints"
-import { PatternLines } from '@visx/pattern'
 import dayjs from "dayjs"
 import Grid from "components/Charts/components/Grid"
 import HoverOverlay from "components/Charts/components/HoverOverlay"
@@ -29,19 +28,12 @@ import HoverTooltip from "./HoverTooltip"
 import {
     Box,
     Text,
-    Button,
     Tooltip
 } from "@chakra-ui/react"
 import styles from "./Chart.module.scss"
 import { useDebouncedCallback } from 'use-debounce'
-import {
-    AreaClosed,
-    LinePath,
-    Bar
-} from "@visx/shape"
 import AxisRight from "components/Charts/components/AxisRight"
 import AxisBottom from "components/Charts/components/AxisBottom"
-import chroma from "chroma-js"
 import DataColumns from "./DataColumns"
 import TimelineBrush from "./TimelineBrush"
 import BadgesLegend from "components/Charts/components/BadgesLegend"
@@ -57,6 +49,9 @@ import { RecoilRoot } from "recoil"
 import NotesSettings from "./overlays/ChartNotes/NotesSettings"
 import { WalletContext } from "components/Wallet/WalletContext"
 import useChartNotes from "./overlays/ChartNotes/useChartNotes"
+import useScales from "./hooks/useScales"
+import usePreparedData from "./hooks/usePreparedData"
+import useDomains from "./hooks/useDomains"
 
 dayjs.extend(isBetween)
 
@@ -67,6 +62,12 @@ function dateKeyVal(val) {
 var rightAxisBreakpoint = 1367
 
 export const ChartContext = createContext()
+
+const noteLayersVisibilityInitialState = {
+    curated: true,
+    community: false,
+    private: true
+}
 
 const Chart = React.memo((props) => {
     const {
@@ -110,14 +111,7 @@ const Chart = React.memo((props) => {
         showChartNotes = false
     } = props
         
-    const _data = useMemo(() => {
-        return data.map(p => {
-            return {
-                ...p,
-                date: xValTransform(dayjs(_.get(p, "date", false)))
-            }
-        })
-    }, [data, xValTransform])
+    const _data = usePreparedData({ data, xValTransform })
     const containerRef = useRef(null)
     const [dimensions, setDimensions] = useState({ width: width, height: 400 })
     const [windowResizeCounter, setWindowResizeCounter] = useState(0)
@@ -126,114 +120,34 @@ const Chart = React.memo((props) => {
     const [brushZoomInitialized, setBrushZoomInitialized] = useState(false)
     const [columnsToggled, setColumnsToggled] = useState(initialColumnToggles)
     const [selectedNote, setSelectedNote] = useState(false)
-    const [newNotes, setNewNotes] = useState([])
-    const [newNotePreview, setNewNotePreview] = useState(false)
+    
     const [controllingZoomBrush, setControllingZoomBrush] = useState(false)
     const [editedNotes, setEditedNotes] = useState({})
     const [editingNote, setEditingNote] = useState(false)
-    const [apiNotes, setApiNotes] = useState(false)
-    const [fetchedNotesWithAccessToken, setFetchedNotesWithAccessToken] = useState(false)
-    const [noteLayers, setNoteLayers] = useState({
-        "curated": true,
-        "community": false,
-        "private": true
-    })
-    const chartNotesState = useChartNotes({chartId: chartId})
-    console.log(`chartNotesState`, chartNotesState)
-
-    const walletContext = useContext(WalletContext)
-
-    const windowSize = useWindowSize()
-
-    const windowWidth = useMemo(() => {
-        return _.get(windowSize, "width", 500)
-    }, [windowSize])
-
     const [hoveredXValue, setHoveredXValue] = useState(false)
-
-    const handleResize = useDebouncedCallback(
-        () => {
-            setWindowResizeCounter((c) => c + 1)
-        },
-        50
-    );
-
-    const handleBrushMove = (newFilteredData) => {
-        setFilteredData(newFilteredData)
-        setBrushMoved(true)
-    }
+    const [noteLayers, setNoteLayers] = useState(noteLayersVisibilityInitialState)
+   
+    const walletContext = useContext(WalletContext)
 
     useEffect(() => {
         setBrushZoomInitialized(false)
     }, [dataHash])
     
     useEffect(() => {
-        if(windowResizeCounter === 0) {
-            setWindowResizeCounter(1)
-        }
+        if(windowResizeCounter === 0) setWindowResizeCounter(1) 
     }, [windowResizeCounter])
 
+    const handleResize = useDebouncedCallback(
+        () => setWindowResizeCounter((c) => c + 1), 50
+    );
+
     useEffect(() => {
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
     }, [handleResize]);
 
-    var accessToken = useMemo(() => {
-        return _.get(walletContext, "userAccessToken.accessToken", false)
-    }, [walletContext])
 
 
-    useEffect(() => {
-        var headers = {}
-
-        if(accessToken) {
-            headers["authorization"] = `Bearer ${accessToken}`
-        }
-        var shouldFetch = (apiNotes === false && _.isString(chartId))
-        if(fetchedNotesWithAccessToken) {
-            shouldFetch = false
-        }
-        if(accessToken && fetchedNotesWithAccessToken === false) {
-            shouldFetch = true
-            setFetchedNotesWithAccessToken(true)
-        }
-        
-
-        var queryParams = {
-            method: "GET",
-            headers: headers
-        }
-        if(shouldFetch) {
-            console.log(`Fetching notes for chart id: ${chartId} with params:`, queryParams)
-            fetch(`/api/chart_note?chart_id=${chartId}`, queryParams)
-                .then(res => res.json())
-                .then(data => {
-                    var parsedNotes = []
-                    if(_.has(data, "notes")) {
-                        parsedNotes = data.notes.map(p => {
-                            return {
-                                ...p,
-                                date: dayjs(p.date),
-                                id: p._id,
-                                noteSource: "api"
-                            }
-                        })
-                    }
-
-                    console.log(data)
-
-                    setApiNotes(parsedNotes)
-                })
-            
-        }
-    }, [
-        apiNotes,
-        chartId,
-        accessToken,
-        fetchedNotesWithAccessToken
-    ])
 
     const _columns = useMemo(() => {
         if(_.isArray(columns)) {
@@ -254,6 +168,8 @@ const Chart = React.memo((props) => {
     }, [columnsToggled, _columns])
 
 
+    const windowSize = useWindowSize()
+
     const _height = useMemo(() => {
         if(windowSize.height < height * 0.75) {
             return windowSize.height * 0.6
@@ -261,58 +177,6 @@ const Chart = React.memo((props) => {
             return height
         }
     }, [windowSize, height])
-
-    const xValues = useMemo(() => {
-        return _data.map(p => _.get(p, xKey, false))
-    }, [_data, xKey])
-
-    const xValuesFiltered = useMemo(() => {
-        return filteredData.map(p => _.get(p, xKey, false))
-    }, [filteredData, xKey])
-
-    const xValueType = useMemo(() => {
-        if(_.every(xValues, _.isNumber)) {
-            return "number"
-        } else if(_.every(xValues, dayjs.isDayjs)) {
-            return "date"
-        } else {
-            return "number"
-        }   
-        
-    }, [xValues])
-
-    const yValues = useMemo(() => {
-        if(type === "boxplot") {
-            return _data.map(p => {
-                return _.get(p, `${_columns[0]}.max`, 0)
-            })
-        }
-        return _.flatten(_data.map(p => {
-            return _columns.map(c => _.get(p, c, false))
-        }))
-    }, [_data, _columns, type])
-
-    const yValuesForSelectedFilteredColumns = useMemo(() => {
-        if(type === "boxplot") {
-            return filteredData.map(p => {
-                return _.get(p, `${_columns[0]}.max`, 0)
-            })
-        }
-        return _.flatten(filteredData.map(p => {
-            return _filteredColumns.map(c => _.get(p, c, false))
-        }))
-    }, [filteredData, _filteredColumns, _columns, type])
-
-    const yValuesFiltered = useMemo(() => {
-        if(type === "boxplot") {
-            return filteredData.map(p => {
-                return _.get(p, `${_columns[0]}.max`, 0)
-            })
-        }
-        return _.flatten(filteredData.map(p => {
-            return _columns.map(c => _.get(p, c, false))
-        }))
-    }, [filteredData, _columns, type])
 
     useEffect(() => {
         if(containerRef.current) {
@@ -322,6 +186,10 @@ const Chart = React.memo((props) => {
             })
         }
     }, [containerRef, windowResizeCounter])
+
+    const windowWidth = useMemo(() => {
+        return _.get(windowSize, "width", 500)
+    }, [windowSize])
 
 
     const _width = useMemo(() => {
@@ -364,243 +232,110 @@ const Chart = React.memo((props) => {
         }
     }, [_width, timelineHeight, _margins])
 
-    const _xDomainFromData = useMemo(() => {
-        if(xValueType === "number") {
-            return [_.min(xValues), _.max(xValues)]
-        } else if(xValueType === "date") {
-            return [_.first(xValues), _.last(xValues)]
+    const xValues = useMemo(() => {
+        return _data.map(p => _.get(p, xKey, false))
+    }, [_data, xKey])
+
+    const xValuesFiltered = useMemo(() => {
+        return filteredData.map(p => _.get(p, xKey, false))
+    }, [filteredData, xKey])
+
+    const xValueType = useMemo(() => {
+        if(_.every(xValues, _.isNumber)) {
+            return "number"
+        } else if(_.every(xValues, dayjs.isDayjs)) {
+            return "date"
         } else {
-            return xDomain
-        }
-    }, [xValueType, xDomain, xValues])
-
-    const _xDomainFiltered = useMemo(() => {
-            if(brushMoved === true || xDomain === "auto") {
-                if(xValueType === "number") {
-                    return [_.min(xValuesFiltered), _.max(xValuesFiltered)]
-                } else if(xValueType === "date") {
-                    return [_.first(xValuesFiltered), _.last(xValuesFiltered)]
-                } else {
-                    xDomain
-                }
-            } else {
-                return xDomain
-            }
-    }, [xValuesFiltered, xDomain, xValueType, brushMoved])
-
-
-    const xScaleFull = useMemo(() => {
-        if(xValueType === "number") {
-            return scaleLinear({
-                range: [0, chart.width],
-                domain: _xDomainFromData
-            })
-        } else if(xValueType === "date") {
-            return scaleTime({
-                range: [0, chart.width],
-                domain: _xDomainFromData
-            })
-        }
-    }, [chart.width, _xDomainFromData, xValueType])
-
-    const xScale = useMemo(() => {
-        if(xValueType === "number") {
-            return scaleLinear({
-                range: [0, chart.width],
-                domain: _xDomainFiltered
-            })
-        } else if(xValueType === "date") {
-            return scaleTime({
-                range: [0, chart.width],
-                domain: _xDomainFiltered
-            })
-        }
-    }, [chart.width, _xDomainFiltered, xValueType])
-
-    const _yDomain = useMemo(() => {
-        if(yDomain === "auto") {
-            var min = _.min(yValues)
-            var max = _.max(yValues)
-            if (min > 0) {
-                min = 0
-            }
-            return [min, max]
-        } else {
-            return yDomain
-        }
-    }, [yValues, yDomain])
-
-    const _yDomainFiltered = useMemo(() => {
-        if(yDomain === "auto") {
-            var min = _.min(yValuesForSelectedFilteredColumns)
-            var max = _.max(yValuesForSelectedFilteredColumns)
-            if (min > 0) {
-                min = 0
-            }
-            return [min, max]
-        } else {
-            return yDomain
-        }
-    }, [yValuesForSelectedFilteredColumns, yDomain])
-
-    const yScale = useMemo(() => {
-        if(yScaleType === "log") {
-            return scaleLog({
-                range: [0, chart.height],
-                domain: [1/1000000, _yDomainFiltered[1]],
-                nice: true
-            })
-        } else {
-            return scaleLinear({
-                range: [0, chart.height],
-                domain: _yDomainFiltered,
-                nice: true
-            })
-        }
+            return "number"
+        }   
         
-    }, [chart.height, _yDomainFiltered, yScaleType])
-
-    const yScaleArea = useMemo(() => {
-        if(yScaleType === "log") {
-            return scaleLog({
-                range: [0, chart.height],
-                domain: [1/1000000, _yDomainFiltered[1]],
-                nice: true
-            })
-        } else {
-            return scaleLinear({
-                range: [chart.height, 0],
-                domain: _yDomainFiltered,
-                nice: true
-            })
-        }
-        
-        
-    }, [chart.height, _yDomainFiltered, yScaleType])
-
-    const yScaleTimeline = useMemo(() => {
-        if(yScaleType === "log") {
-            return scaleLog({
-                range: [0, timelineHeight],
-                domain: [1/1000000, _yDomainFiltered[1]],
-                nice: true
-            })
-        } else {
-            return scaleLinear({
-                range: [0, timelineHeight],
-                domain: _yDomain
-            })
-        }
-        
-    }, [timelineHeight, _yDomain, _yDomainFiltered, yScaleType])
-
-    const yScaleTimelineArea = useMemo(() => {
-        if(yScaleType === "log") {
-            return scaleLog({
-                range: [0, timelineHeight],
-                domain: [1/1000000, _yDomainFiltered[1]],
-                nice: true
-            })
-        } else {
-            return scaleLinear({
-                range: [timelineHeight, 0],
-                domain: _yDomain,
-                nice: true
-            })
-        }
-        
-    }, [timelineHeight, _yDomain, _yDomainFiltered, yScaleType])
+    }, [xValues])
 
 
+    
 
-    /**
+    
+
+    /****************************************
+     * Prepare domains
+     */
+
+    const {
+        _xDomainFromData,
+        _xDomainFiltered,
+
+        _yDomain,
+        _yDomainFiltered
+    } = useDomains({
+        brushMoved,
+        xDomain,
+        xValueType,
+        xValues,
+        xValuesFiltered,
+        yDomain,
+        _data,
+        filteredData,
+        _columns,
+        _filteredColumns,
+        type
+    })
+
+    
+    /****************************************
+     * Prepare scales
+     */
+
+    const {
+        xScale,
+        xScaleFull,
+        yScale,
+        yScaleArea,
+        yScaleTimeline,
+        yScaleTimelineArea
+    } = useScales({
+        chart,
+        _xDomainFromData,
+        _xDomainFiltered,
+        xValueType,
+
+        _yDomain,
+        _yDomainFiltered,
+        yScaleType,
+
+        timelineHeight
+    })
+
+
+    /****************************************
      * Prepare chart notes
      */
 
-    const allChartNotes = useMemo(() => {
-        var allNotes = []
-        if(custom_note) {
-            if(_.isArray(custom_note)) {
-                allNotes = allNotes.concat(custom_note)
-            } else {
-                allNotes.push(custom_note)
-            }
-        }
-        if(_.isArray(notes)) {
-            allNotes = allNotes.concat(notes)
-        }
+    
 
-        if(newNotes) {
-            allNotes = allNotes.concat(newNotes)
-        }
-        if(_.isArray(apiNotes)) {
-            allNotes = allNotes.concat(apiNotes)
-        }
+    const chartNotesState = useChartNotes({
+        chartId: chartId,
+        walletContext: walletContext,
+        propNotes: notes,
+        custom_note: custom_note,
+        _xDomainFiltered: _xDomainFiltered,
+        noteLayers: noteLayers
+    })
 
-        if(newNotePreview) {
-            allNotes.push(newNotePreview)
-        }
-        allNotes.forEach((n, n_i) => {
-            if (!_.has(n, "id")) {
-                n.id = `temp-id-${n_i}`
-            }
-        })
+    var apiNotes = useMemo(() => _.get(chartNotesState, "notes", []) , [chartNotesState])
 
-        return allNotes
-    }, [custom_note, notes, newNotes, newNotePreview, apiNotes])
-
-    var notesInXRange = useMemo(() => {
-        return allChartNotes.filter(note => {
-            if(_.has(note, "date") && dayjs.isDayjs(note.date)) {
-                return note.date.isBetween(_xDomainFiltered[0], _xDomainFiltered[1])
-            } else {
-                return false
-            }
-        })
-    }, [allChartNotes, _xDomainFiltered])
-
-    const communityNotesVisible = useMemo(() => {
-        return notesInXRange.filter(note => {
-            return _.get(note, "visibility", false) === "community"
-        })
-    }, [notesInXRange])
-
-    const communityNotesTotal = useMemo(() => {
-        return allChartNotes.filter(note => {
-            return _.get(note, "visibility", false) === "community"
-        })
-    }, [allChartNotes])
+    const {
+        allChartNotes,
+        notesInXRange,
+        communityNotesVisible,
+        visibleChartNotes,
+        communityNotesInXRange
+    } = chartNotesState
 
 
-    const visibleChartNotes = useMemo(() => {
-        return notesInXRange.filter(note => {
-            var noteLayersVisible = _.toPairs(noteLayers).filter(p => p[1] === true).map(p => p[0])
-            noteLayersVisible.concat("initialized")
-            var noteSource = _.get(note, 'noteSource', false)
-            var previewNoteSourceStates = ["preview", "initialized"]
-            if(previewNoteSourceStates.includes(noteSource)) {
-                return true
-            }
-            // if(_.get(note, "owner", 'no-owner') === _.get(walletContext, "address", 'no-wallet')) {
-            //     if(noteLayers.private) {
-            //         return true
-            //     } else {
-            //         return false
-            //     }
-            // }
-            if(_.get(note, "noteSource", false) === "custom_markdown") {
-                return true
-            }
-            return noteLayersVisible.includes(_.get(note, "visibility", false))
-        })
-    }, [ notesInXRange, noteLayers])
 
-    const communityNotesInXRange = useMemo(() => {
-        return notesInXRange.filter(note => {
-            return _.get(note, "visibility", false) === "community"
-        })
-    }, [notesInXRange])
-
+    /****************************************
+     * Initialize brush zoom
+     */
 
     useEffect(() => {
         if(brushZoomInitialized === false) {
@@ -635,7 +370,7 @@ const Chart = React.memo((props) => {
     }
 
 
-    /**
+    /****************************************
      * Colors preparation
      */
     const colColors = _columns.map((col, col_i) => {
@@ -683,6 +418,11 @@ const Chart = React.memo((props) => {
     const hovered = hoveredXValue !== false
 
 
+    const handleBrushMove = (newFilteredData) => {
+        setFilteredData(newFilteredData)
+        setBrushMoved(true)
+    }
+
     return (
         <RecoilRoot>
         <ChartContext.Provider value={{
@@ -692,25 +432,22 @@ const Chart = React.memo((props) => {
                 setColumnsToggled: setColumnsToggled,
                 toggleColumn: (col) => {
                     if(columnsToggled.includes(col)) {
-                        setColumnsToggled(
-                            columnsToggled.filter(c => c !== col)
-                        )
+                        setColumnsToggled( columnsToggled.filter(c => c !== col) )
                     } else {
                         var newColsToggled = _.cloneDeep(columnsToggled)
                         newColsToggled.push(col)
-                        setColumnsToggled(
-                            newColsToggled
-                        )
+                        setColumnsToggled(newColsToggled)
                     }
                 },
                 addNote: (newNoteParams) => {
-                    setNewNotes(newNotes.concat([newNoteParams]))
+                    chartNotesState.setNewNotes(chartNotesState.newNotes.concat([newNoteParams]))
                 },
-                newNotes,
-                setNewNotes,
+                newNotes: chartNotesState.newNotes,
+                setNewNotes: chartNotesState.newNotes,
                 apiNotes,
-                setApiNotes,
-                setNewNotePreview,
+                postNote: chartNotesState.postNote,
+                deleteNote: chartNotesState.deleteNote,
+                setNewNotePreview: chartNotesState.setNewNotePreview,
                 controllingZoomBrush,
                 setControllingZoomBrush,
                 editedNotes,

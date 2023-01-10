@@ -15,6 +15,8 @@ export default async function handler(req, res) {
 
     const { db } = await connectToDatabase()
 
+    console.log("Searching for: ", search_term)
+
     var sortParams = [
         [sortKey, sortDirection],
         ["address", -1]
@@ -24,7 +26,8 @@ export default async function handler(req, res) {
     if (_.isString(search_term)) {
         findParams["$or"] = [
             {"tzkt_account_data.alias": {"$regex":search_term, "$options": "i"}},
-            {"address": {"$regex":search_term, "$options": "xi"}}
+            {"address": {"$regex":search_term, "$options": "xi"}},
+            {"address": search_term}
         ]
         findParams[sortKey] = {$exists: true}
     }

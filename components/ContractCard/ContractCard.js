@@ -47,7 +47,8 @@ const ContractCard = React.memo(({
                     borderWidth="1px"
                     padding="0.5rem"
                     _hover={{
-                        background: "black"
+                        background: "black",
+                        color: "white"
                     }}
                     role="group"
                     maxW="100%"

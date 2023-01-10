@@ -14,7 +14,6 @@ const WrappedLink = ({
     if(textDecoration !== false) {
         linkProps["textDecoration"] = textDecoration
     }
-    console.log(children)
     return (
         <>
         <NextLink

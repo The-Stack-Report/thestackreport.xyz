@@ -6,7 +6,6 @@ import { DataBlockDynamic } from "components/DataBlock/DataBlock"
 import ModelChart from "components/Charts/ModelChart"
 import ChartBySlug from "components/Charts/ChartBySlug"
 import {
-    UnorderedList,
     Button,
     Text,
     Box,
@@ -14,7 +13,6 @@ import {
     Code
 } from "@chakra-ui/react"
 import _ from "lodash"
-import dayjs from "dayjs"
 import prepareChartProps from "./prepareChartProps"
 
 var markdownComponents = {

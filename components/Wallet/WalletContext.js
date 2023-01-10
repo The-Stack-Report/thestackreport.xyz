@@ -299,6 +299,14 @@ export const WalletContextProvider = ({ children }) => {
         actions: {
             requestPermissions: requestPermissions,
             disconnect: disconnect
+        },
+        clearUserAccessToken: () => {
+            console.log("clearing user access token.")
+            setUserAccessToken(null)
+            setDecodedJwt(null)
+            setSignInState("init")
+            setConnectionState(INITIAL)
+            sessionStorage.removeItem("tsr-session")
         }
     }
 

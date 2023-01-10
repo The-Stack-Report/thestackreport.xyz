@@ -31,7 +31,7 @@ handler.use(
 )
 // handler.use(token_gated_auth)
 
-async function checkBetaAccess(req) {
+async function checkBetaAccess(req, res) {
     // Check if has access to beta token
     console.log("checking if user has beta access")
     try {
@@ -190,14 +190,14 @@ handler.post(async (req, res) => {
     console.log("Checking if note with id: ", noteId, " exists.")
 
     var noteExists = false
+    var existingNote = false
     
     try {
-
         // check if noteId is a valid mongodb ObjectId
         // if so, check if it exists in the db
         if(_.isString(noteId)) {
             if(ObjectId.isValid(noteId)) {
-                var existingNote = await collection.findOne({
+                existingNote = await collection.findOne({
                     _id: new ObjectId(noteId)
                 })
             
@@ -251,6 +251,11 @@ handler.post(async (req, res) => {
         }
         console.log("Trying to update note")
         var updateResult = false
+
+
+       /**
+        * Updating note
+        */ 
         try {
             console.log("Updating to text: ", noteText)
             updateResult = await collection.updateOne({
@@ -269,7 +274,11 @@ handler.post(async (req, res) => {
             res.status(500).json({message: "Error updating chart note."})
             return
         }
-        res.status(200).json({message: "Success", result: updateResult})
+        console.log("successfully updated note, returning result.")
+        var updatedResult = await collection.findOne({
+            _id: new ObjectId(noteId)
+        })
+        res.status(200).json(updatedResult)
         return
     } else {
         console.log("Inserting new note")
@@ -289,7 +298,9 @@ handler.post(async (req, res) => {
             })
 
             console.log("Inserted new chart note, returning result.")
-            res.status(200).json(result)
+            res.status(200).json({
+                _id: result.insertedId
+            })
             return
         } catch(err) {
             console.log("Error storing note in db")

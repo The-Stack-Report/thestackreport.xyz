@@ -8,7 +8,7 @@ import {
 import { ChartContext } from "../../Chart"
 import { WalletContext } from "components/Wallet"
 import _ from "lodash"
-import WrappedLink from "components/WrappedLink"
+import StyledLink from "components/Links/StyledLink"
 
 const NoteAlertMessages = () => {
     const chartContext = useContext(ChartContext)
@@ -24,7 +24,7 @@ const NoteAlertMessages = () => {
                 message: (
                     <>
                     Notes can be stored with access to the
-                    <WrappedLink href="/interpretation-layer" marginLeft="0.6rem">{"Interpretation Layer"}</WrappedLink>
+                    <StyledLink href="/interpretation-layer" marginLeft="0.6rem">{"Interpretation Layer"}</StyledLink>
                     </>
                 ),
                 secondLine: (
