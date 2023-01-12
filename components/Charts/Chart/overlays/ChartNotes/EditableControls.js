@@ -1,4 +1,4 @@
-import { useEffect, useContext } from "react"
+import { useEffect, useContext, useState } from "react"
 import {
     Box,
     Text,
@@ -28,6 +28,8 @@ const EditableControls = ({
         communityToggleCallback,
         leftPos
     }) => {
+    const [isEditingState, setIsEditingState] = useState(false)
+    
     const {
         isEditing,
         getSubmitButtonProps,
@@ -38,8 +40,11 @@ const EditableControls = ({
 
 
     useEffect(() => {
-        setIsEditing(isEditing)
-    }, [isEditing, setIsEditing])
+        if(isEditingState !== isEditing) {
+            setIsEditingState(isEditing)
+            setIsEditing(isEditing)
+        }
+    }, [isEditingState, isEditing, setIsEditing])
 
     var submitButtonProps = getSubmitButtonProps()
 

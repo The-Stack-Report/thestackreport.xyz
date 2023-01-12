@@ -29,7 +29,7 @@ function useChartNotes({
         return false
     }, [connectionState, walletContext])
 
-    var activeAccountAddress = useMemo(() => {
+    const activeAccountAddress = useMemo(() => {
         return _.get(walletContext, "address", false)
     }, [walletContext])
 
@@ -37,7 +37,7 @@ function useChartNotes({
         // if active account address changes,
         // update all new notes that do not have an owner yet to be from the new address
         if(_.isString(activeAccountAddress) && activeAccountAddress.startsWith("tz1")) {
-            setNewNotes(newNotes.map(n => {
+            setNewNotes(_newNotes => _newNotes.map(n => {
                 if(_.isString(n.owner) && n.owner.startsWith("tz1")) {
                     return n
                 }
@@ -47,7 +47,7 @@ function useChartNotes({
                 }
             }))
         }
-    }, [activeAccountAddress, newNotes])
+    }, [activeAccountAddress])
 
     /****************************************
      * Data loading
@@ -72,7 +72,6 @@ function useChartNotes({
                 .then(response => response.json())
                 .then(data => {
                     var authorizationState = _.get(data, "authorizationState", false)
-                    console.log(authorizationState)
 
                     if(authorizationState === "failed") {
                         console.log("authorization failed on fetching notes, clearing token.")

@@ -30,16 +30,11 @@ const AccessCardsGrid = ({
                 })
             }).then(res => res.json())
             .then(res => {
-                console.log(res)
                 setAccessCardsSalesData(res.data.tokens)
             })
         }
         
     }, [accessCardsSalesData])
-
-    console.log(accessCardsSalesData)
-
-    
 
     var availableCards = useMemo(() => {
         if(_.isArray(accessCardsSalesData)) {

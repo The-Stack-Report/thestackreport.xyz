@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react"
 import _ from "lodash"
 import prepareChartProps from "./prepareChartProps"
+import styles from "./MarkdownWrapper.module.scss"
 
 var markdownComponents = {
     "data_block": (props) => {
@@ -142,7 +143,7 @@ var markdownComponents = {
 
 const MarkdownWrapper = ({ markdownText }) => {
     return (
-        <div className='markdown-wrapper'>
+        <div className={styles["markdown-wrapper"]}>
             <ReactMarkdown
                 components={ChakraUIRenderer(markdownComponents)}
                 rehypePlugins={[rehypeRaw]}

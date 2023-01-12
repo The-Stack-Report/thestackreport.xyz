@@ -129,6 +129,7 @@ const Chart = React.memo((props) => {
    
     const walletContext = useContext(WalletContext)
 
+
     useEffect(() => {
         setBrushZoomInitialized(false)
     }, [dataHash])
@@ -190,6 +191,7 @@ const Chart = React.memo((props) => {
     const windowWidth = useMemo(() => {
         return _.get(windowSize, "width", 500)
     }, [windowSize])
+
 
 
     const _width = useMemo(() => {
@@ -255,6 +257,7 @@ const Chart = React.memo((props) => {
     
 
     
+    
 
     /****************************************
      * Prepare domains
@@ -281,6 +284,8 @@ const Chart = React.memo((props) => {
     })
 
     
+
+    
     /****************************************
      * Prepare scales
      */
@@ -305,7 +310,7 @@ const Chart = React.memo((props) => {
         timelineHeight
     })
 
-
+    
     /****************************************
      * Prepare chart notes
      */
@@ -330,8 +335,6 @@ const Chart = React.memo((props) => {
         visibleChartNotes,
         communityNotesInXRange
     } = chartNotesState
-
-
 
     /****************************************
      * Initialize brush zoom
@@ -428,7 +431,7 @@ const Chart = React.memo((props) => {
         setFilteredData(newFilteredData)
         setBrushMoved(true)
     }
-
+    
     return (
         <RecoilRoot>
         <ChartContext.Provider value={{
@@ -530,6 +533,7 @@ const Chart = React.memo((props) => {
                                             ...noteLayers,
                                             community: !noteLayers.community
                                         })
+                                        chartNotesState.setHoveredNote(false)
                                     }}
                                     
                                     >
@@ -636,10 +640,6 @@ const Chart = React.memo((props) => {
                                 {name}
                             </text>
                             <g style={{pointerEvents: "none"}}>
-                            
-                            
-                            
-                                
                                 <DataColumns {...dataColumnsProps} />
                                 <HoverTooltip
                                     data={_data}

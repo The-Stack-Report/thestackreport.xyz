@@ -100,6 +100,7 @@ const ChartLoader = ({
         ...chartProps,
         ...props
     }
+    
     return (
         <Box>
             {showState === "initial" && (

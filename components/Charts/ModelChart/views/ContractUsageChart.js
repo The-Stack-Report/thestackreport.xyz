@@ -18,23 +18,7 @@ var ContractUsageChart = ({
     chartProps
 }) => {
     const { isLoading, data } = useFetch(`https://the-stack-report.ams3.digitaloceanspaces.com/datasets/tezos/contracts_daily_stats/${address}-daily-stats.json`)
-    const [metaData, setMetaData] = useState(false)
-    const [loadingMeta, setLoadingMeta] = useState(false)
-
-    useEffect(() => {
-        if(metaData === false && loadingMeta === false) {
-            setLoadingMeta(true)
-            fetch(`/api/contract?address=${address}`)
-                .then(resp => {
-                    if(resp.status === 200) {
-                        return resp.json()
-                    }
-                })
-                .then(metaDataResp => {
-                    setMetaData(metaDataResp)
-                })
-        }        
-    }, [metaData, loadingMeta, address])
+    const { isLoading: metaIsLoading, data: metaData } = useFetch(`/api/contract?address=${address}`)
     
     // Returning loading placeholder when data is still being loaded.
     if(isLoading === true || !_.isObject(metaData)) {

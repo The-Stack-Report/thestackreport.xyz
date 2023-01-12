@@ -22,6 +22,7 @@ import Link from 'next/link'
 import PageLayout from "components/PageLayout"
 import WrappedLink from "components/WrappedLink"
 import MarkdownWrapper from "components/MarkdownWrapper"
+import StyledLink from "components/Links/StyledLink"
 
 const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
     const spaces_url = _.get(dataset, "spaces_url", false)
@@ -40,13 +41,13 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                 {error ? (
                     <React.Fragment>
                         <Text>{errorMessage}</Text>
-                        <WrappedLink
+                        <StyledLink
                             href="/datasets"
                             >
                             <Text fontSize="0.7rem" textDecoration="underline">
                             Back to datasets overview
                             </Text>
-                        </WrappedLink>
+                        </StyledLink>
                     </React.Fragment>
                 ) : (
                     <React.Fragment>
@@ -57,13 +58,13 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                                 md: "1rem"
                             }}
                             >
-                            <WrappedLink
+                            <StyledLink
                                 href="/datasets"
                                 fontSize="0.7rem"
                                 marginTop="1rem"
                                 >
                                 To datasets overview
-                            </WrappedLink>
+                            </StyledLink>
                         </Box>
                         <Heading
                             as="h1"

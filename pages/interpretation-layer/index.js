@@ -11,7 +11,11 @@ import {
 } from "@chakra-ui/react"
 import _ from "lodash"
 import MarkdownWrapper from "components/MarkdownWrapper"
-import { interpretationLayerContent, interpretationLayerFAQ } from "content/interpretation-layer-content"
+import {
+    interpretationLayerContent,
+    tezosAccountConnectionInstructions,
+    interpretationLayerFAQ
+} from "content/interpretation-layer-content"
 import AccordionExplainer from "components/AccordionExplainer"
 import BannerImage from "components/BannerImage"
 import AccessCardsGrid from "components/AccessCardsGrid"
@@ -63,8 +67,6 @@ const InterpretationLayerPage = ({ pageContent }) => {
 
     const [leftPadding, setLeftPadding] = useState(false)
 
-    console.log(paddingRef)
-
     useEffect(() => {
         if (paddingRef.current) {
             const padding = paddingRef.current.getBoundingClientRect().x
@@ -89,9 +91,6 @@ const InterpretationLayerPage = ({ pageContent }) => {
         }
     })
 
-    console.log(leftPadding)
-
-
     return (
         <PageLayout>
             <Head>
@@ -109,7 +108,7 @@ const InterpretationLayerPage = ({ pageContent }) => {
                     >
                     Interpretation Layer
                 </Heading>
-                <Box maxW="container.sm" paddingBottom="4rem">
+                <Box maxW="container.sm" paddingBottom="2rem">
                     <MarkdownWrapper markdownText={pageContentText} />
                 </Box>
             </Container>
@@ -120,11 +119,17 @@ const InterpretationLayerPage = ({ pageContent }) => {
                             />
                     )}
                 </Box>
+                <Container maxW="container.lg">
+                    <Box maxW="container.sm">
+                        <Divider marginTop="4rem" marginBottom="4rem"  />
+                        <MarkdownWrapper markdownText={tezosAccountConnectionInstructions} />
+                    </Box>
+                </Container>
             <Container maxW="container.lg">
                 <Box maxW="container.sm" paddingBottom="4rem">
                     {pageFAQ.length > 0 && (
-                        <Box marginTop="2rem">
-                            <Divider />
+                        <Box>
+                            <Divider marginTop="4rem" marginBottom="4rem" />
                             <MarkdownWrapper markdownText="### Frequently Asked Questions" />
                         </Box>
                     )}

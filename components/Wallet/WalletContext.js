@@ -138,20 +138,27 @@ export const WalletContextProvider = ({ children }) => {
                 var decodedIdToken = jwt_decode(idToken)
                 var decodedAccessToken = jwt_decode(accessToken)
                 var decodedRefreshToken = jwt_decode(refreshToken)
+                if(activeAccount === false) {
+                    setUserAccessToken(null)
+                    setDecodedJwt(null)
+                    setSignInState("init")
+                    setConnectionState(INITIAL)
+                    sessionStorage.removeItem("tsr-session")
+                } else {
+                    setHasBetaAccess(decodedIdToken?.beta_access?.passedTest)
+                    setDecodedJwt({
+                        decodedIdToken: decodedIdToken,
+                        decodedAccessToken: decodedAccessToken,
+                        decodedRefreshToken: decodedRefreshToken
+                    })
 
-
-                setHasBetaAccess(decodedIdToken?.beta_access?.passedTest)
-                setDecodedJwt({
-                    decodedIdToken: decodedIdToken,
-                    decodedAccessToken: decodedAccessToken,
-                    decodedRefreshToken: decodedRefreshToken
-                })
-
-                setSignInState("signature-validated")
-                setUserAccessToken(accessResp)
+                    setSignInState("signature-validated")
+                    setUserAccessToken(accessResp)
+                }
+                
             }
         }
-    }, [decodedTSRSession])
+    }, [decodedTSRSession, activeAccount])
 
     /**
      * Send sign in message when active account
@@ -240,8 +247,10 @@ export const WalletContextProvider = ({ children }) => {
      */
     useEffect(() => {
         if(disconnectSuccessful) {
+            sessionStorage.removeItem("tsr-session")
             var timeout = setTimeout(() => {
                 setDisconnectSuccessful(false)
+                sessionStorage.removeItem("tsr-session")
             }, 10000)
             return () => {
                 clearTimeout(timeout)

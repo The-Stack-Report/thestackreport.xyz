@@ -14,6 +14,7 @@ import ChartLoader from "components/Charts/ChartLoader"
 import prepareChartMetadata from "utils/prepareChartMetadata"
 import WrappedLink from "components/WrappedLink"
 import MarkdownWrapper from "components/MarkdownWrapper"
+import StyledLink from "components/Links/StyledLink"
 
 const ChartPage = ({ chart }) => {
     const richDescription = _.get(chart, "rich_description", false)
@@ -32,9 +33,9 @@ const ChartPage = ({ chart }) => {
                                 md: "1rem"
                             }}
                             >
-                        <WrappedLink href="/charts" fontSize="0.7rem">
+                        <StyledLink href="/charts" fontSize="0.7rem">
                             To charts overview
-                        </WrappedLink>
+                        </StyledLink>
                         </Box>
                 <Heading
                     marginTop={{
