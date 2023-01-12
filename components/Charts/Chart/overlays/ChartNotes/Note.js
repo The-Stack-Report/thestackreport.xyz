@@ -116,8 +116,26 @@ const ChartNote = ({ note }) => {
 
     var visibility = _.get(note, "visibility", "not-set")
 
+    var noteXAxisLabel = ""
+
+    if(_.has(note, "date")) {
+        noteXAxisLabel = note.date.add(2, "minute").format("MMMM D, YYYY")
+    }
+
     return (
-        <Box role="group" className={styles['note-group']} opacity={groupOpacity}>
+    <Box
+        role="group"
+        className={styles['note-group']}
+        opacity={groupOpacity}
+        onPointerEnter={() => {
+            setHovered(true)
+            chartContext.setHoveredNote(note)
+        }}
+        onPointerLeave={() => {
+            setHovered(false)
+            chartContext.setHoveredNote(false)
+        }}
+        >
         <Box
             position="absolute"
             left={`${notePosition}px`}
@@ -340,6 +358,20 @@ const ChartNote = ({ note }) => {
                     }}
                     >
 
+                </Box>
+                <Box
+                    position="absolute"
+                    width="200px"
+                    pointerEvents="none"
+                    top={`${note.lineHeight + 18}px`}
+                    left="0px"
+                    fontSize="0.8rem"
+                    opacity={0}
+                    _groupHover={{
+                        opacity: 1
+                    }}
+                    >
+                    {noteXAxisLabel}
                 </Box>
             </Box>
         </Box>

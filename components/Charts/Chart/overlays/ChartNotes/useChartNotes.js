@@ -15,6 +15,7 @@ function useChartNotes({
     const [notesFetched, setNotesFetched] = useState(false);
     const [fetchedWithToken, setFetchedWithToken] = useState(false);
     const [newNotePreview, setNewNotePreview] = useState(false)
+    const [hoveredNote, setHoveredNote] = useState(false)
 
     var connectionState = useMemo(() => {
         return _.get(walletContext, "connectionState", false)
@@ -27,6 +28,26 @@ function useChartNotes({
         }
         return false
     }, [connectionState, walletContext])
+
+    var activeAccountAddress = useMemo(() => {
+        return _.get(walletContext, "address", false)
+    }, [walletContext])
+
+    useEffect(() => {
+        // if active account address changes,
+        // update all new notes that do not have an owner yet to be from the new address
+        if(_.isString(activeAccountAddress) && activeAccountAddress.startsWith("tz1")) {
+            setNewNotes(newNotes.map(n => {
+                if(_.isString(n.owner) && n.owner.startsWith("tz1")) {
+                    return n
+                }
+                return {
+                    ...n,
+                    owner: activeAccountAddress
+                }
+            }))
+        }
+    }, [activeAccountAddress, newNotes])
 
     /****************************************
      * Data loading
@@ -47,12 +68,9 @@ function useChartNotes({
             }
 
             var fetchUrl = `/api/chart_note?chart_id=${chartId}`
-            console.log("fetching notes: ", fetchUrl, fetchOptions, "")
             fetch(fetchUrl, fetchOptions)
                 .then(response => response.json())
                 .then(data => {
-                    console.log("chart notes data: ", data)
-
                     var authorizationState = _.get(data, "authorizationState", false)
                     console.log(authorizationState)
 
@@ -199,9 +217,9 @@ function useChartNotes({
                         var confirmedNote = {
                             ...updatedNote,
                             noteSource: "db",
-                            id: dbId
+                            id: dbId,
+                            _id: dbId
                         }
-                        console.log("confirmed note:", confirmedNote)
                         if(currentNoteIDs.includes(dbId)) {
                             setNotes(
                                 notes.map(n => {
@@ -279,7 +297,10 @@ function useChartNotes({
         postNote,
         setNewNotes,
         deleteNote,
-        setNewNotePreview
+        setNewNotePreview,
+
+        hoveredNote,
+        setHoveredNote
     };
 }
 

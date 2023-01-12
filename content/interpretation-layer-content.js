@@ -15,6 +15,8 @@ Chart Notes, as will be introduced below, is the first component of the interpre
 
 More tools to interpret & share datasets and data visuals will be added to the interpretation layer in the future.
 
+Access to the tools that make up the Interpretation Layer is managed through a set of digital Access Cards which you can hold in a Tezos wallet account. 
+
 ---
 
 ### Chart Notes
@@ -28,7 +30,7 @@ See below for a chart with a note placed on it.
 model="contract"
 _key="KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"
 view="entrypoints-daily"
-custom_note='{"note":"First ever OBJKT4OBJKT", "date": "2021-04-25"}'
+custom_note='{"note":"#OBJKT4OBJKT ED.1", "date": "2021-04-25"}'
 end_date="2021-11-01"
 show_chart_notes="yes"
 />
@@ -42,13 +44,18 @@ Notes are fixed to a specific chart and can be placed at a specific date. The no
 
 ### Access Cards
 
-Access to the tools that make up the Interpretation Layer is managed through a set of digital cards.
+Access to the tools that make up the Interpretation Layer is managed through a set of digital cards. These can be added to your Tezos account.
 
-These can be found at: [objkt.com](https://objkt.com).
+The full Access Card collection can be found on Objkt.com at: [https://objkt.com/collection/KT1LaCf37XyoR4eNCzMnw6Ccp5bfPFQrKYxe](https://objkt.com/collection/KT1LaCf37XyoR4eNCzMnw6Ccp5bfPFQrKYxe).
+
+The Stack Report uses Access Cards to manage the growth of users on the platform in a controlled manner.
+
+*New cards* will be added in the future as the set of tools and community of interested users grows.
+
+Below is a selection of the cards that are currently available.
 
 ---
 
-### FAQ
 
 `)
 
@@ -84,5 +91,15 @@ export const interpretationLayerFAQ = [
     {
         question: "What are the Access Cards?",
         answer: "The Interpretation Layer Access Cards are tokens that give the holder authorization to access to the interpretation layer tools. \n\nThese Cards can be acquired through objkt.com. \n\nOn the [account page](/connected-account) you can confirm that you own a valid card."
+    },
+    {
+        question: "How is supply managed?",
+        answer: "The purpose of the Access Cards is to grow the community of users on the platform in a controlled manner. \n\n*New cards* will be added in the future as set of tools and community of interested users grows."
+    },
+    {
+        question: "Are Chart Notes moderated?",
+        answer: `Yes! Chart notes are meant to provide further context & educational value.\n\nThe Stack Report will actively remove notes and even block accounts of Access Cards holders who post notes that do not add to this intended goal.
+        
+        `
     }
 ]

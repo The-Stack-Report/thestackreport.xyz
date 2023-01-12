@@ -33,6 +33,7 @@ import {
     interpretationLayerTextProps,
     connectWalletButtonProps
 } from "./elementProps"
+import StyledLink from "components/Links/StyledLink"
 
 const WalletMenuWidget = () => {
     const walletContext = useContext(WalletContext)
@@ -150,7 +151,7 @@ const WalletMenuWidget = () => {
                 <>
                 <Box {...containerBoxProps} >
                         <Box paddingRight="5px">
-                            <WrappedLink href="/interpretation-layer" {...interpretationLayerLinkProps} >
+                            <StyledLink href="/interpretation-layer" {...interpretationLayerLinkProps} >
                                 <Text {...interpretationLayerTextProps} >
                                     {"Interpretation layer "}
                                     <ArrowForwardIcon
@@ -159,7 +160,7 @@ const WalletMenuWidget = () => {
                                         className={styles["connect-label-icon"]}
                                         />
                                 </Text>
-                            </WrappedLink>
+                            </StyledLink>
 
                         </Box>
                     <Box>

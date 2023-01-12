@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Image from "next/image"
 import {
     Box,
@@ -15,6 +15,13 @@ import {
 
 
 const FeaturedArticleBanner = ({ article }) => {
+    const [publishedDate, setPublishedDate] = useState(() => {
+        return dayjs(_.get(article, "attributes.Published", "2022-01-01")).format("MMMM D, YYYY h:mm A")
+    })
+    useEffect(() => {
+        setPublishedDate(dayjs(_.get(article, "attributes.Published", "2022-01-01")).format("MMMM D, YYYY h:mm A"))
+    }, [article])
+
     if(article === false) {
         return (
             <div style={{minHeight: 400}}></div>
@@ -79,7 +86,7 @@ const FeaturedArticleBanner = ({ article }) => {
                             fontSize="0.7rem"
                             color="black"
                             >
-                            {dayjs(_.get(article, "attributes.Published", "2022-01-01")).format("MMMM D, YYYY h:mm A")}
+                            {publishedDate}
                         </Text>
                     </Box>
                     </div>

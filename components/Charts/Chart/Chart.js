@@ -415,7 +415,13 @@ const Chart = React.memo((props) => {
     }, [xValueType])
 
     const touchEnabled = isTouchEnabled()
-    const hovered = hoveredXValue !== false
+    var hovered = hoveredXValue !== false
+
+    var hoveredChart = hoveredXValue !== false
+
+    if (chartNotesState.hoveredNote) {
+        hovered = true
+    }
 
 
     const handleBrushMove = (newFilteredData) => {
@@ -456,6 +462,9 @@ const Chart = React.memo((props) => {
                 setEditingNote,
                 noteLayers,
                 setNoteLayers,
+
+                hoveredNote: chartNotesState.hoveredNote,
+                setHoveredNote: chartNotesState.setHoveredNote
             }}>
             <Box className={styles["chart"]}
                 ref={containerRef}
@@ -484,7 +493,7 @@ const Chart = React.memo((props) => {
                                     marginRight: _.get(_margins, "right")
                                 }}
                                 zIndex={-1}
-                                opacity={hovered ? 0.2 : 1}
+                                opacity={hoveredChart ? 0.2 : 1}
                                 >
                                 <ChartNotes
                                     editedNotes={editedNotes}

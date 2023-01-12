@@ -1,3 +1,4 @@
+import React, { useEffect, useRef, useState } from "react"
 import Head from "next/head"
 import PageLayout from "components/PageLayout"
 import {
@@ -13,6 +14,7 @@ import MarkdownWrapper from "components/MarkdownWrapper"
 import { interpretationLayerContent, interpretationLayerFAQ } from "content/interpretation-layer-content"
 import AccordionExplainer from "components/AccordionExplainer"
 import BannerImage from "components/BannerImage"
+import AccessCardsGrid from "components/AccessCardsGrid"
 import { INTERPRETATION_LAYER_VISUAL_URL } from "constants/imageAssets"
 import { INTERPRETATION_LAYER_CHART_NOTES } from "constants/feature_flags"
 
@@ -57,6 +59,39 @@ if(INTERPRETATION_LAYER_CHART_NOTES === false) {
 var placeholderFAQ = []
 
 const InterpretationLayerPage = ({ pageContent }) => {
+    const paddingRef = useRef(null)
+
+    const [leftPadding, setLeftPadding] = useState(false)
+
+    console.log(paddingRef)
+
+    useEffect(() => {
+        if (paddingRef.current) {
+            const padding = paddingRef.current.getBoundingClientRect().x
+            setLeftPadding(padding)
+        }
+        if(leftPadding === false && paddingRef.current) {
+            const padding = paddingRef.current.getBoundingClientRect().x
+            setLeftPadding(padding)
+        }
+    }, [paddingRef, leftPadding])
+
+    useEffect(() => {
+        var resizeFunc = () => {
+            if (paddingRef.current) {
+                const padding = paddingRef.current.getBoundingClientRect().x
+                setLeftPadding(padding)
+            }
+        }
+        window.addEventListener('resize', resizeFunc)
+        return () => {
+            window.removeEventListener('resize', resizeFunc, [paddingRef])
+        }
+    })
+
+    console.log(leftPadding)
+
+
     return (
         <PageLayout>
             <Head>
@@ -65,17 +100,34 @@ const InterpretationLayerPage = ({ pageContent }) => {
             </Head>
             <Container
                 maxW="container.lg"
-                minH="100vh"
                 paddingTop="10rem"
                 >
                 <Heading
                     fontWeight="thin"
                     marginBottom="2rem"
+                    ref={paddingRef}
                     >
                     Interpretation Layer
                 </Heading>
                 <Box maxW="container.sm" paddingBottom="4rem">
                     <MarkdownWrapper markdownText={pageContentText} />
+                </Box>
+            </Container>
+                <Box>
+                    {INTERPRETATION_LAYER_CHART_NOTES === true && (
+                        <AccessCardsGrid
+                            leftPadding={leftPadding}
+                            />
+                    )}
+                </Box>
+            <Container maxW="container.lg">
+                <Box maxW="container.sm" paddingBottom="4rem">
+                    {pageFAQ.length > 0 && (
+                        <Box marginTop="2rem">
+                            <Divider />
+                            <MarkdownWrapper markdownText="### Frequently Asked Questions" />
+                        </Box>
+                    )}
                     {pageFAQ.map((faq, i) => {
                         return (
                             <AccordionExplainer

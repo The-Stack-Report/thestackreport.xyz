@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState, useMemo } from "react"
 import {
     Heading,
     Box,
@@ -11,15 +11,18 @@ import {
     SimpleGrid
 } from "@chakra-ui/react"
 import {
-    Container
+    Container, Divider
 } from "@chakra-ui/layout"
 import { WalletContext } from "components/Wallet"
 import { ACCOUNT_ACTIVE } from "components/Wallet/states"
 import WrappedLink from "components/WrappedLink"
 import NoAccountConnectedInformation from "./NoAccountConnectedInformation"
+import ChartNotesList from "components/ChartNotesList"
 import _ from "lodash"
 
 const AccountInformation = ({ account }) => {
+    const [accountChartNotes, setAccountChartNotes] = useState(false)
+
     const walletContext = useContext(WalletContext)
     
     const address = _.get(walletContext, "address", 'no-address')
@@ -30,10 +33,43 @@ const AccountInformation = ({ account }) => {
 
     const signInState = _.get(walletContext, "signInState", false)
 
+    var connectionState = useMemo(() => {
+        return _.get(walletContext, "connectionState", false)
+    }, [walletContext])
+
+    var accessToken = useMemo(() => {
+        if(connectionState === "ACCOUNT_ACTIVE") {
+            return _.get(walletContext, "userAccessToken.accessToken", false)
+        }
+        return false
+    }, [connectionState, walletContext])
+
+    useEffect(() => {
+        if(walletContext.connectionState === ACCOUNT_ACTIVE && accountChartNotes === false) {
+            const fetchAccountChartNotes = async () => {
+                var headers = {}
+                if(accessToken) {
+                    headers["authorization"] = `Bearer ${accessToken}`
+                }
+                const response = await fetch(`/api/account_chart_notes?address=${address}`, {
+                    method: "GET",
+                    headers: headers
+                })
+                const data = await response.json()
+                console.log(data)
+                setAccountChartNotes(data)
+            }
+            fetchAccountChartNotes()
+        }
+    }, [accessToken, walletContext, accountChartNotes, address])
+
+
     const betaAccessContract = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.contractAddress", false)
     var betaAccessToken = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.tokens[0]", false)
     var betaAccessToken = _.toNumber(betaAccessToken)
     var accessTokens = _.get(walletContext, "decodedJwt.decodedIdToken.beta_access.tokens", [])
+
+    console.log("accountChartNotes", accountChartNotes)
 
     return (
         <Container paddingBottom="8rem">
@@ -100,6 +136,17 @@ const AccountInformation = ({ account }) => {
                         })}
                         
                     </SimpleGrid>
+                    <Divider paddingTop="2rem" />
+                    <Text paddingTop="2rem">
+                        Your chart notes:
+                    </Text>
+                    {_.isArray(accountChartNotes) && accountChartNotes.length > 0 ? (
+                        <ChartNotesList notes={accountChartNotes} />
+                    ) : (
+                        <Text>
+                            You do not have any chart notes yet.
+                        </Text>
+                    )}
                     </>
                 ) : (
                     <Text>
