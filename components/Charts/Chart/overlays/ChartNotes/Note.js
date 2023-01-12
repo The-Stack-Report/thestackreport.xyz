@@ -241,6 +241,7 @@ const ChartNote = ({ note }) => {
                             console.log("submitted")
                             setHovered(false)
                             chartContext.setHoveredNote(false)
+                            chartContext.setEditingNote(false)
                         }}
                         onCancel={() => {
                             console.log("canceled")
@@ -254,6 +255,7 @@ const ChartNote = ({ note }) => {
                             }
                             setHovered(false)
                             chartContext.setHoveredNote(false)
+                            chartContext.setEditingNote(false)
                         }}
                         >
                         <EditablePreview
@@ -319,6 +321,7 @@ const ChartNote = ({ note }) => {
                                 chartContext.deleteNote(note)
                                 setHovered(false)
                                 chartContext.setHoveredNote(false)
+                                chartContext.setEditingNote(false)
                             }}
                             communityToggleCallback={() => {
                                 var newVisibilityState = _.cloneDeep(note.visibility)
@@ -333,6 +336,13 @@ const ChartNote = ({ note }) => {
                                 })
                                 setHovered(false)
                                 chartContext.setHoveredNote(false)
+                                chartContext.setEditingNote(false)
+                                if(newVisibilityState === "community") {
+                                    chartContext.setNoteLayers({
+                                        ...chartContext.noteLayers,
+                                        "community": true
+                                    })
+                                }
                             }}
                             />
                         </Box>

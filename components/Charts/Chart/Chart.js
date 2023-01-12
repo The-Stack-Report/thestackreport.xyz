@@ -718,7 +718,6 @@ const Chart = React.memo((props) => {
                     )}
                     </>
                 )}
-                
             </Box>
             {!touchEnabled && (
                 <Box

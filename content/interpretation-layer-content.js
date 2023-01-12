@@ -23,7 +23,7 @@ More tools to interpret & share datasets and data visuals will be added to the i
 
 See below for a chart with a note placed on it.
 
-<div>
+<div style="margin-top:100px;margin-bottom:100px;">
 <ModelChart
 model="contract"
 _key="KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"
@@ -36,7 +36,11 @@ show_chart_notes="yes"
 
 ---
 
-Notes are fixed to a specific chart and can be placed at a specific date. The note can be edited by the author at any time.
+Notes are fixed to a specific chart and can be placed at a specific value on the x axis. 
+
+The note can be edited by the author at any time.
+
+When a note is placed, it initially is only visible privately to the author. 
 
 ---
 
