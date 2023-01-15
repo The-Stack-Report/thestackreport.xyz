@@ -28,7 +28,6 @@ See below for a chart with a note placed on it.
 model="contract"
 _key="KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton"
 view="entrypoints-daily"
-custom_note='{"note":"#OBJKT4OBJKT ED.1", "date": "2021-03-28"}'
 end_date="2021-11-01"
 show_chart_notes="yes"
 />
