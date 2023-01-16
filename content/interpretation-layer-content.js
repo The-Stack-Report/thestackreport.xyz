@@ -37,9 +37,9 @@ show_chart_notes="yes"
 
 Notes are fixed to a specific chart and can be placed at a specific value on the x axis. 
 
-The note can be edited by the author at any time.
+The note can be edited by the author at any time. When a note is placed, it initially is only visible privately to the author. 
 
-When a note is placed, it initially is only visible privately to the author. 
+For further information on how to interact with Chart Notes see the [Chart Notes Announcement post](/articles/chart-notes-and-interpretation-layer-launch).
 
 ---
 
