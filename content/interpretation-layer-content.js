@@ -11,9 +11,9 @@ Making meaning out of data often requires extra context.
 
 The <i>Interpretation Layer</i> is intended to become a set of tools to add context and meaning to charts and datasets on The Stack Report data platform.
 
-Chart Notes, as will be introduced below, is the first component of the interpretation layer. Allowing community members to place and share notes on top of Stack Report charts.
+Chart Notes, as will be introduced below, is the first tool of the interpretation layer. Allowing community members to place and share notes on top of Stack Report charts.
 
-More tools to interpret & share datasets and data visuals will be added to the interpretation layer in the future.
+More tools to interpret & share datasets and data visuals will be added to the interpretation layer over time.
 
 ---
 
