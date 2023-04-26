@@ -4,19 +4,15 @@ import {
     SimpleGrid,
     Box,
     Text,
-    Heading,
-    Flex,
-    Center
+    Heading
 } from "@chakra-ui/react"
 import PageLayout from 'components/PageLayout'
 import FeaturedArticleBanner from "components/FeaturedArticleBanner"
 import ArticleList from "components/ArticleList"
-import ArticleCard from "components/ArticleCard"
-import DataBlock from "components/DataBlock"
 import { CMS_URL } from 'constants/cms'
 import _ from "lodash"
 import { connectToDatabase } from "utils/mongo_db"
-import StyledLink from "components/Links/StyledLink"
+import { Link } from "@chakra-ui/next-js"
 import MarkdownWrapper from "components/MarkdownWrapper"
 import TopContractsLandingPageWidget from "components/TopContractsLandingPageWidget"
 import qs from "qs"
@@ -71,9 +67,9 @@ const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStat
                         />
                     <Text>
                         {">> "}
-                        <StyledLink href="/articles">
-                            All articles
-                        </StyledLink>
+                        <Link href="/categories">
+                            More articles
+                        </Link>
                     </Text>
                 </Box>
                 <Box>
@@ -91,9 +87,9 @@ const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStat
                         contracts={topContractsStats}
                         />
                     <Box paddingTop="2rem" paddingBottom="2rem">
-                        <StyledLink href="/dashboards/tezos">
+                        <Link href="/dashboards/tezos">
                             Search through all Tezos contract dashboards
-                        </StyledLink>
+                        </Link>
                     </Box>
                 </Box>
             </SimpleGrid>
@@ -124,9 +120,9 @@ const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStat
                         markdownText={aboutText}
                         />
                     <br />
-                    <StyledLink href="/about" >
+                    <Link href="/about" >
                         Read more
-                    </StyledLink>
+                    </Link>
                     <br />
                     </Box>
                 </Box>

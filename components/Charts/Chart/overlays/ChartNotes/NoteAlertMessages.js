@@ -8,7 +8,7 @@ import {
 import { ChartContext } from "../../Chart"
 import { WalletContext } from "components/Wallet"
 import _ from "lodash"
-import StyledLink from "components/Links/StyledLink"
+import { Link } from "@chakra-ui/next-js"
 
 const NoteAlertMessages = () => {
     const chartContext = useContext(ChartContext)
@@ -24,7 +24,7 @@ const NoteAlertMessages = () => {
                 message: (
                     <>
                     Notes can be stored with access to the
-                    <StyledLink href="/interpretation-layer" marginLeft="0.6rem">{"Interpretation Layer"}</StyledLink>
+                    <Link href="/interpretation-layer" marginLeft="0.6rem">{"Interpretation Layer"}</Link>
                     </>
                 ),
                 secondLine: (

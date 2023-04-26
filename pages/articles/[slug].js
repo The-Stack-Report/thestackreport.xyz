@@ -8,8 +8,7 @@ import {
     Box
 } from "@chakra-ui/react"
 import Article from 'components/Article'
-import WrappedLink from "components/WrappedLink"
-import StyledLink from "components/Links/StyledLink"
+import { Link } from "@chakra-ui/next-js"
 import Image from "next/image"
 import { basicImgLoader } from "utils/basicImgLoader"
 import {
@@ -81,9 +80,9 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                             >
                             {errorMessage}
                         </Text>
-                        <StyledLink href="/articles"  fontSize="0.7rem">
+                        <Link href="/articles"  fontSize="0.7rem">
                             To latest articles
-                        </StyledLink>
+                        </Link>
                     </Container>
                 ) : (
                     <>
@@ -136,9 +135,9 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                             paddingTop="4rem"
                             paddingBottom="4rem"
                             >
-                            <StyledLink href="/articles" fontSize="0.7rem" marginTop="1rem">
+                            <Link href="/articles" fontSize="0.7rem" marginTop="1rem">
                                 To latest articles
-                            </StyledLink>
+                            </Link>
                             <Article
                                 article={attrs}
                                 />

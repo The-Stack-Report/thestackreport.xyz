@@ -9,7 +9,7 @@ import {
     Text,
     Input
 } from "@chakra-ui/react"
-import WrappedLink from "components/WrappedLink"
+import { Link } from "@chakra-ui/next-js"
 import _ from "lodash"
 
 const dashboardDescription = `
@@ -27,9 +27,9 @@ const DashboardsIndexPage = () => {
             </Head>
             <Container maxW="container.xl" paddingTop="8rem">
                 <Heading>Dashboards</Heading>
-                <WrappedLink href="/dashboards/tezos">
+                <Link href="/dashboards/tezos">
                     Go to Tezos dashboards
-                </WrappedLink>
+                </Link>
             </Container>
         </PageLayout>
     )

@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react"
 import { connectToDatabase } from "utils/mongo_db"
 import PageLayout from 'components/PageLayout'
-import WrappedLink from "components/WrappedLink"
 import ContractsCardsTable from "components/ContractsCardsTable"
 
 

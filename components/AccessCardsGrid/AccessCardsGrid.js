@@ -8,8 +8,6 @@ import {
 } from "@chakra-ui/react"
 import { accessCardsTeztokQuery } from "./teztokQuery"
 import _ from "lodash"
-import StyledLink from "components/Links/StyledLink"
-import WrappedLink from "components/WrappedLink"
 
 const AccessCardsGrid = ({
     mode="available",

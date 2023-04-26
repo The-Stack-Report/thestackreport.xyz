@@ -9,7 +9,6 @@ import {
 import PageLayout from "components/PageLayout"
 import { CMS_URL } from 'constants/cms'
 import _ from "lodash"
-import WrappedLink from "components/WrappedLink"
 import { Link } from "@chakra-ui/next-js"
 import dayjs from "dayjs"
 import ArticleCard from "components/ArticleCard"
@@ -81,7 +80,7 @@ const CategoriesPage = ({ categories }) => {
                                         if (categoryTitle === "Deep dives") {
                                             return (
                                                 <Box key={article.id} marginBottom="0rem">
-                                                <ArticleCard article={article} height="10rem" marginBottom="-1rem" />
+                                                <ArticleCard article={article} height="10rem" />
                                                 </Box>
                                             )
                                         }
@@ -89,7 +88,7 @@ const CategoriesPage = ({ categories }) => {
                                         if (categoryTitle === "Announcements") {
                                             return (
                                                 <Box key={article.id} marginBottom="0rem">
-                                                <ArticleCard article={article} height="12rem" marginBottom="-1rem" />
+                                                <ArticleCard article={article} height="12rem" />
                                                 </Box>
                                             )
                                         }

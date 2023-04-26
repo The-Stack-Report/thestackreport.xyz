@@ -13,14 +13,13 @@ import {
     ACCOUNT_ACTIVE
 } from "components/Wallet/states"
 import {
-    InfoOutlineIcon,
     ArrowForwardIcon,
     LinkIcon,
     CheckIcon,
     RepeatIcon
 } from "@chakra-ui/icons"
 import styles from "./wallet-menu-widget.module.scss"
-import WrappedLink from "components/WrappedLink"
+import { Link } from "@chakra-ui/next-js"
 import { WALLET_CONNECTION } from "constants/feature_flags"
 import {
     connectedAccountLinkProps,
@@ -33,7 +32,6 @@ import {
     interpretationLayerTextProps,
     connectWalletButtonProps
 } from "./elementProps"
-import StyledLink from "components/Links/StyledLink"
 
 const WalletMenuWidget = () => {
     const walletContext = useContext(WalletContext)
@@ -79,7 +77,7 @@ const WalletMenuWidget = () => {
             {walletContext.connectionState === ACCOUNT_ACTIVE ? (
                 <>
                 <Box {...containerBoxProps}>
-                <WrappedLink
+                <Link
                     href="/connected-account"
                     {...connectedAccountLinkProps}
                     renderAsText={false}
@@ -87,7 +85,7 @@ const WalletMenuWidget = () => {
                     <Text {...displayNameTextProps}>
                     {displayName}
                     </Text>
-                </WrappedLink>
+                </Link>
                 <Text {...displayModeIconProps}
                     onPointerDown={() => {
                         if(accountNameDisplayMode === "address") {
@@ -151,7 +149,7 @@ const WalletMenuWidget = () => {
                 <>
                 <Box {...containerBoxProps} >
                         <Box paddingRight="5px">
-                            <StyledLink href="/interpretation-layer" {...interpretationLayerLinkProps} >
+                            <Link href="/interpretation-layer" {...interpretationLayerLinkProps} >
                                 <Text {...interpretationLayerTextProps} >
                                     {"Interpretation layer "}
                                     <ArrowForwardIcon
@@ -160,7 +158,7 @@ const WalletMenuWidget = () => {
                                         className={styles["connect-label-icon"]}
                                         />
                                 </Text>
-                            </StyledLink>
+                            </Link>
 
                         </Box>
                     <Box>

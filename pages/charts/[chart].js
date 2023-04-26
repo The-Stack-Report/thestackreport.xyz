@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react"
+import React from "react"
 import Head from "next/head"
 import { Container } from "@chakra-ui/layout"
 import {
@@ -12,9 +12,8 @@ import _ from "lodash"
 import { CMS_URL } from 'constants/cms'
 import ChartLoader from "components/Charts/ChartLoader"
 import prepareChartMetadata from "utils/prepareChartMetadata"
-import WrappedLink from "components/WrappedLink"
 import MarkdownWrapper from "components/MarkdownWrapper"
-import StyledLink from "components/Links/StyledLink"
+import { Link } from "@chakra-ui/next-js"
 
 const ChartPage = ({ chart }) => {
     const richDescription = _.get(chart, "rich_description", false)
@@ -33,9 +32,9 @@ const ChartPage = ({ chart }) => {
                                 md: "1rem"
                             }}
                             >
-                        <StyledLink href="/charts" fontSize="0.7rem">
+                        <Link href="/charts" fontSize="0.7rem">
                             To charts overview
-                        </StyledLink>
+                        </Link>
                         </Box>
                 <Heading
                     marginTop={{

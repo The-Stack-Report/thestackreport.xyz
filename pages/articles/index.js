@@ -12,7 +12,7 @@ import _ from "lodash"
 import { CMS_URL } from 'constants/cms'
 import CategoriesTags from "components/CategoriesTags"
 import PageLayout from 'components/PageLayout'
-import WrappedLink from "components/WrappedLink"
+import { Link } from "@chakra-ui/next-js"
 
 
 
@@ -74,9 +74,9 @@ const ArticlesPage = ({ articles, categories }) => {
                             <CategoriesTags categories={categories} />
                         )}
                         <Box fontSize="0.8rem" marginTop="2rem">
-                        <WrappedLink href="/categories">
+                        <Link href="/categories">
                             To categories overview
-                        </WrappedLink>
+                        </Link>
                         </Box>
                         <Box height="4rem"/>
                     </GridItem>

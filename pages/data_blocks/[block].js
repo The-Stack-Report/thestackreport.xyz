@@ -10,7 +10,7 @@ import {
 import _ from "lodash"
 import { connectToDatabase } from "utils/mongo_db"
 import DataBlock from "components/DataBlock"
-import WrappedLink from "components/WrappedLink"
+import { Link } from "@chakra-ui/next-js"
 
 import Footer from "components/Footer"
 const BlockPage = ({block, error, errorMessage="Error"}) => {
@@ -61,9 +61,9 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
                         Error loading block.
                     </Heading>
                     <Text>{errorMessage}</Text>
-                    <WrappedLink href="/data_blocks" fontSize="0.7rem">
+                    <Link href="/data_blocks" fontSize="0.7rem">
                         To visuals overview
-                    </WrappedLink>
+                    </Link>
                     </Container>
                 ) : (
                 <Container paddingTop="100px">
@@ -74,9 +74,9 @@ const BlockPage = ({block, error, errorMessage="Error"}) => {
                             md: "1rem"
                         }}
                         >
-                    <WrappedLink href="/data_blocks" fontSize="0.7rem">
+                    <Link href="/data_blocks" fontSize="0.7rem">
                         To visuals overview
-                    </WrappedLink>
+                    </Link>
                     </Box>
                     <Heading
                         marginTop={{

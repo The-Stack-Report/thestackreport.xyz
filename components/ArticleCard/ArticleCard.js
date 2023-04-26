@@ -1,6 +1,4 @@
 import React from "react"
-import Link from 'next/link'
-import WrappedLink from "components/WrappedLink"
 import Image from "next/image"
 import {
     Box,
@@ -12,11 +10,12 @@ import { basicImgLoader } from "utils/basicImgLoader"
 import {
     placeholderImg
 } from "constants/cms"
+import { Link } from "@chakra-ui/next-js"
 
 const ArticleCard = ({
     article,
     height="14rem",
-    marginBottom="0.5rem"
+    marginBottom="1rem"
 }) => {
     const attrs = article.attributes
     const authors = _.get(attrs, "authors.data", false)
@@ -28,7 +27,7 @@ const ArticleCard = ({
 
     var previewMode = _.get(attrs, "preview", false)
     return (
-        <WrappedLink
+        <Link
             href={`/articles/${_.get(attrs, "slug", "no-slug-set-for-article")}`}
             >
             <Box key={article.id}
@@ -202,7 +201,7 @@ const ArticleCard = ({
                     )}
                 </div>
             </Box>
-        </WrappedLink>
+        </Link>
     )
 }
 

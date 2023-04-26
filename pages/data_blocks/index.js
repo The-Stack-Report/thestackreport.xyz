@@ -14,7 +14,7 @@ import PageLayout from 'components/PageLayout'
 import BlocksGrid from "components/BlocksGrid"
 import useDebounce from "utils/useDebounce"
 import MarkdownWrapper from "components/MarkdownWrapper"
-import WrappedLink from "components/WrappedLink"
+import { Link } from "@chakra-ui/next-js"
 
 const replacementMessage = _.trim(`
 The Data Blocks were an experiment in pre-rendered charts but is currently discontinued.
@@ -89,10 +89,18 @@ const DataBlocksCatalogPage = ({ blocks }) => {
 
                 <Box padding="1rem" boxShadow="md" border="1px solid rgb(220,220,220)" borderRadius="5px" marginBottom="2rem">
                     <MarkdownWrapper markdownText={replacementMessage} />
-
-                    <WrappedLink href="/dashboards/tezos">
-                        <Button>Dashboards</Button>
-                    </WrappedLink>
+                    <Link href="/dashboards/tezos">
+                        <Button
+                            bg="black"
+                            color="white"
+                            _hover={{
+                                bg: "black",
+                                textDecoration: "underline"
+                            }}
+                            >
+                            Dashboards
+                        </Button>
+                    </Link>
                 </Box>
                 <Input
                     placeholder="search visuals"

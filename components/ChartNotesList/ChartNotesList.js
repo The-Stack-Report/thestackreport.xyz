@@ -1,6 +1,7 @@
 import { Box, Text } from "@chakra-ui/react"
-import StyledLink from "components/Links/StyledLink"
+import { Link } from "@chakra-ui/next-js"
 import React from "react"
+import _ from "lodash"
 
 const ChartNotesList = ({
     notes
@@ -22,7 +23,7 @@ const ChartNotesList = ({
                             </Text>
                         </Box>
                         <Text fontSize='0.8rem' color="grey">
-                            Placed on <StyledLink href={targetUrl}>{targetUrl}</StyledLink>
+                            Placed on <Link href={targetUrl}>{_.last(targetUrl.split("/"))}</Link>
                         </Text>
                     </Box>
                 )

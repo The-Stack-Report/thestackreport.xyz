@@ -4,7 +4,7 @@ import {
     Text,
     Badge
 } from "@chakra-ui/react"
-import WrappedLink from "components/WrappedLink"
+import { Link } from "@chakra-ui/next-js"
 import _ from "lodash"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"
 import AreaChartBasic from "components/Charts/AreaChartBasic"
@@ -49,7 +49,7 @@ const TopContractsLandingPageWidget = ({
                     <Box position="relative"
                         key={contract_i}
                         >
-                    <WrappedLink href={`/dashboards/tezos/contracts/${contract.address}`} inline={true} >
+                    <Link href={`/dashboards/tezos/contracts/${contract.address}`} inline={true} >
                         <Box
                             _hover={{
                                 background: "black"
@@ -74,7 +74,7 @@ const TopContractsLandingPageWidget = ({
                                 sortPosition={sortPosition}
                                 />
                         </Box>
-                    </WrappedLink>
+                    </Link>
                     <Box>
                     <Text fontSize="0.7rem">
                         Contract calls past two weeks:{" "}

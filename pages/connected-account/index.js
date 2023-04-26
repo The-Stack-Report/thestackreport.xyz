@@ -5,7 +5,7 @@ import {
 } from "@chakra-ui/layout"
 import { WALLET_CONNECTION } from "constants/feature_flags"
 import AccountInformation from "components/AccountInformation"
-import WrappedLink from "components/WrappedLink"
+import { Link } from "@chakra-ui/next-js"
 
 
 const ConnectedAccountPage = () => {
@@ -24,9 +24,9 @@ const ConnectedAccountPage = () => {
                      <AccountInformation />
                     </>
                 ) : (
-                    <WrappedLink href="/">
+                    <Link href="/">
                         Go to home
-                    </WrappedLink>
+                    </Link>
                 )}
                 
                 

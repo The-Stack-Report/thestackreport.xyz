@@ -4,9 +4,8 @@ import LinkedInIcon from "./icons/LinkedInIcon"
 import TezosIcon from "./icons/TezosIcon"
 import TwitterIcon from "./icons/TwitterIcon"
 import MastodonIcon from "./icons/MastodonIcon"
-import WrappedLink from "components/WrappedLink"
-import StyledLink from "components/Links/StyledLink"
-import { Text, Box } from "@chakra-ui/react"
+import { Box } from "@chakra-ui/react"
+import { Link } from "@chakra-ui/next-js"
 import styles from "./SocialsLinkList.module.scss"
 
 const SocialsLinkList = () => {
@@ -14,40 +13,40 @@ const SocialsLinkList = () => {
         <div className={styles["socials-link-list"]}>
             <Box display="flex">
                 <TezosIcon />
-                <StyledLink href="https://app.tezos.domains/domain/thestackreport.tez" >
+                <Link href="https://app.tezos.domains/domain/thestackreport.tez" >
                     thestackreport.tez
-                </StyledLink>
+                </Link>
             </Box>
             <br />
             <Box display="flex">
                 <MastodonIcon />
-                <StyledLink href="https://mastodon.social/@thestackreport" >
+                <Link href="https://mastodon.social/@thestackreport" >
                     Mastodon
-                </StyledLink>
+                </Link>
             </Box>
             <br />
 
             <Box display="flex">
                 <TwitterIcon />
-                <StyledLink href="https://twitter.com/thestackreport" >
+                <Link href="https://twitter.com/thestackreport" >
                     Twitter
-                </StyledLink>
+                </Link>
             </Box>
             <br />
 
             <Box display="flex">
                 <InstagramIcon />
-                <StyledLink href="https://www.instagram.com/stackreport/" >
+                <Link href="https://www.instagram.com/stackreport/" >
                     Instagram
-                </StyledLink>
+                </Link>
             </Box>
             <br />
 
             <Box display="flex">
                 <LinkedInIcon />
-                <StyledLink href="https://www.linkedin.com/company/the-stack-report/" >
+                <Link href="https://www.linkedin.com/company/the-stack-report/" >
                     Linkedin
-                </StyledLink>
+                </Link>
             </Box>
         </div>
     )

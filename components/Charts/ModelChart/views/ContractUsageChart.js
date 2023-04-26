@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from "react"
 import useFetch from "react-fetch-hook"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"
 import Chart from "components/Charts/Chart"
 import { gridScale, grayScale } from "utils/colorScales"
 import dayjs from "dayjs"
-
-import WrappedLink from "components/WrappedLink"
-import StyledLink from "components/Links/StyledLink"
-import {
-    Text
-} from "@chakra-ui/react"
+import { Text } from "@chakra-ui/react"
+import { Link } from "@chakra-ui/next-js"
 
 
 var ContractUsageChart = ({
@@ -82,9 +77,12 @@ var ContractUsageChart = ({
                             >
                             Entrypoints called{" "}
                             </Text>
-                            <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
-                            {_.get(contract, "tzkt_account_data.alias", address)}
-                            </WrappedLink>
+                            <Link
+                                href={`/dashboards/tezos/contracts/${address}`}
+                                fontWeight={"bold"}
+                                >
+                                {_.get(contract, "tzkt_account_data.alias", address)}
+                            </Link>
                         </Text>
                         <Chart
                             name=" "
@@ -119,9 +117,12 @@ var ContractUsageChart = ({
                         >
                         Accounts using{" "}
                         </Text>
-                        <StyledLink href={`/dashboards/tezos/contracts/${address}`}>
+                        <Link
+                            href={`/dashboards/tezos/contracts/${address}`}
+                            fontWeight={"bold"}
+                            >
                         {_.get(contract, "tzkt_account_data.alias", address)}
-                        </StyledLink>
+                        </Link>
                     </Text>
                     <Chart
                         name=" "
@@ -150,9 +151,11 @@ var ContractUsageChart = ({
                     color="gray.500"
                     >
                     Dashboard:{" "}
-                    <StyledLink href={`/dashboards/tezos/contracts/${address}`}>
+                    <Link
+                        href={`/dashboards/tezos/contracts/${address}`}
+                        >
                         {_.get(contract, "tzkt_account_data.alias", address)}
-                    </StyledLink>
+                    </Link>
                 </Text>
                 </>
             )}

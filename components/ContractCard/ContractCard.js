@@ -1,11 +1,10 @@
-import React, { useRef, useLayoutEffect, useState, useEffect } from "react"
+import React, { useRef, useState, useEffect } from "react"
 import {
     Box,
     Text,
     Heading,
     Image
 } from "@chakra-ui/react"
-import WrappedLink from "components/WrappedLink"
 import _ from "lodash"
 import CardAreaChart from "./CardAreaChart"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"
@@ -16,6 +15,7 @@ import { gridScale } from "utils/colorScales"
 import StatsTable from "./StatsTable"
 import Badges from "./Badges"
 import { useDebouncedCallback } from 'use-debounce'
+import { Link } from "@chakra-ui/next-js"
 
 
 const ContractCard = React.memo(({
@@ -36,8 +36,8 @@ const ContractCard = React.memo(({
         recent_days_data = prepareContractDailyStats(_.get(contract, "past_14_days", false), contract)
     }
     return (
-        <Box position="relative">
-            <WrappedLink
+        <Box position="relative" paddingBottom="2rem">
+            <Link
                 href={`/dashboards/tezos/contracts/${contract.address}`}
                 textDecoration="none"
                 >
@@ -104,7 +104,7 @@ const ContractCard = React.memo(({
 
                     </Box>
                 </Box>
-            </WrappedLink>
+            </Link>
         </Box>
     )
 }, (prev, next) => {

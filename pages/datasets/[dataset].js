@@ -11,18 +11,15 @@ import {
     InputRightElement,
     Button,
     Box,
-    SimpleGrid,
     Grid,
     GridItem,
     Divider
 } from "@chakra-ui/react"
 import { connectToDatabase } from "utils/mongo_db"
 import _ from "lodash"
-import Link from 'next/link'
 import PageLayout from "components/PageLayout"
-import WrappedLink from "components/WrappedLink"
+import { Link } from "@chakra-ui/next-js"
 import MarkdownWrapper from "components/MarkdownWrapper"
-import StyledLink from "components/Links/StyledLink"
 
 const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
     const spaces_url = _.get(dataset, "spaces_url", false)
@@ -41,13 +38,13 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                 {error ? (
                     <React.Fragment>
                         <Text>{errorMessage}</Text>
-                        <StyledLink
+                        <Link
                             href="/datasets"
                             >
                             <Text fontSize="0.7rem" textDecoration="underline">
                             Back to datasets overview
                             </Text>
-                        </StyledLink>
+                        </Link>
                     </React.Fragment>
                 ) : (
                     <React.Fragment>
@@ -58,13 +55,13 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                                 md: "1rem"
                             }}
                             >
-                            <StyledLink
+                            <Link
                                 href="/datasets"
                                 fontSize="0.7rem"
                                 marginTop="1rem"
                                 >
                                 To datasets overview
-                            </StyledLink>
+                            </Link>
                         </Box>
                         <Heading
                             as="h1"

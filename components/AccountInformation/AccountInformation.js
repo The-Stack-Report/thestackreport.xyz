@@ -15,10 +15,10 @@ import {
 } from "@chakra-ui/layout"
 import { WalletContext } from "components/Wallet"
 import { ACCOUNT_ACTIVE } from "components/Wallet/states"
-import WrappedLink from "components/WrappedLink"
 import NoAccountConnectedInformation from "./NoAccountConnectedInformation"
 import ChartNotesList from "components/ChartNotesList"
 import _ from "lodash"
+import { Link } from "@chakra-ui/next-js"
 
 const AccountInformation = ({ account }) => {
     const [accountChartNotes, setAccountChartNotes] = useState(false)
@@ -110,7 +110,7 @@ const AccountInformation = ({ account }) => {
                 {hasBetaAccess ? (
                     <>
                     <Text>
-                        You have access to the <WrappedLink href="/interpretation-layer">Interpretation Layer</WrappedLink> based on your ownership of the following {accessTokens.length > 1 ? "cards" : "card"}:
+                        You have access to the <Link href="/interpretation-layer">Interpretation Layer</Link> based on your ownership of the following {accessTokens.length > 1 ? "cards" : "card"}:
                     </Text>
                     <SimpleGrid minChildWidth={`200px`} >
                         {accessTokens.map(accessToken => {
@@ -120,7 +120,7 @@ const AccountInformation = ({ account }) => {
                             var objktTokenUrl = `https://objkt.com/asset/KT1LaCf37XyoR4eNCzMnw6Ccp5bfPFQrKYxe/${accessToken.toString()}`
                             return (
                                 <Box key={accessToken} borderRadius="0.25rem" marginTop="1rem" marginBottom="1rem" marginRight="1rem">
-                                    <WrappedLink
+                                    <Link
                                         href={objktTokenUrl}
                                         >
                                     <Image
@@ -130,7 +130,7 @@ const AccountInformation = ({ account }) => {
                                         width="100%"
                                         alt="Beta access token"
                                         />
-                                    </WrappedLink>
+                                    </Link>
                                 </Box>
                             )
                         })}
@@ -152,7 +152,7 @@ const AccountInformation = ({ account }) => {
                     <Text>
                         You do not have beta access.
                         
-                        Check the page on the <WrappedLink href="/interpretation-layer">interpretation layer</WrappedLink> to learn how to get beta access.
+                        Check the page on the <Link href="/interpretation-layer">interpretation layer</Link> to learn how to get beta access.
                     </Text>
                 )}
                 </Box>

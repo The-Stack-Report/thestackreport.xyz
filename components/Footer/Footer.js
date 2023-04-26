@@ -6,7 +6,7 @@ import {
     Box,
     Text
 } from "@chakra-ui/react"
-import StyledLink from "components/Links/StyledLink"
+import { Link } from "@chakra-ui/next-js"
 import SocialsLinkList from "components/socials/SocialsLinkList"
 
 const Footer = () => {
@@ -38,25 +38,33 @@ const Footer = () => {
                             >
                             Pages
                         </Text>
-                        <StyledLink href="/articles" >
+                        <Link href="/articles">
+                            <Text>
                             Articles
-                        </StyledLink>
+                            </Text>
+                        </Link>
                         <br />
-                        <StyledLink href="/categories" >
+                        <Link href="/categories" >
+                            <Text>
                             Categories
-                        </StyledLink>
+                            </Text>
+                        </Link>
                         <br />
-                        <StyledLink href="/dashboards/tezos" >
+                        <Link href="/dashboards/tezos" >
+                            <Text>
                             Dashboards
-                        </StyledLink>
+                            </Text>
+                        </Link>
                         <br />
-                        <StyledLink href="/datasets" >
+                        <Link href="/datasets" >
+                            <Text>
                             Datasets
-                        </StyledLink>
+                            </Text>
+                        </Link>
                         <br />
-                        <StyledLink href="/about" >
+                        <Link href="/about" >
                             About
-                        </StyledLink>
+                        </Link>
                     </Box>
                     <Box>
                     <Text as="h2"
@@ -68,11 +76,11 @@ const Footer = () => {
                         <SocialsLinkList />
                     </Box>
                     <Box>
-                        <StyledLink href="/about"
+                        <Link href="/about"
                             fontWeight="bold"
                             >
                             About
-                        </StyledLink>
+                        </Link>
                         <Text
                             marginTop="1rem"
                             paddingRight={{

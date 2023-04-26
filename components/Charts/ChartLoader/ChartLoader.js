@@ -7,7 +7,7 @@ import _ from "lodash"
 import * as d3 from "d3"
 import prepareDf from "utils/data/prepareDf"
 import Chart from "components/Charts/Chart"
-import StyledLink from "components/Links/StyledLink"
+import { Link } from "@chakra-ui/next-js"
 import { chartCMSProps } from "constants/cms"
 
 const ChartLoader = ({
@@ -133,9 +133,9 @@ const ChartLoader = ({
                         zIndex="100"
                         >
                         Chart:{" "}
-                        <StyledLink href={`/charts/${_.get(chart, "slug", "not-found")}`}>
+                        <Link href={`/charts/${_.get(chart, "slug", "not-found")}`}>
                             {`#${_.get(chart, "slug", "not-found")}`}
-                        </StyledLink>
+                        </Link>
                     </Text>
                 </Box>
             )}

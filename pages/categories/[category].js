@@ -10,7 +10,7 @@ import {
     Grid,
     GridItem
 } from "@chakra-ui/react"
-import WrappedLink from "components/WrappedLink"
+import { Link } from "@chakra-ui/next-js"
 import ArticleList from "components/ArticleList"
 
 
@@ -37,9 +37,9 @@ const CategoryPage = ({category, error, errorMessage}) => {
                             >
                             {errorMessage}
                         </Text>
-                        <WrappedLink href="/categories">
+                        <Link href="/categories">
                             To categories overview
-                        </WrappedLink>
+                        </Link>
                     </Container>
                 ) : (
                     <>
@@ -54,9 +54,9 @@ const CategoryPage = ({category, error, errorMessage}) => {
                                 md: "1rem"
                             }}
                             >
-                        <WrappedLink href="/categories" fontSize="0.7rem">
+                        <Link href="/categories" fontSize="0.7rem">
                             To categories overview
-                        </WrappedLink>
+                        </Link>
                         </Box>
                         <Heading
                             marginTop={{
@@ -84,10 +84,10 @@ const CategoryPage = ({category, error, errorMessage}) => {
                     <Container maxW="container.xl">
                             <Box height="2rem" />
                             <Box style={{textAlign: "right"}}>
-                            <WrappedLink
+                            <Link
                                 href="/articles" fontSize="0.7rem">
                                 To latest articles
-                            </WrappedLink>
+                            </Link>
                             </Box>
                             <Box height="4rem" />
                     </Container>

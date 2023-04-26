@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react"
 import useFetch from "react-fetch-hook"
 import Chart from "components/Charts/Chart"
-import StyledLink from "components/Links/StyledLink"
+import { Link } from "@chakra-ui/next-js"
 import {
     Text
 } from "@chakra-ui/react"
@@ -145,9 +145,9 @@ const ChartRenderer = ({
             color="gray.500"
             >
             Dashboard:{" "}
-            <StyledLink href={`/dashboards/tezos/contracts/${address}#xtz-statistics`}>
+            <Link href={`/dashboards/tezos/contracts/${address}#xtz-statistics`}>
                 {_.get(contract, "tzkt_account_data.alias", address)}
-            </StyledLink>
+            </Link>
         </Text>
         </>
     )

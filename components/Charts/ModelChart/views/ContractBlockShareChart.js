@@ -3,14 +3,12 @@ import useFetch from "react-fetch-hook"
 import _ from "lodash"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"
 import Chart from "components/Charts/Chart"
-import { gridScale, grayScale } from "utils/colorScales"
+import { grayScale } from "utils/colorScales"
 import dayjs from "dayjs"
-
-import WrappedLink from "components/WrappedLink"
-import StyledLink from "components/Links/StyledLink"
 import {
     Text
 } from "@chakra-ui/react"
+import { Link } from "@chakra-ui/next-js"
 
 const ContractBlockShareChart = ({
     address,
@@ -88,9 +86,12 @@ const ContractBlockShareChart = ({
                             fontWeight="light"
                             >
                             Block share in transactions{" "}
-                            <StyledLink href={`/dashboards/tezos/contracts/${address}`}>
+                            <Link
+                                href={`/dashboards/tezos/contracts/${address}`}
+                                fontWeight={"bold"}
+                                >
                             {_.get(contract, "tzkt_account_data.alias", address)}
-                            </StyledLink>
+                            </Link>
                             </Text>
                         </Text>
                         <Chart
@@ -129,9 +130,12 @@ const ContractBlockShareChart = ({
                             >
                             Block share in baker fees{" "}
                             </Text>
-                            <WrappedLink href={`/dashboards/tezos/contracts/${address}`}>
+                            <Link
+                                href={`/dashboards/tezos/contracts/${address}`}
+                                fontWeight={"bold"}
+                                >
                             {_.get(contract, "tzkt_account_data.alias", address)}
-                            </WrappedLink>
+                            </Link>
                         </Text>
                         <Chart
                             name=" "

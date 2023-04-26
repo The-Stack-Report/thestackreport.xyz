@@ -14,8 +14,7 @@ import {
 import { connectToDatabase } from "utils/mongo_db"
 import PageLayout from "components/PageLayout"
 import TezosContractDashboard from "components/TezosContractDashboard"
-import WrappedLink from "components/WrappedLink"
-import StyledLink from "components/Links/StyledLink"
+import { Link } from "@chakra-ui/next-js"
 import _ from "lodash"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"
 import { getUrl } from "utils/serverCache"
@@ -78,7 +77,7 @@ const ContractPage = ({
                     <React.Fragment>
                         <Text>{errorMessage}</Text>
                         <Box height="0.5rem" />
-                        <WrappedLink
+                        <Link
                             href="/dashboards/tezos" 
                             >
                             <Text 
@@ -88,7 +87,7 @@ const ContractPage = ({
                                 >
                                 Back to contract dashboards overview.
                             </Text>
-                        </WrappedLink>
+                        </Link>
                     </React.Fragment>
                 ) : (
                     <React.Fragment>
@@ -99,9 +98,9 @@ const ContractPage = ({
                                 md: "1rem"
                             }}
                             >
-                        <StyledLink href="/dashboards/tezos" fontSize="0.7rem">
+                        <Link href="/dashboards/tezos" fontSize="0.7rem">
                             To Tezos dashboards overview
-                        </StyledLink>
+                        </Link>
                         </Box>
                         
                         <Heading
