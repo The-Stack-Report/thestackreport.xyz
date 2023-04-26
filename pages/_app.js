@@ -5,10 +5,6 @@ import PlausibleProvider from 'next-plausible'
 import { WalletContextProvider } from "components/Wallet"
 import _ from 'lodash'
 
-const colors = {
-
-}
-
 const fonts = {
   heading: "Roboto Mono, monospace",
   body: "Roboto Mono, monospace"
@@ -92,11 +88,12 @@ const styles = {
 }
 
 const theme = extendTheme({
-  colors,
   fonts,
   textStyles,
   styles,
-  components
+  components,
+  initialColorMode: "dark",
+  useSystemColorMode: false
 })
 
 

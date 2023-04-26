@@ -49,7 +49,7 @@ const TopContractsLandingPageWidget = ({
                     <Box position="relative"
                         key={contract_i}
                         >
-                    <Link href={`/dashboards/tezos/contracts/${contract.address}`} inline={true} >
+                    <Link href={`/dashboards/tezos/contracts/${contract.address}`}>
                         <Box
                             _hover={{
                                 background: "black"
