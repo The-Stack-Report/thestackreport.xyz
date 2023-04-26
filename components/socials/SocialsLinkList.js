@@ -3,6 +3,7 @@ import InstagramIcon from "./icons/InstagramIcon"
 import LinkedInIcon from "./icons/LinkedInIcon"
 import TezosIcon from "./icons/TezosIcon"
 import TwitterIcon from "./icons/TwitterIcon"
+import MastodonIcon from "./icons/MastodonIcon"
 import WrappedLink from "components/WrappedLink"
 import StyledLink from "components/Links/StyledLink"
 import { Text, Box } from "@chakra-ui/react"
@@ -15,6 +16,13 @@ const SocialsLinkList = () => {
                 <TezosIcon />
                 <StyledLink href="https://app.tezos.domains/domain/thestackreport.tez" >
                     thestackreport.tez
+                </StyledLink>
+            </Box>
+            <br />
+            <Box display="flex">
+                <MastodonIcon />
+                <StyledLink href="https://mastodon.social/@thestackreport" >
+                    Mastodon
                 </StyledLink>
             </Box>
             <br />

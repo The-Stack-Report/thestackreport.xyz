@@ -42,7 +42,16 @@ const TimelineBrush = ({
 
     const [touchEnabled, setTouchEnabled] = useState("initialized")
     const [touchSliderValues, setTouchSliderValues] = useState(false)
+    const [brushError, setBrushError] = useState(false)
     var chart = dataColumnsProps.chart
+
+    useEffect(() => {
+        if(brushError) {
+            setTimeout(() => {
+                setBrushError(false)
+            }, 100)
+        }
+    }, [brushError])
     /**
      * Brush parameters preparation
      */
@@ -93,6 +102,11 @@ const TimelineBrush = ({
         if(!domain) return
         const { x0, x1 } = domain
         var newDomain = [x0, x1]
+        if (x0 === x1) {
+            console.log("Brush error: x0 === x1")
+            setBrushError(true)
+            return
+        }
         if(xValueType === "date") {
             newDomain = newDomain.map(p => dayjs(p))
             setFilteredData(dataInDateRange(dataColumnsProps.data, newDomain))
@@ -137,35 +151,39 @@ const TimelineBrush = ({
                             y={0}
                             />
                     ) : (
-                        <Brush
-                            xScale={dataColumnsProps.xScale}
-                            yScale={dataColumnsProps.yScale}
-                            resizeTriggerAreas={['left', 'right']}
-                            brushDirection="horizontal"
-                            innerRef={brushRef}
-                            width={xBrushMax}
-                            height={yBrushMax}
-                            handleSize={8}
-                            margin={brushMargins}
-                            onBrushStart={() => {
-                                chartContext.setControllingZoomBrush(true)
-                            }}
-                            onBrushEnd={() => {
-                                chartContext.setControllingZoomBrush(false)
-                            }}
-                            onChange={onBrushChange}
-                            onPointerDown={() => {
-                                setFilteredData(dataColumnsProps.data)
-                                chartContext.setControllingZoomBrush(true)
-
-                            }}
-                            onPointerUp={() => {
-                                chartContext.setControllingZoomBrush(false)
-                            }}
-                            initialBrushPosition={initialBrushPosition}
-                            selectedBoxStyle={selectedBrushStyle}
-                            useWindowMoveEvents
-                            />
+                        <React.Fragment>
+                            {brushError === false && (
+                                <Brush
+                                    xScale={dataColumnsProps.xScale}
+                                    yScale={dataColumnsProps.yScale}
+                                    resizeTriggerAreas={['left', 'right']}
+                                    brushDirection="horizontal"
+                                    innerRef={brushRef}
+                                    width={xBrushMax}
+                                    height={yBrushMax}
+                                    handleSize={8}
+                                    margin={brushMargins}
+                                    onBrushStart={() => {
+                                        chartContext.setControllingZoomBrush(true)
+                                    }}
+                                    onBrushEnd={() => {
+                                        chartContext.setControllingZoomBrush(false)
+                                    }}
+                                    onChange={onBrushChange}
+                                    onPointerDown={() => {
+                                        setFilteredData(dataColumnsProps.data)
+                                        chartContext.setControllingZoomBrush(true)
+        
+                                    }}
+                                    onPointerUp={() => {
+                                        chartContext.setControllingZoomBrush(false)
+                                    }}
+                                    initialBrushPosition={initialBrushPosition}
+                                    selectedBoxStyle={selectedBrushStyle}
+                                    useWindowMoveEvents
+                                    />
+                            )}
+                        </React.Fragment>
                     )}
                     <g style={{pointerEvents: 'none'}}>
                         <DataColumns

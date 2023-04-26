@@ -12,8 +12,7 @@ import {
 } from "@chakra-ui/react"
 import _ from "lodash"
 import dayjs from "dayjs"
-import WrappedLink from "components/WrappedLink"
-import Link from 'next/link'
+import { Link } from '@chakra-ui/next-js'
 
 const DataTable = ({
     data,
@@ -21,6 +20,7 @@ const DataTable = ({
     columnNames = false,
     customColumns = {},
     rowLink = false,
+    colLinks = {},
     rowProps = {}
 }) => {
     const borderStyle = "1px solid rgb(220,220,220)"
@@ -73,6 +73,7 @@ const DataTable = ({
                                     {..._rowProps}
                                     >
                                     {_columns.map((col, col_i, cols) => {
+
                                         var colContentGenerator = _.get(customColumns, col)
                                         var colContent = _.get(row, col, "not-found")
                                         if(colContentGenerator) {
@@ -89,7 +90,16 @@ const DataTable = ({
                                         } else if(_.isObject(colContent)) {
                                             colContent = JSON.stringify(colContent)
                                         }
-
+                                        if(_.has(colLinks, col)) {
+                                            var link = colLinks[col](row)
+                                            colContent = (
+                                                <Link
+                                                    href={link}
+                                                    >
+                                                    {colContent}
+                                                </Link>
+                                            )
+                                        }
                                         return (
                                             <Td
                                                 key={col_i}
@@ -102,20 +112,11 @@ const DataTable = ({
                                 </Tr>
                             )
 
-                            if(rowLink) {
-                                var link = rowLink(row)
-                                return (
-                                    <Link href={link} key={row_i} passHref={true}>
-                                        {colBody}
-                                    </Link>
-                                )
-                            } else {
-                                return (
-                                    <React.Fragment key={row_i}>
-                                    {colBody}
-                                    </React.Fragment>
-                                )
-                            }
+                            return (
+                                <React.Fragment key={row_i}>
+                                {colBody}
+                                </React.Fragment>
+                            )
                         })}
                     </Tbody>
                 </Table>

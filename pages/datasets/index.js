@@ -38,6 +38,9 @@ const DatasetsCatalogPage = ({ datasets }) => {
 
     var olderDatasets = datasetsWithUploadDt.filter(dataset => !dataset.upload_dt.isAfter(todayMin30))
 
+    console.log(recentDatasets)
+    console.log(olderDatasets)
+
     return (
         <PageLayout>
             <Head>
@@ -76,7 +79,9 @@ const DatasetsCatalogPage = ({ datasets }) => {
                 <DataTable
                     data={recentDatasets}
                     columns={[ "key", "upload_date" ]}
-                    rowLink={(row) => `/datasets/${row.key}`}
+                    colLinks={{
+                        key: (row) => `/datasets/${row.key}`
+                    }}
                     />
                 <Box height={{base: "2rem", md: "4rem"}} />
                 <Divider />
@@ -94,7 +99,9 @@ const DatasetsCatalogPage = ({ datasets }) => {
                 <DataTable
                     data={olderDatasets}
                     columns={[ "key", "upload_date" ]}
-                    rowLink={(row) => `/datasets/${row.key}`}
+                    colLinks={{
+                        key: (row) => `/datasets/${row.key}`
+                    }}
                     rowProps={{color: "gray.500"}}
                     />
                 

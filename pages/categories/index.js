@@ -10,6 +10,7 @@ import PageLayout from "components/PageLayout"
 import { CMS_URL } from 'constants/cms'
 import _ from "lodash"
 import WrappedLink from "components/WrappedLink"
+import { Link } from "@chakra-ui/next-js"
 import dayjs from "dayjs"
 import ArticleCard from "components/ArticleCard"
 
@@ -46,11 +47,12 @@ const CategoriesPage = ({ categories }) => {
                         var articles = _.get(attrs, "articles.data", []).map((article) => {
                             return {
                                 ...article,
-                                published: _.get(article, "attribures.published", false)
+                                published: _.get(article, "attributes.Published", false)
                             }
                         })
 
                         articles = _.sortBy(articles, "published").reverse()
+                        console.log(articles)
 
                         var categoryTitle = attrs.Category
 
@@ -83,15 +85,23 @@ const CategoriesPage = ({ categories }) => {
                                                 </Box>
                                             )
                                         }
+
+                                        if (categoryTitle === "Announcements") {
+                                            return (
+                                                <Box key={article.id} marginBottom="0rem">
+                                                <ArticleCard article={article} height="12rem" marginBottom="-1rem" />
+                                                </Box>
+                                            )
+                                        }
                                         return (
                                             <Box marginBottom="1rem"
                                                 key={article.id}
                                                 >
-                                                <WrappedLink
+                                                <Link
                                                     href={`/articles/${_.get(article, "attributes.slug", "no-slug-found")}`}
                                                     >
                                                     {article.attributes.Title}
-                                                </WrappedLink>
+                                                </Link>
                                                 <Text
                                                     fontSize="0.7rem"
                                                     >

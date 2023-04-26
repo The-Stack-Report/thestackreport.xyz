@@ -5,7 +5,7 @@ import {
     useBreakpointValue
 } from "@chakra-ui/react"
 import DataTable from "components/DataTable"
-import WrappedLink from "components/WrappedLink"
+import { Link } from "@chakra-ui/next-js"
 import PieChart from "components/Charts/PieChart"
 import PieArrowTop from "./components/PieArrowTop"
 import PieArrowBottom from "./components/PieArrowBottom"
@@ -74,11 +74,11 @@ const ContractTransactionFlow = ({
                             var sender_addr = _.get(row, "sender_address", "not-found")
                             if(sender_addr.startsWith("KT")) {
                                 return (
-                                    <WrappedLink
+                                    <Link
                                         href={`/dashboards/tezos/contracts/${sender_addr}`}
                                         >
                                         {sender_addr}
-                                    </WrappedLink>
+                                    </Link>
                                 )
                             }
                             return (
@@ -152,12 +152,12 @@ const ContractTransactionFlow = ({
                                                 md: "flex"
                                             }}
                                             >
-                                            <WrappedLink
+                                            <Link
                                                 href={`/dashboards/tezos/contracts/${split_values[0]}`}
                                                 >
                                                 {split_values[0]}
                                                 
-                                            </WrappedLink>
+                                            </Link>
                                             <Text as="span">
                                                 {`.${split_values[1]}`}
                                                 </Text>

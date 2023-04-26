@@ -6,6 +6,9 @@ module.exports = withPlausibleProxy()({
   images: {
     domains: ["the-stack-report.ams3.digitaloceanspaces.com", "the-stack-report.ams3.cdn.digitaloceanspaces.com"]
   },
+  experimental: {
+    esmExternals: false,
+  },
   async redirects() {
     return [
       {

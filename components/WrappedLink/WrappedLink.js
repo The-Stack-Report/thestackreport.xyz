@@ -19,6 +19,7 @@ const WrappedLink = ({
         <NextLink
             href={href}
             passHref={passHref}
+            {...linkProps}
             >
             {children}
         </NextLink>
