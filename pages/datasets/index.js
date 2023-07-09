@@ -21,6 +21,12 @@ const tableCols = [
     "upload_date",
 ]
 
+const pinnedDatasetsIdentifiers = [
+    "the-stack-report--tezos-daily-chain-stats",
+    "the-stack-report--tezos-accounts-index",
+    "the-stack-report--tezos-entrypoints-index"
+]
+
 const DatasetsCatalogPage = ({ datasets }) => {
     // const recentDatasets = datasets.filter(dataset => dataset.date)
     var datasetsWithUploadDt = datasets.map(dataset => {
@@ -37,6 +43,8 @@ const DatasetsCatalogPage = ({ datasets }) => {
     var recentDatasets = datasetsWithUploadDt.filter(dataset => dataset.upload_dt.isAfter(todayMin30))
 
     var olderDatasets = datasetsWithUploadDt.filter(dataset => !dataset.upload_dt.isAfter(todayMin30))
+
+    var pinnedDatasets = datasetsWithUploadDt.filter(dataset => pinnedDatasetsIdentifiers.includes(dataset.identifier))
 
     console.log(recentDatasets)
     console.log(olderDatasets)
@@ -68,19 +76,19 @@ const DatasetsCatalogPage = ({ datasets }) => {
                     marginBottom="2rem"
                     fontSize="1.5rem"
                     >
-                    Recent datasets
+                    Pinned datasets
                 </Heading>
                 <Text
                     fontSize="sm"
                     marginBottom="1rem"
                     >
-                    Updated or uploaded datasets within the last 30 days.
+                    Curated list of datasets.
                 </Text>
                 <DataTable
-                    data={recentDatasets}
-                    columns={[ "key", "upload_date" ]}
+                    data={pinnedDatasets}
+                    columns={[ "identifier", "date" ]}
                     colLinks={{
-                        key: (row) => `/datasets/${row.key}`
+                        identifier: (row) => `/datasets/${row['identifier']}`
                     }}
                     />
                 <Box height={{base: "2rem", md: "4rem"}} />

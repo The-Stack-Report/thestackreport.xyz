@@ -101,7 +101,6 @@ function MyApp({
   Component,
   pageProps: { session, ...pageProps }
 }) {
-  console.log("app render Component: ", _.get(Component, "name"))
 
   var pageContent = (
     
@@ -120,7 +119,6 @@ function MyApp({
       </PlausibleProvider>
     )
   } else {
-    console.log("render without wrapping.")
     return (
         <>
           {pageContent}

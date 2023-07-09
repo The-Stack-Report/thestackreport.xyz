@@ -20,18 +20,23 @@ import _ from "lodash"
 import PageLayout from "components/PageLayout"
 import { Link } from "@chakra-ui/next-js"
 import MarkdownWrapper from "components/MarkdownWrapper"
+import Dataset from "models/Dataset"
+import DataSheet from "components/DataSheet"
 
 const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
-    const spaces_url = _.get(dataset, "spaces_url", false)
-    const columns = _.get(dataset, "columns", false)
-    const name = _.get(dataset, "name", false)
-    const description_md = _.get(dataset, "description_md", false)
+    const spaces_url = _.get(dataset, "url", false)
+    const title = _.get(dataset, "title", "")
+    var _dataset = new Dataset(dataset)
+    const description = _.get(dataset, "description", "Dataset without description.")
 
+    var datasetAsList = _dataset.to_list()
     return (
         <PageLayout>
             <Head>
-                <title>Dataset</title>
-                <meta name="description" content="Dataset page." />
+                <title>{title} - Dataset</title>
+                <meta
+                    name="description"
+                    content={description} />
 
             </Head>
             <Container maxW="container.xl" style={{paddingTop: 100}}>
@@ -72,14 +77,9 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                             }}
                             marginBottom="2rem"
                             >
-                            Dataset: <Text as="span" fontWeight="bold">{_.get(dataset, "key")}</Text>
+                            Dataset: <Text as="span" fontWeight="bold">{_.get(dataset, "title")}</Text>
                         </Heading>
                         <Box>
-                            <Text
-                                marginBottom="1rem"
-                                >
-                                Uploaded: {_.get(dataset, "upload_date", false)}
-                            </Text>
                             <Box display="flex">
                             <InputGroup size="md">
                                 <Input
@@ -121,71 +121,29 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
                             </Box>
                             
                         </Box>
-                        <Box maxW="container.sm" marginTop="2rem">
-                            {description_md && (
-                                <>
-                                <Text textTransform="uppercase">
-                                    Description
+                        {datasetAsList.length > 0 && (
+                            <Box paddingTop="2rem" paddingBottom="6rem" maxW="container.md">
+                                <Text marginBottom="1.5rem">
+                                    About this dataset:
                                 </Text>
-                                <MarkdownWrapper
-                                    markdownText={description_md}
-                                    />
-                                </>
-                            )}
-                        </Box>
-
-                        {columns && (
-                            <Box marginTop="2rem" marginBottom="4rem">
-                                <Divider />
-                                <Text textTransform="uppercase">
-                                    Columns in dataset
-                                </Text>
-                                
-                                    {columns.map((col, col_i) => {
-                                        return (
-                                            <Box
-                                                paddingBottom="1rem"
-                                                border="1px solid rgb(220,220,220)"
-                                                marginBottom="-1px"
-                                                paddingTop="0.25rem"
-                                                paddingLeft="0.5rem"
-                                                key={col_i}
+                                {datasetAsList.map(prop => {
+                                    return (
+                                        <Box key={prop.key}>
+                                            <Text
+                                                fontSize="0.7rem"
+                                                fontWeight="bold"
                                                 >
-                                                <Grid
-                                                    templateColumns="repeat(3, 1fr)"
-                                                    >
-                                                    <GridItem
-                                                        colSpan={{
-                                                            base: 1,
-                                                            sm: 2,
-                                                            md: 1
-                                                        }}
-                                                        >
-                                                    <Text
-                                                        fontWeight="bold"
-                                                        marginRight="1rem"
-                                                        fontSize="sm"
-                                                        >
-                                                    {_.get(col, "column", false)}
-                                                    </Text>
-                                                    </GridItem>
-                                                    <GridItem colSpan={2}>
-                                                    <Box
-                                                        paddingRight="2rem"
-                                                        fontSize="sm"
-                                                        >
-                                                        <MarkdownWrapper
-                                                            markdownText={_.get(col, "description_md", "")}
-                                                            />
-                                                    </Box>
-                                                    </GridItem>
-                                                </Grid>
-                                            </Box>
-                                        )
-                                    })}
-                                
+                                                {prop.key}
+                                            </Text>
+                                            <Text marginBottom="1rem">
+                                                {prop.value}
+                                            </Text>
+                                        </Box>
+                                    )
+                                })}
                             </Box>
                         )}
+                        
                     </React.Fragment>
                 )}
                 
@@ -197,27 +155,24 @@ const DatasetPage = ({ dataset, error = false, errorMessage = false }) => {
 var datasetsCache = {}
 
 export async function getServerSideProps(context) {
-    const key = _.get(context, "query.dataset", false)
-    if(key) {
-        if(_.has(datasetsCache, key)) {
-            console.log("using blocks cache for: ", key)
-            console.log(datasetsCache[key])
+    const identifier = _.get(context, "query.dataset", false)
+    if(identifier) {
+        if(_.has(datasetsCache, identifier)) {
             return {
                 props: {
-                    block: datasetsCache[key],
+                    block: datasetsCache[identifier],
                     error: false
                 }
             }
         } else {
             const { db } = await connectToDatabase()
             var dataset = await db.collection('datasets')
-                .findOne({"key": key})
+                .findOne({"identifier": identifier})
             if(!_.has(dataset, '_id')) {
-                return { props: { errorMessage: "Incorrect dataset key.", error: true }}
+                return { props: { errorMessage: "Incorrect dataset identifier.", error: true }}
             } else {
                 dataset = JSON.parse(JSON.stringify(dataset))
 
-                // datasetsCache[key] = dataset
                 return { props: {
                     dataset: dataset,
                     error: false
@@ -225,7 +180,7 @@ export async function getServerSideProps(context) {
             }
         }
     } else {
-        return { props: {errorMessage: "Missing dataset key.", error: true} }
+        return { props: {errorMessage: "Missing dataset identifier.", error: true} }
     }
 }
 
