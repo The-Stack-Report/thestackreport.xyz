@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react"
 import * as contractModel from "./models/contract" 
-import ContractUsageChart from "./views/ContractUsageChart"
-import ContractXtzChart from "./views/ContractXtzChart"
-import ContractBlockShareChart from "./views/ContractBlockShareChart"
-import ContractBakerFeeChart from "./views/ContractBakerFeeChart"
+import ContractUsageChart from "./views/contract/ContractUsageChart"
+import ContractXtzChart from "./views/contract/ContractXtzChart"
+import ContractBlockShareChart from "./views/contract/ContractBlockShareChart"
+import ContractBakerFeeChart from "./views/contract/ContractBakerFeeChart"
 import _ from "lodash"
 
 const ModelChart = ({

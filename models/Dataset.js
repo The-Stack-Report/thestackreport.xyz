@@ -11,10 +11,13 @@ class Dataset {
         })
         this.schema = dataset_schema
         this.schema_keys = schema_props_keys
-
+        if(_.keys(params).length === 1 && _.has(params, "identifier")) {
+            this.from_identifier(params.identifier)
+        }
     }
 
     from_identifier(identifier) {
+        console.log("Constructing dataset from identifier", identifier)
         this.identifier = identifier
     }
 

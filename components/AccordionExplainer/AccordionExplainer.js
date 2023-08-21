@@ -19,8 +19,19 @@ import MarkdownWrapper from "components/MarkdownWrapper"
 const AccordionExplainer = ({
     title = "",
     textMd = "",
-    textAlign = "right"
+    textAlign = "right",
+    generatorValue = "",
 }) => {
+    var textContent = textMd
+    if (typeof textMd === "function") {
+        textContent = textMd(generatorValue)
+    }
+
+    var titleContent = title
+    if (typeof title === "function") {
+        titleContent = title(generatorValue)
+    }
+
     return (
         <Accordion
             allowToggle
@@ -36,7 +47,7 @@ const AccordionExplainer = ({
                         <AccordionButton>
                         <AccordionIcon />
                             <Box flex='1' textAlign={textAlign} fontWeight="bold" fontSize="0.8rem">
-                                {title}<Text fontWeight="light" color="gray.500" as="span" paddingRight="0.5rem">{` (click to expand) `}</Text>
+                                {titleContent}<Text fontWeight="light" color="gray.500" as="span" paddingRight="0.5rem">{` (click to expand) `}</Text>
                             </Box>
                             
                         </AccordionButton>
@@ -44,7 +55,7 @@ const AccordionExplainer = ({
                     <AccordionPanel pb={4}>
                         <Box maxW="600px" paddingTop="1rem" paddingBottom="1rem">
                             <MarkdownWrapper
-                                markdownText={textMd}
+                                markdownText={textContent}
                                 />
                         </Box>
                     </AccordionPanel>

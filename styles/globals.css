@@ -31,3 +31,10 @@ video {
 .markdown-wrapper svg {
   overflow: visible;
 }
+
+.data-sheet .dsg-container {
+  font-size:var(--font-size);
+}
+.data-sheet .dsg-input {
+  font-size:var(--font-size);
+}

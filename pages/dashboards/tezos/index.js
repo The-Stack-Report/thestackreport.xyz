@@ -1,36 +1,19 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 import Head from "next/head"
 import { Container } from "@chakra-ui/layout"
 import {
     Heading,
     Text,
-    Input,
-    InputGroup,
-    InputLeftElement,
-    Spinner,
-    Center,
-    SimpleGrid,
-    Select,
-    Box,
-    Divider,
-    InputRightElement,
-    Button
+    Divider
 } from "@chakra-ui/react"
-import {
-    SearchIcon
-} from "@chakra-ui/icons"
 import { connectToDatabase } from "utils/mongo_db"
 import PageLayout from 'components/PageLayout'
 import ContractsCardsTable from "components/ContractsCardsTable"
 import _ from "lodash"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"
-import useDebounce from "utils/useDebounce"
-import {
-    insertUrlParam,
-    getUrlParam,
-    removeQueryParamsFromRouter
-} from "utils/urlQueryParams"
-import { useRouter } from 'next/router'
+import DashboardsCategoriesNavigation from "components/DashboardsCategoriesNavigation"
+import SearchContainer from "components/SearchContainer"
+
 
 const sortOptions = [
     {
@@ -57,85 +40,6 @@ function searchTezosContractsApi(search, sortKey) {
 }
 
 const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
-    const [searchTerm, setSearchTerm] = useState(initial_search_term)
-    const [isSearching, setIsSearching] = useState(false)
-    const [queriedSearchTerm, setQueriedSearchTerm] = useState(initial_search_term)
-    const [query, setQuery] = useState(false)
-    const [searchResults, setSearchResults] = useState(false)
-    const [searchTermInitialized, setSearchTermInitialized] = useState(false)
-    const [sortKey, setSortKey] = useState(sortOptions[0].key)
-    const [queriedSortKey, setQueriedSortKey] = useState(sortOptions[0].key)
-    const router = useRouter()
-
-    
-    useEffect(() => {
-        if(initial_search_term !== "" && searchTermInitialized === false) {
-            setSearchTerm(initial_search_term)
-            setSearchTermInitialized(true)
-        }
-    }, [
-        initial_search_term, 
-        searchTermInitialized,
-        searchTerm
-    ])
-
-    const debouncedSearchTerm = useDebounce(searchTerm, 500)
-
-    
-
-    useEffect(() => {
-
-        if(debouncedSearchTerm === "") {
-            setQuery(false)
-            setSearchResults(false)
-            var search_term_param = getUrlParam("search_term")
-            if(!_.isNull(search_term_param)) {
-                removeQueryParamsFromRouter(router, ["search_term"])
-
-            }
-        }
-        if(debouncedSearchTerm !== queriedSearchTerm) {
-            setIsSearching(true)
-            setQueriedSearchTerm(debouncedSearchTerm)
-            router.push(
-                insertUrlParam("search_term", debouncedSearchTerm),
-                undefined,
-                { shallow: true}
-            )
-            
-
-
-            searchTezosContractsApi(debouncedSearchTerm, sortKey).then((results) => {
-                if(_.isArray(results)) {
-                    setSearchResults(results)
-                }
-                setIsSearching(false)
-            })
-        }
-    }, [
-        debouncedSearchTerm,
-        queriedSearchTerm,
-        sortKey,
-        router
-    ])
-
-    useEffect(() => {
-        console.log("render tezos index page")
-
-        if(sortKey !== queriedSortKey) {
-            setQueriedSortKey(sortKey)
-            searchTezosContractsApi(debouncedSearchTerm, sortKey).then((results) => {
-                if(_.isArray(results)) {
-                    setSearchResults(results)
-                }
-                setIsSearching(false)
-            })
-        }
-    }, [sortKey, queriedSortKey, debouncedSearchTerm])
-
-
-    const contractsToShow = _.isArray(searchResults) ? searchResults : top_contracts
-
     return (
         <PageLayout>
             <Head>
@@ -143,106 +47,43 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
                 <meta name="description" content="Tezos contracts dashboards by The Stack Report" />
             </Head>
             <Container maxW="container.xl" paddingTop="8rem">
+                <DashboardsCategoriesNavigation
+                    categories={["contracts", "entrypoints", "chain"]}
+                    urlPrefix={"/dashboards/tezos"}
+                    />
                 <Heading>
-                    Tezos Dashboards
+                    Tezos{" "}
+                    <Text as="span" fontWeight="light">
+                    Smart Contracts
+                    </Text>
                 </Heading>
-                <Text>
+                <Text paddingTop="1rem" fontSize="0.8rem">
                     Search through tezos contracts and view dashboards with graphs showing contract usage history.
                 </Text>
                 <Divider />
-                <SimpleGrid
-                    columns={{sm: 1, md: 2}}
-                    marginTop="1rem"
-                    marginBottom="1rem"
-                    >
-                    <Box
-                        paddingRight="1rem"
-                        paddingBottom="1rem"
-                        >
-                        <Text
-                            fontSize="0.7rem"
-                            color="gray.500"
-                            >
-                            Search contract dashboards:
-                        </Text>
-                    <InputGroup>
-                        <InputLeftElement
-                            pointerEvents='none'
-                            color='gray.300'
-                            >
-                            <SearchIcon color='gray.500' />
-                        </InputLeftElement>
-                        <Input
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Search by contract alias or address"
-                            
-                            />
-                        <InputRightElement
-                            width="5rem"
-                            >
-                            <Button
-                                h='1.75rem' size='sm' 
-                                position="relative"
-                                top="0.175rem"
-                                right="0.4rem"
-                                onPointerDown={() => {
-                                    setSearchTerm("")
-                                }}
-                                >
-                                Clear
-                            </Button>
-                        </InputRightElement>
-                    </InputGroup>
-                    </Box>
-                    <Box
-                        maxW="400px"
-                        >
-                            <Text
-                            fontSize="0.7rem"
-                            color="gray.500"
-                            >
-                            Sorted by:
-                        </Text>
-                        <Select
-                            onChange={(e) => {
-                                setSortKey(e.target.value)
-                            }}
-                            >
-                            {sortOptions.map(option => {
-                                return (
-                                    <option
-                                        value={option.key}
-                                        key={option.key}
-                                        >
-                                        {option.label}
-                                    </option>
-                                )
-                            })}
-                        </Select>
-                    </Box>
-                </SimpleGrid>
-                
-                {isSearching ? (
-                    <Center
-                        h="200px"
-                        >
-                    <Spinner />
-                    </Center>
-                ) : (
-                    <React.Fragment>
-                        {contractsToShow.length > 0 ? (
+                <SearchContainer
+                    searchBoxLabel="Search contracts:"
+                    searchBoxPlaceholder="Search by contract alias or address"
+                    initialSearchTerm={initial_search_term}
+                    searchData={searchTezosContractsApi}
+                    sortOptions={sortOptions}
+                    fallbackResults={top_contracts}
+                    renderResults={(results, searchTerm) => {
+                        if (results.length > 0) {
+                        return (
                             <ContractsCardsTable
-                                contracts={contractsToShow}
+                                contracts={results}
                                 highlightTerm={searchTerm}
                                 />
-                        ) : (
+                        )} else {
+                        return (
                             <p>
-                                No contract dashboards found for term: {debouncedSearchTerm}
+                                No contract dashboards found for term: {searchTerm}
                             </p>
-                        )}
-                    </React.Fragment>
-                )}
+                        )
+                        }
+                    }}
+                    />
                 
                 
             </Container>

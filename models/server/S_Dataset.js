@@ -38,7 +38,7 @@ class Dataset {
         return JSON.parse(JSON.stringify(json))
     }
 
-    async load_file() {
+    async load_file(prep_function=false) {
 
         var fileUrl = this.url
 
@@ -60,6 +60,16 @@ class Dataset {
         
 
         // JSON loader
+
+        if(fileType == "json") {
+            const response = await fetch(fileUrl)
+            data = await response.json()
+        }
+
+
+        if(_.isFunction(prep_function)) {
+            data = prep_function(data)
+        }
 
         return data
     }

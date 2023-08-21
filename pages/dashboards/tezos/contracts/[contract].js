@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react"
 import { connectToDatabase } from "utils/mongo_db"
 import PageLayout from "components/PageLayout"
-import TezosContractDashboard from "components/TezosContractDashboard"
+import TezosContractDashboard from "components/tezos/TezosContractDashboard"
 import { Link } from "@chakra-ui/next-js"
 import _ from "lodash"
 import prepareContractDailyStats from "utils/data/contracts/prepareContractDailyStats"

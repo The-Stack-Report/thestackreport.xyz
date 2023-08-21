@@ -68,6 +68,7 @@ const InPageNavigator = ({
             return "1rem"
         }
     }, [displayMode])
+    
     return (
         <>
         {displayMode === SIDEBAR_MODE && (

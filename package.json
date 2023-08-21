@@ -47,6 +47,7 @@
     "react-datasheet-grid": "^4.11.0",
     "react-dom": "^18.2.0",
     "react-fetch-hook": "^1.9.5",
+    "react-force-graph-2d": "^1.25.0",
     "react-highlight-words": "^0.18.0",
     "react-icons": "^4.6.0",
     "react-markdown": "^7.1.2",

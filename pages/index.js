@@ -18,6 +18,8 @@ import TopContractsLandingPageWidget from "components/TopContractsLandingPageWid
 import qs from "qs"
 import {filterPreviewMode} from "utils/articleFilters"
 import QuickLinksWidget from "components/QuickLinksWidget"
+import TezosEntrypointsPreview from "components/tezos/TezosEntrypointsPreview"
+import PatternDivider from "components/PatternDivider"
 
 const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStats }) => {
     const featured = _.get(landing, "attributes.featured.data", false)
@@ -93,6 +95,33 @@ const LandingPage = ({ landing, latestArticles, latestWeeklies, topContractsStat
                     </Box>
                 </Box>
             </SimpleGrid>
+            <PatternDivider />
+            <Box
+                maxW="container.md"
+                paddingBottom="1rem"
+                >
+            <Text
+                fontWeight="bold"
+                >
+                Tezos Entrypoints dashboards
+            </Text>
+            <Text>
+                Statistics for tezos transactions grouped by entrypoint name of targeted smart contracts.
+            </Text>
+            </Box>
+            <TezosEntrypointsPreview
+                cardWidth={{
+                    base: "calc(50% - 1rem)",
+                    md: "calc(33% - 1rem)",
+                    lg: "calc(25% - 1rem)",
+                    xl: "calc(20% - 1rem)"
+                }}
+                />
+            <Link
+                href="/dashboards/tezos/entrypoints"
+                >
+                View all entrypoints
+            </Link>
             </Container>
             <Box
                 borderTop="1px solid rgb(200,200,200)"
@@ -157,10 +186,6 @@ const recentArticlesQuery = qs.stringify({
 }, { encodeValuesOnly: true })
 
 var recentArticlesApiUrl = `/articles?${recentArticlesQuery}&sort=Published:desc&populate=%2A`
-
-const topContractsBlocks = ""
-
-var topContractsStatsCache = []
 
 export async function getServerSideProps(context) {
     var returnProps = {

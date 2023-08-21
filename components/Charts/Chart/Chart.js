@@ -8,11 +8,6 @@ import React, {
 } from "react"
 import _ from "lodash"
 import {
-    scaleLinear,
-    scaleLog,
-    scaleTime
-} from "@visx/scale"
-import {
     marginsDefault,
     marginsMdDefault,
     marginsXl2Default,
@@ -37,6 +32,7 @@ import AxisBottom from "components/Charts/components/AxisBottom"
 import DataColumns from "./DataColumns"
 import TimelineBrush from "./TimelineBrush"
 import BadgesLegend from "components/Charts/components/BadgesLegend"
+import DatasetPreview from "components/Charts/components/DatasetPreview"
 import ChartNotes from "./overlays/ChartNotes"
 import { snapToEndOfDay } from "utils/snapFunctions"
 import { exportAsImage } from "utils/exportAsImage"
@@ -74,6 +70,7 @@ const Chart = React.memo((props) => {
         name = "Chart",
         chartId = false,
         data = [],
+        dataset = false,
         dataHash = "",
         columns = [],
         initialColumnToggles = [],
@@ -742,6 +739,19 @@ const Chart = React.memo((props) => {
                         >
                         Download as PNG
                     </Text>
+                    {dataset && (
+                        <React.Fragment>
+                            <Text
+                                fontSize="0.7rem"
+                                opacity={0.5}
+                                marginLeft="1rem"
+                                marginRight="1rem"
+                                >-</Text>
+                        <DatasetPreview
+                            dataset={dataset}
+                            />
+                        </React.Fragment>
+                    )}
                 </Box>
             )}
             

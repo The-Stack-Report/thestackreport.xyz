@@ -12,7 +12,7 @@ import { connectToDatabase } from "utils/mongo_db"
 import _ from "lodash"
 import PageLayout from 'components/PageLayout'
 import BlocksGrid from "components/BlocksGrid"
-import useDebounce from "utils/useDebounce"
+import useDebounce from "utils/hooks/useDebounce"
 import MarkdownWrapper from "components/MarkdownWrapper"
 import { Link } from "@chakra-ui/next-js"
 

@@ -3,24 +3,16 @@ import {
     Box,
     Divider,
     Text,
-    Button,
     Input,
     InputGroup,
-    InputRightAddon,
-    Accordion,
-    AccordionItem,
-    AccordionButton,
-    AccordionPanel,
-    AccordionIcon
+    InputRightAddon
 } from "@chakra-ui/react"
 import ContractStatsCarousel from "./components/ContractStatsCarousel"
 import EntrypointsXtzStats from "./components/EntrypointsXtzStats"
-import AreaChart from "components/Charts/AreaChart"
 import Chart from "components/Charts/Chart"
 import { gridScale } from "utils/colorScales"
 import dayjs from "dayjs"
 import _ from "lodash"
-import BadgesLegend from "components/Charts/components/BadgesLegend"
 import chroma from "chroma-js"
 import AccordionExplainer from "components/AccordionExplainer"
 import ContractTransactionFlow from "components/ContractTransactionFlow"
