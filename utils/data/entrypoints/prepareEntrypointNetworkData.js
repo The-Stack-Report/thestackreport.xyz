@@ -9,6 +9,9 @@ function prepareEntrypointNetworkData(data, TOP_NODES_COUNT=200, CONTAINER_WIDTH
 
     var calleeNodeIndexes = []
 
+    var SETFIXED_POSITIONS = false
+    var SET_INITIAL_POSITIONS = true
+
     var nodes = data.nodes.slice(0, TOP_NODES_COUNT).map((node, i) => {
 
         // Classifying nodes as caller and/or callee
@@ -88,29 +91,58 @@ function prepareEntrypointNetworkData(data, TOP_NODES_COUNT=200, CONTAINER_WIDTH
         }
     })
 
-    if (_.inRange(calleeCounter, 2, 5)) {
-        var RADIUS = _.clamp(CONTAINER_WIDTH  / 4, 100, 250)
-        var Y_FLATTENING = 0.5
-        _.range(calleeCounter).forEach(i => {
-            nodes[calleeNodeIndexes[i]].fx = Math.sin(i / calleeCounter * 2 * Math.PI + Math.PI * 0.5) * RADIUS
-            nodes[calleeNodeIndexes[i]].fy = Math.cos(i / calleeCounter * 2 * Math.PI + Math.PI * 0.5) * RADIUS * Y_FLATTENING
-        })
-    } else {
-        nodes[calleeNodeIndexes[0]].fx = 0
-        nodes[calleeNodeIndexes[0]].fy = 0
+    if (SETFIXED_POSITIONS) {
+        if (_.inRange(calleeCounter, 2, 5)) {
+            var RADIUS = _.clamp(CONTAINER_WIDTH  / 4, 100, 250)
+            var Y_FLATTENING = 0.5
+            _.range(calleeCounter).forEach(i => {
+                nodes[calleeNodeIndexes[i]].fx = Math.sin(i / calleeCounter * 2 * Math.PI + Math.PI * 0.5) * RADIUS
+                nodes[calleeNodeIndexes[i]].fy = Math.cos(i / calleeCounter * 2 * Math.PI + Math.PI * 0.5) * RADIUS * Y_FLATTENING
+            })
+        } else {
+            nodes[calleeNodeIndexes[0]].fx = 0
+            nodes[calleeNodeIndexes[0]].fy = 0
+        }
+
+        if(nodes.length === 2) {
+            nodes.forEach((node, node_i) => {
+                if(node.isCallee) {
+                    node.fx = 100
+                    node.fy = -50 + node_i * 100
+                }
+            })
+            // nodes[0].fx = 50
+            // nodes[0].fy = -20
+            // nodes[1].fx = -50
+            // nodes[1].fy = 20
+        }
     }
 
-    if(nodes.length === 2) {
-        nodes.forEach((node, node_i) => {
-            if(node.isCallee) {
-                node.fx = 100
-                node.fy = -50 + node_i * 100
-            }
-        })
-        // nodes[0].fx = 50
-        // nodes[0].fy = -20
-        // nodes[1].fx = -50
-        // nodes[1].fy = 20
+    if (SET_INITIAL_POSITIONS) {
+        if (_.inRange(calleeCounter, 2, 5)) {
+            var RADIUS = _.clamp(CONTAINER_WIDTH  / 4, 100, 250)
+            var Y_FLATTENING = 0.5
+            _.range(calleeCounter).forEach(i => {
+                nodes[calleeNodeIndexes[i]].x = Math.sin(i / calleeCounter * 2 * Math.PI + Math.PI * 0.5) * RADIUS
+                nodes[calleeNodeIndexes[i]].y = Math.cos(i / calleeCounter * 2 * Math.PI + Math.PI * 0.5) * RADIUS * Y_FLATTENING
+            })
+        } else {
+            nodes[calleeNodeIndexes[0]].x = 0
+            nodes[calleeNodeIndexes[0]].y = 0
+        }
+
+        if(nodes.length === 2) {
+            nodes.forEach((node, node_i) => {
+                if(node.isCallee) {
+                    node.x = 100
+                    node.y = -50 + node_i * 100
+                }
+            })
+            // nodes[0].fx = 50
+            // nodes[0].fy = -20
+            // nodes[1].fx = -50
+            // nodes[1].fy = 20
+        }
     }
 
     
@@ -128,7 +160,7 @@ function prepareEntrypointNetworkData(data, TOP_NODES_COUNT=200, CONTAINER_WIDTH
     var linkColorScale = chroma.scale(['#2A4858','#fafa6e']).domain([0, 1]).mode('lch')
 
     var MAX_LINK_DISTANCE = 200
-    var MIN_LINK_DISTANCE = 20
+    var MIN_LINK_DISTANCE = 30
     var LINK_DISTANCE_RANGE = MAX_LINK_DISTANCE - MIN_LINK_DISTANCE
     var CONTAINER_WIDTH_ADJUSTMENT = _.clamp(CONTAINER_WIDTH / 1000, 0.5, 1)
     links = links.map((l, i) => {
@@ -138,7 +170,7 @@ function prepareEntrypointNetworkData(data, TOP_NODES_COUNT=200, CONTAINER_WIDTH
             source: l.sender,
             l_time: l_time,
             distance: MAX_LINK_DISTANCE - Math.round(l.transactions / maxTransactionsLinks * LINK_DISTANCE_RANGE) / CONTAINER_WIDTH_ADJUSTMENT,
-            value: Math.round(l.transactions / maxTransactionsLinks * 10),
+            value: Math.round(l.transactions / maxTransactionsLinks * 15),
             styles: {
                 color: linkColorScale(l_time).hex()
             }
@@ -146,25 +178,50 @@ function prepareEntrypointNetworkData(data, TOP_NODES_COUNT=200, CONTAINER_WIDTH
     }).reverse()
 
 
-    if(nodes.length === 4 && links.length === 2) {
-        var RADIUS = 100
-        var Y_FLATTENING = 0.5
-        _.range(nodes.length).forEach(i => {
-            if (nodes[i].isCallee) {
-            nodes[i].fx = Math.sin(i / calleeCounter * 1 * Math.PI + Math.PI * 0.6) * RADIUS
-            nodes[i].fy = Math.cos(i / calleeCounter * 1 * Math.PI + Math.PI * 0.6) * RADIUS * Y_FLATTENING
-            }
-        })
+    if (SETFIXED_POSITIONS) {
+        if(nodes.length === 4 && links.length === 2) {
+            var RADIUS = 100
+            var Y_FLATTENING = 0.5
+            _.range(nodes.length).forEach(i => {
+                if (nodes[i].isCallee) {
+                nodes[i].fx = Math.sin(i / calleeCounter * 1 * Math.PI + Math.PI * 0.6) * RADIUS
+                nodes[i].fy = Math.cos(i / calleeCounter * 1 * Math.PI + Math.PI * 0.6) * RADIUS * Y_FLATTENING
+                }
+            })
+        }
+        if(nodes.length === 3 && links.length === 2) {
+            var RADIUS = 100
+            var Y_FLATTENING = 0.5
+            _.range(nodes.length).forEach(i => {
+                if (nodes[i].isCallee) {
+                nodes[i].fx = Math.sin(i / calleeCounter * 1 * Math.PI + Math.PI * 1.5) * RADIUS
+                nodes[i].fy = Math.cos(i / calleeCounter * 1 * Math.PI + Math.PI * 1.5) * RADIUS * Y_FLATTENING
+                }
+            })
+        }
     }
-    if(nodes.length === 3 && links.length === 2) {
-        var RADIUS = 100
-        var Y_FLATTENING = 0.5
-        _.range(nodes.length).forEach(i => {
-            if (nodes[i].isCallee) {
-            nodes[i].fx = Math.sin(i / calleeCounter * 1 * Math.PI + Math.PI * 1.5) * RADIUS
-            nodes[i].fy = Math.cos(i / calleeCounter * 1 * Math.PI + Math.PI * 1.5) * RADIUS * Y_FLATTENING
-            }
-        })
+
+    if (SET_INITIAL_POSITIONS) {
+        if(nodes.length === 4 && links.length === 2) {
+            var RADIUS = 100
+            var Y_FLATTENING = 0.5
+            _.range(nodes.length).forEach(i => {
+                if (nodes[i].isCallee) {
+                nodes[i].x = Math.sin(i / calleeCounter * 1 * Math.PI + Math.PI * 0.6) * RADIUS
+                nodes[i].y = Math.cos(i / calleeCounter * 1 * Math.PI + Math.PI * 0.6) * RADIUS * Y_FLATTENING
+                }
+            })
+        }
+        if(nodes.length === 3 && links.length === 2) {
+            var RADIUS = 100
+            var Y_FLATTENING = 0.5
+            _.range(nodes.length).forEach(i => {
+                if (nodes[i].isCallee) {
+                nodes[i].x = Math.sin(i / calleeCounter * 1 * Math.PI + Math.PI * 1.5) * RADIUS
+                nodes[i].y = Math.cos(i / calleeCounter * 1 * Math.PI + Math.PI * 1.5) * RADIUS * Y_FLATTENING
+                }
+            })
+        }
     }
 
     var linksSlicedCount = data.links.length - links.length

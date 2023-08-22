@@ -31,7 +31,6 @@ const ForceDirectedNetwork = ({
     const [initialZoomDone, setInitialZoomDone] = useState(false)
     const [selectedNode, setSelectedNode] = useState(false)
 
-
     // Add event listener to window for pointer up events to set dragging to false
     useEffect(() => {
         const handlePointerUp = () => {
@@ -73,7 +72,7 @@ const ForceDirectedNetwork = ({
             // Deactivate existing forces
             fg.d3Force('center', d3.forceCenter().strength(1));
             fg.d3Force('charge', null);
-            fg.d3Force("charge", d3.forceManyBody().strength(-70).distanceMax(150))
+            fg.d3Force("charge", d3.forceManyBody().strength(-70).distanceMax(250))
             fg.d3Force("charge2", d3.forceManyBody().strength(50).distanceMin(2000))
             fg.d3Force("x", customXForce().x(0).strength(n => {
                 return -3
@@ -84,11 +83,11 @@ const ForceDirectedNetwork = ({
             fg.d3Force("link", d3.forceLink().id(d => d.id).distance((l) => {
                 return l.distance
                 return 10
-            }).strength(0.1))
+            }).strength(0.6))
             // fg.d3Force('charge', d3.forceManyBody().strength(-30));
 
             // Add collision and bounding box forces
-            fg.d3Force('collide', d3.forceCollide(2));
+            fg.d3Force('collide', d3.forceCollide(6));
 
             fg.d3Force('box', () => {
 
@@ -196,8 +195,8 @@ const ForceDirectedNetwork = ({
                 cooldownTime={Infinity}
                 d3VelocityDecay={0.3}
                 d3AlphaDecay={0.01}
-                warmupTicks={200}
-                cooldownTicks={10}
+                warmupTicks={100}
+                cooldownTicks={1000}
                 minZoom={1}
                 maxZoom={3}
                 enableZoomInteraction={false}
@@ -213,7 +212,7 @@ const ForceDirectedNetwork = ({
                     return _.get(link, "styles.color", "grey")
                 }}
                 linkDirectionalParticles={(link) => {
-                    return _.clamp(link.value, 0, 10)
+                    return _.clamp(link.value, 1, 15)
                 }}
                 linkDirectionalParticleWidth={3}
                 linkDirectionalParticleSpeed={0.005}

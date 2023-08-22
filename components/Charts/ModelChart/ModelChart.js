@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react"
-import * as contractModel from "./models/contract" 
+import * as contractModel from "./models/contract"
+import * as entrypointModel from "./models/entrypoint"
+
 import ContractUsageChart from "./views/contract/ContractUsageChart"
 import ContractXtzChart from "./views/contract/ContractXtzChart"
 import ContractBlockShareChart from "./views/contract/ContractBlockShareChart"
 import ContractBakerFeeChart from "./views/contract/ContractBakerFeeChart"
+
+import EntrypointUsageChart from "./views/entrypoint/EntrypointUsageChart"
+import EntrypointUsageSumChart from "./views/entrypoint/EntrypointUsageSumChart"
+
 import _ from "lodash"
 
 const ModelChart = ({
@@ -30,12 +36,21 @@ const ModelChart = ({
     if(loaded) {
         if(model === "contract") {
             modelConfig = contractModel
+        } else if(model === "entrypoint") {
+            modelConfig = entrypointModel
         }
     }
 
     const blockShareViews = ["transaction-share", "fee-share"]
 
-    if (modelConfig) {
+    console.log("Model chart with the following properties:", {
+        model,
+        _key,
+        view,
+        chartProps,
+        modelConfig})
+
+    if (modelConfig && model === "contract") {
         if (view === "entrypoints-xtz-daily") {
             return (
                 <ContractXtzChart
@@ -69,7 +84,10 @@ const ModelChart = ({
                     />
             )
         }
-        
+    } else if (modelConfig && model === "entrypoint") {
+        return (
+            <div>Entrypoint mode</div>
+        )
     }
 
     return (
