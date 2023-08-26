@@ -5,15 +5,17 @@ import React, {
     useMemo
 } from "react"
 import {
-    Box
+    Box,
+    Text
 } from "@chakra-ui/react"
 import useDebounce from "utils/hooks/useDebounce";
 import { useDebouncedCallback } from 'use-debounce'
-import _ from "lodash"
+import _, { set } from "lodash"
 import ForceGraph2D from "react-force-graph-2d";
 import customXForce from "./customXForce";
 import * as d3 from "d3";
 import SelectedNodeCard from "./components/SelectedNodeCard";
+import ChartHoveredTooltips from "./components/ChartHoveredTooltips";
 
 var forceXTicks = 0
 
@@ -30,6 +32,41 @@ const ForceDirectedNetwork = ({
     const [hoveredNode, setHoveredNode] = useState(false)
     const [initialZoomDone, setInitialZoomDone] = useState(false)
     const [selectedNode, setSelectedNode] = useState(false)
+    const [chartHovered, setChartHovered] = useState(false)
+    const [zoomKeyHeld, setZoomKeyHeld] = useState(false)
+    const [initializedChart, setInitializedChart] = useState(false)
+    const [engineStarted, setEngineStarted] = useState(false)
+
+    // Add event listener to document onkeypress to set controlKeyHeld to true and false
+    useEffect(() => {
+        const ZOOM_KEY = "Shift"
+        const handleKeyDown = (event) => {
+            if(event.key === ZOOM_KEY) {
+                setZoomKeyHeld(true)
+            }
+        }
+        const handleKeyUp = (event) => {
+            if(event.key === ZOOM_KEY || event.key === "Escape") {
+                setZoomKeyHeld(false)
+            }
+        }
+        document.addEventListener("keydown", handleKeyDown)
+        document.addEventListener("keyup", handleKeyUp)
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown)
+            document.removeEventListener("keyup", handleKeyUp)
+        }
+    }, [])
+
+    // Trigger initalized chart once a ref is available
+    useEffect(() => {
+        if(fgRef.current && initializedChart === false) {
+            console.log(zoomTransform)
+            console.log("Initialized chart: ", fgRef.current)
+            fgRef.current.zoom(1.1)
+            setInitializedChart(true)
+        }
+    }, [fgRef])
 
     // Add event listener to window for pointer up events to set dragging to false
     useEffect(() => {
@@ -163,6 +200,9 @@ const ForceDirectedNetwork = ({
     if(_.isObject(hoveredNode)) {
         cursor = "pointer"
     }
+    if (zoomKeyHeld) {
+        cursor = "zoom-in"
+    }
 
     return (
         <Box
@@ -182,10 +222,20 @@ const ForceDirectedNetwork = ({
             ref={containerRef}
             position="relative"
             height={height}
+            onPointerEnter={() => {
+                setChartHovered(true)
+            }}
+            onPointerLeave={() => {
+                setChartHovered(false)
+            }}
             >
             <SelectedNodeCard
                 node={selectedNode}
                 setSelectedNode={setSelectedNode}
+                />
+            <ChartHoveredTooltips
+                selectedNode={selectedNode}
+                chartHovered={chartHovered}
                 />
             <ForceGraph2D
                 ref={fgRef}
@@ -195,11 +245,11 @@ const ForceDirectedNetwork = ({
                 cooldownTime={Infinity}
                 d3VelocityDecay={0.3}
                 d3AlphaDecay={0.01}
-                warmupTicks={100}
+                warmupTicks={500}
                 cooldownTicks={1000}
-                minZoom={1}
+                minZoom={0.5}
                 maxZoom={3}
-                enableZoomInteraction={false}
+                enableZoomInteraction={zoomKeyHeld}
                 linkCurvature={0.25}
                 linkWidth={1}
                 linkColor={(link) => {
@@ -224,6 +274,12 @@ const ForceDirectedNetwork = ({
                         y !== _.floor(zoomTransform.y) ||
                         k !== _.floor(zoomTransform.k) ) {
                         setZoomTransform(transform)
+                    }
+                }}
+                onEngineTick={(t) => {
+                    if(engineStarted === false) {
+                        setEngineStarted(true)
+                        console.log("engine tick: ", t)
                     }
                 }}
                 onEngineStop={() => {
@@ -347,11 +403,13 @@ const ForceDirectedNetwork = ({
                     node.fx = node.x;
                     node.fy = node.y;
                     node.fz = node.z;
-                  }}
+                }}
+                
 
                 width={width}
                 height={height}
                 />
+                
         </Box>
     )
 }

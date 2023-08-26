@@ -41,7 +41,15 @@ const HoverLabelsOverlay = ({
 
     var columnsToShow = columns.map((col, col_i) => {
         var colVal = _.get(hoveredData, col, false)
-        var areaColor = colColors[col_i]
+        var areaColor = "red"
+        if (_.isArray(colColors)) {
+            areaColor = colColors[col_i % colColors.length]
+        } else if(_.isString(colColors)) {
+            areaColor = colColors
+        } else if(_.isObject(colColors)) {
+            areaColor = colColors[col]
+        }
+        
         return {
             value: colVal,
             label: col,

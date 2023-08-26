@@ -48,6 +48,7 @@ import useChartNotes from "./overlays/ChartNotes/useChartNotes"
 import useScales from "./hooks/useScales"
 import usePreparedData from "./hooks/usePreparedData"
 import useDomains from "./hooks/useDomains"
+import chroma from "chroma-js"
 
 dayjs.extend(isBetween)
 
@@ -75,6 +76,7 @@ const Chart = React.memo((props) => {
         columns = [],
         initialColumnToggles = [],
         color = "pink",
+        columnColors = false,
         xKey = "date",
         xValTransform = (p) => p.startOf("day"),
         type = "line",
@@ -373,14 +375,24 @@ const Chart = React.memo((props) => {
     /****************************************
      * Colors preparation
      */
-    const colColors = _columns.map((col, col_i) => {
+    var colColors = _columns.map((col, col_i) => {
         var col_t = _columns.length === 1 ? 0.5 : col_i / (_columns.length - 1)
         var colColor = color
         if(_.isFunction(color)) {
             colColor = color(col_t)
+        } 
+        if(_.isArray(columnColors)) {
+            colColor = _.get(columnColors, col_i, color)
         }
         return colColor
     })
+    if (_.isObject(columnColors)) {
+        colColors = {}
+        _columns.forEach((col, col_i) => {
+            colColors[col] = _.get(columnColors, col, color)
+        })
+    }
+
 
 
 

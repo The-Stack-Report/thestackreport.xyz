@@ -66,7 +66,15 @@ const DataColumns = ({
                 } else {
                     valueSegments = [data]
                 }
-                var colColor = colColors[c_i]
+                var colColor = "red"
+                if (_.isArray(colColors)) {
+                    colColor = colColors[c_i % colColors.length]
+                } else if(_.isString(colColors)) {
+                    colColor = colColors
+                } else if(_.isObject(colColors)) {
+                    colColor = colColors[c]
+                }
+                
                 if(_type === "line") {
                     return (
                         <React.Fragment

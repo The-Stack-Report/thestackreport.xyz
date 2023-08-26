@@ -37,6 +37,21 @@ const BadgesLegend = ({
         _colColors = ["rgb(0,255,0)", "rgb(0,0,255)"]
     }
 
+    if(_.isArray(colColors)) {
+        _colColors = []
+        columns.forEach((c, c_i) => {
+            _colColors.push(colColors[c_i % colColors.length])
+        })
+    }
+
+    if(_.isObject(colColors)) {
+        _colColors = {}
+        columns.forEach((c, c_i) => {
+            _colColors[c] = colColors[c]
+        })
+    }
+
+
     return (
         <Box position="absolute"
             padding="0.5rem"
@@ -59,7 +74,15 @@ const BadgesLegend = ({
                 style={{transition: "opacity 0.1s"}}
                 >
                 {columns.slice(0, 11).map((col, col_i) => {
-                    var colColor = _colColors[col_i % _colColors.length]
+                    var colColor = "red"
+                    if (_.isArray(_colColors)) {
+                        colColor = _colColors[col_i % _colColors.length]
+                    } else if(_.isString(_colColors)) {
+                        colColor = _colColors
+                    } else if(_.isObject(_colColors)) {
+                        colColor = _colColors[col]
+                    }
+                    
                     if(!_.isString(colColor)) {
                             if(_.has(colColor, "_rgb")) {
                                 colColor = colColor.hex()

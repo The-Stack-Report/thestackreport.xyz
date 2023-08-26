@@ -71,6 +71,14 @@ const TezosEntrypointCard = ({
                                 {entrypoint}
                             </Text>
                         </Box>
+                        <Box>
+                            <Text
+                                fontSize="0.7rem"
+                                _groupHover={{ color: "black", textDecoration: "underline" }}
+                                >
+                                <strong>{transactions.toLocaleString()}</strong> transactions
+                            </Text>
+                        </Box>
                         <Box minHeight="6rem" >
                             <Box position="relative" boxShadow="base" borderRadius="3px" height="50px" overflow="hidden" background="gray.200">
                                 <Box display="flex" height="1rem">

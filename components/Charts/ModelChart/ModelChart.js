@@ -9,6 +9,7 @@ import ContractBakerFeeChart from "./views/contract/ContractBakerFeeChart"
 
 import EntrypointUsageChart from "./views/entrypoint/EntrypointUsageChart"
 import EntrypointUsageSumChart from "./views/entrypoint/EntrypointUsageSumChart"
+import EntrypointAccountsChart from "./views/entrypoint/EntrypointAccountsChart"
 
 import _ from "lodash"
 
@@ -85,6 +86,32 @@ const ModelChart = ({
             )
         }
     } else if (modelConfig && model === "entrypoint") {
+        console.log(view)
+        if (view === "calls") {
+            return (
+                <EntrypointUsageChart
+                    entrypoint={_key}
+                    view={view}
+                    chartProps={chartProps}
+                    />
+            )
+        } else if(view === "calls-sum") {
+            return (
+                <EntrypointUsageSumChart
+                    entrypoint={_key}
+                    view={view}
+                    chartProps={chartProps}
+                    />
+            )
+        } else if(view === "accounts-involved") {
+            return (
+                <EntrypointAccountsChart
+                    entrypoint={_key}
+                    view={view}
+                    chartProps={chartProps}
+                    />
+            )
+        }
         return (
             <div>Entrypoint mode</div>
         )

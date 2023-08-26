@@ -62,7 +62,15 @@ const HoverTooltip = ({
                 if(colVal === false) {
                     return null
                 }
-                var areaColor = colColors[col_i]
+                var areaColor = "red"
+                if (_.isArray(colColors)) {
+                    areaColor = colColors[col_i % colColors.length]
+                } else if(_.isString(colColors)) {
+                    areaColor = colColors
+                } else if(_.isObject(colColors)) {
+                    areaColor = colColors[col]
+                }
+                
                 return (
                     <g transform={`translate(0, ${chart.height - yScale(colVal)})`}
                         className={styles["value-mark"]}

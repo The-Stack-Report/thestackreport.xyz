@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import {
     Box,
     Text,
@@ -13,6 +13,16 @@ import _ from "lodash"
 const TezosEntrypointsPreview = ({
     providedData = false
     }) => {
+    const [showing, setShowing] = useState(1)
+
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setShowing(showing => showing + 1)
+        }, 50);
+        return () => clearInterval(interval);
+    }, []);
+
     const PREVIEW_COUNT = useBreakpointValue({
         base: 6,
         md: 6,
@@ -41,7 +51,17 @@ const TezosEntrypointsPreview = ({
         } 
     }
     showData = showData.filter(p => p !== false)
+    var showingValues = showing
+
+    if (showingValues > PREVIEW_COUNT) {
+        showingValues = PREVIEW_COUNT
+    }
+    if(showingValues > showData.length) {
+        showingValues = showData.length
+    }
+
     
+
     return (
         <Box>
             <Box
@@ -50,7 +70,7 @@ const TezosEntrypointsPreview = ({
                 flexWrap={"wrap"}
                 marginBottom="4rem"
                 >
-                {showData.slice(0, PREVIEW_COUNT).map((entrypoint, i) => {
+                {showData.slice(0, showingValues).map((entrypoint, i) => {
                     return (
                         <TezosEntrypointCard
                             key={entrypoint ? entrypoint : `i_${i}`}
