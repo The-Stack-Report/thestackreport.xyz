@@ -10,6 +10,7 @@ import { Link } from "@chakra-ui/next-js"
 
 const EntrypointUsageChart = ({
     entrypoint,
+    chartProps
 }) => {
     const timeseriesIdentifier = `the-stack-report--tezos-entrypoint-${entrypoint}-time-series`
     
@@ -62,6 +63,9 @@ const EntrypointUsageChart = ({
     }
 
     
+    var _props = {
+        ...chartProps
+    }
 
     return (
         <Box>
@@ -81,6 +85,7 @@ const EntrypointUsageChart = ({
                 noteEditingEnabled={true}
                 showChartNotes={true}
                 height={300}
+                {..._props}
                 />
             <Text
                 fontSize="0.7rem"

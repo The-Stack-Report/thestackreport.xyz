@@ -11,6 +11,7 @@ import chroma from "chroma-js"
 
 const EntrypointAccountsChart = ({
     entrypoint,
+    chartProps
 }) => {
     const timeseriesIdentifier = `the-stack-report--tezos-entrypoint-${entrypoint}-time-series`
     
@@ -62,7 +63,9 @@ const EntrypointAccountsChart = ({
         )
     }
 
-    
+    var _props = {
+        ...chartProps
+    }
 
     return (
         <Box>
@@ -86,6 +89,7 @@ const EntrypointAccountsChart = ({
                 noteEditingEnabled={true}
                 showChartNotes={true}
                 height={300}
+                {..._props}
                 />
             <Text
                 fontSize="0.7rem"
