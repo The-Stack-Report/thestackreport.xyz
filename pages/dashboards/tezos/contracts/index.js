@@ -40,7 +40,7 @@ function searchTezosContractsApi(search, sortKey) {
     })
 }
 
-const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
+const TezosContractsIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
     return (
         <PageLayout>
             <Head>
@@ -143,4 +143,4 @@ export async function getServerSideProps(context) {
     }
 }
 
-export default TezosIndexPage
+export default TezosContractsIndexPage

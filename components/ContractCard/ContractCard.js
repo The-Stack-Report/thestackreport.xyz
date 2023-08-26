@@ -35,6 +35,9 @@ const ContractCard = React.memo(({
     if(recent_days_data === false) {
         recent_days_data = prepareContractDailyStats(_.get(contract, "past_14_days", false), contract)
     }
+
+    console.log(recent_days_data)
+
     return (
         <Box position="relative" paddingBottom="2rem">
             <Link
@@ -62,45 +65,45 @@ const ContractCard = React.memo(({
                         overflow="hidden"
                         maxW="100%"
                         >
-                    <div style={{width: "100%", overflow: "hidden", position: "relative", height: 30}}>
-                        <Box position="absolute"
-                            top="0px"
-                            left="0px"
-                            right="0px"
-                            >
-                            <Heading fontSize="xl"
-                                textDecoration="underline"
+                        <div style={{width: "100%", overflow: "hidden", position: "relative", height: 30}}>
+                            <Box position="absolute"
+                                top="0px"
+                                left="0px"
+                                right="0px"
+                                >
+                                <Heading fontSize="xl"
+                                    textDecoration="underline"
+                                    noOfLines={1}
+                                    maxW="100%"
+                                    >
+                                    <Highlighter
+                                        highlightClassName={styles["search-term-highlight"]}
+                                        searchWords={[highlightTerm]}
+                                        autoEscape={true}
+                                        textToHighlight={alias}
+                                        />
+                                        
+                                </Heading>
+                            </Box>
+                        </div>
+                        <div style={{width: "100%", overflow: "hidden", position: "relative", height: 30}}>
+                            <Text fontSize="0.7rem"
                                 noOfLines={1}
-                                maxW="100%"
+                                color="gray.500"
                                 >
                                 <Highlighter
                                     highlightClassName={styles["search-term-highlight"]}
                                     searchWords={[highlightTerm]}
                                     autoEscape={true}
-                                    textToHighlight={alias}
+                                    textToHighlight={contract.address}
                                     />
-                                    
-                            </Heading>
-                        </Box>
-                    </div>
-                    <div style={{width: "100%", overflow: "hidden", position: "relative", height: 30}}>
-                        <Text fontSize="0.7rem"
-                            noOfLines={1}
-                            color="gray.500"
-                            >
-                            <Highlighter
-                                highlightClassName={styles["search-term-highlight"]}
-                                searchWords={[highlightTerm]}
-                                autoEscape={true}
-                                textToHighlight={contract.address}
-                                />
-                        </Text>
+                            </Text>
 
-                    </div>
-                    <StatsTable
-                        contract={contract}
-                        />
-                    <Badges badges={badges} />  
+                        </div>
+                        <StatsTable
+                            contract={contract}
+                            />
+                        <Badges badges={badges} />  
 
                     </Box>
                 </Box>
@@ -173,11 +176,7 @@ const CardDataContent = React.memo(({
         color = gridScale(_.clamp(sortPosition / 100, 0, 1))
     }
     return (
-        <React.Fragment>
-        <div
-            style={{position: "relative"}}
-            ref={containerRef}
-            >
+        <Box position="relative" ref={containerRef}>
             <Image
                 alt="grey background"
                 src="/dashboard-card-bg.png"
@@ -195,8 +194,7 @@ const CardDataContent = React.memo(({
                 color={color}
                 />
             </div>
-        </div>
-        </React.Fragment>
+        </Box>
                 
     )
 }, (prev, next) => prev.data.length === next.data.length)

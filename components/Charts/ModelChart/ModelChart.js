@@ -44,12 +44,6 @@ const ModelChart = ({
 
     const blockShareViews = ["transaction-share", "fee-share"]
 
-    console.log("Model chart with the following properties:", {
-        model,
-        _key,
-        view,
-        chartProps,
-        modelConfig})
 
     if (modelConfig && model === "contract") {
         if (view === "entrypoints-xtz-daily") {
@@ -86,7 +80,6 @@ const ModelChart = ({
             )
         }
     } else if (modelConfig && model === "entrypoint") {
-        console.log(view)
         if (view === "calls") {
             return (
                 <EntrypointUsageChart

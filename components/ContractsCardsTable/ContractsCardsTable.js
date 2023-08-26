@@ -9,13 +9,22 @@ import _ from "lodash"
 
 
 const ContractsCardsTable = ({
-        contracts,
-        highlightTerm
-    }) => {
+    contracts,
+    highlightTerm
+}) => {
+    console.group("Contract cards table: ", contracts, highlightTerm)
+
+    var highlight = ""
+    if(_.isString(highlightTerm) && highlightTerm.length > 0) {
+        highlight = highlightTerm
+    }
+
+    // return (<Text> Hi</Text>)
     return (
-        <div className='contracts-cards-table'>
+        <Box className='contracts-cards-table'>
             {_.isArray(contracts) ? (
-                <React.Fragment>
+                <Box>
+                    <Text>Contracts</Text>
                     {contracts.length > 0 ? (
                         <SimpleGrid
                             columns={{
@@ -27,43 +36,43 @@ const ContractsCardsTable = ({
                             spacing="10px"
                             >
                             {contracts.map(contract => {
-                            const sortPosition = _.get(contract, "sort_positions.by_calls_past_14_days", false)
-
-                            return (
-                                <Box
-                                    key={contract.address}
-                                    position="relative"
-                                    >
-                                    <Text
-                                        position="absolute"
-                                        top={"-1rem"}
-                                        right="0rem"
-                                        fontSize="0.7rem"
-                                        color="gray.500"
-                                        textAlign="right"
+                                const sortPosition = _.get(contract, "sort_positions.by_calls_past_14_days", 0)
+                                
+                                // return (<Text>Contract</Text>)
+                                return (
+                                    <Box
+                                        key={contract.address}
+                                        position="relative"
                                         >
-                                        sort position {`#${sortPosition.toLocaleString()}`}
-                                    </Text>
-                                    <ContractCard
-                                        contract={contract}
-                                        highlightTerm={highlightTerm}
-                                        sortPosition={sortPosition}
-                                        />
-                                </Box>
-                            )
-                            
-                            })}
-                            </SimpleGrid>
+                                        <Text
+                                            position="absolute"
+                                            top={"-1rem"}
+                                            right="0rem"
+                                            fontSize="0.7rem"
+                                            color="gray.500"
+                                            textAlign="right"
+                                            >
+                                            sort position {`#${sortPosition.toLocaleString()}`}
+                                        </Text>
+                                        <ContractCard
+                                            contract={contract}
+                                            highlightTerm={highlight}
+                                            sortPosition={sortPosition}
+                                            />
+                                    </Box>
+                                )}
+                            )}
+                        </SimpleGrid>
                     ) : (
                         <p>No contracts provided</p>
                     )}
                     
-                </React.Fragment>
+                </Box>
             ) : (
                 <p>No contracts provided</p>
             )}
             
-        </div>
+        </Box>
     )
 }
 

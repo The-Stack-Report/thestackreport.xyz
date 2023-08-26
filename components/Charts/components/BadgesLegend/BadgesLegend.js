@@ -42,15 +42,12 @@ const BadgesLegend = ({
         columns.forEach((c, c_i) => {
             _colColors.push(colColors[c_i % colColors.length])
         })
-    }
-
-    if(_.isObject(colColors)) {
+    } else if(_.isObject(colColors)) {
         _colColors = {}
         columns.forEach((c, c_i) => {
             _colColors[c] = colColors[c]
         })
     }
-
 
     return (
         <Box position="absolute"
@@ -87,8 +84,8 @@ const BadgesLegend = ({
                             if(_.has(colColor, "_rgb")) {
                                 colColor = colColor.hex()
                             }
-                            
                     }
+
                     var colIsToggled = true
                     var opacity = 1
                     if(columnsToggled.length > 0) {
@@ -110,27 +107,26 @@ const BadgesLegend = ({
                             key={col_i}
                             height={"14px"}
                             >
-                        <Badge
-                            color={"white"}
-                            variant="solid"
-                            background={colColor}
-                            size="small"
-                            fontSize="0.5rem"
-                            margin="0.1rem"
-
-                            pointerEvents="initial"
-                            opacity={opacity}
-                            {...interactionProps}
-                            _hover={{
-                                opacity: 0.8
-                            }}
-                            _groupHover={{
-                                color: colColor,
-                                background: "rgba(255,255,255,0.95)"
-                            }}
-                            >
-                            {col}
-                        </Badge>
+                            <Badge
+                                color={"white"}
+                                variant="solid"
+                                background={colColor}
+                                size="small"
+                                fontSize="0.5rem"
+                                margin="0.1rem"
+                                pointerEvents="initial"
+                                opacity={opacity}
+                                {...interactionProps}
+                                _hover={{
+                                    opacity: 0.8
+                                }}
+                                _groupHover={{
+                                    color: colColor,
+                                    background: "rgba(255,255,255,0.95)"
+                                }}
+                                >
+                                {col}
+                            </Badge>
                         </Box>
                     )
                 })}

@@ -69,19 +69,20 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
                     sortOptions={sortOptions}
                     fallbackResults={top_contracts}
                     renderResults={(results, searchTerm) => {
-                        if (results.length > 0) {
+                        if (_.isArray(results) && results.length > 0) {
+                        console.log("renderResults: ", results, searchTerm)
                         return (
                             <ContractsCardsTable
                                 contracts={results}
                                 highlightTerm={searchTerm}
                                 />
-                        )} else {
+                            )
+                        }
                         return (
                             <p>
                                 No contract dashboards found for term: {searchTerm}
                             </p>
                         )
-                        }
                     }}
                     />
                 

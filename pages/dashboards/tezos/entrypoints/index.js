@@ -18,7 +18,8 @@ import SearchContainer from "components/SearchContainer"
 
 
 const TezosEntrypointsIndexPage = ({
-    entrypoints=['test1', 'test2']
+    entrypoints=['test1', 'test2'],
+    initial_search_term = ""
 }) => {
 
     function searchTezosEntrypoints(searchTerm) {
@@ -51,7 +52,7 @@ const TezosEntrypointsIndexPage = ({
                 <SearchContainer
                     searchBoxLabel="Search through entrypoints by name"
                     searchBoxPlaceholder="e.g. transfer, mint, burn"
-                    initialSearchTerm={""}
+                    initialSearchTerm={initial_search_term}
                     sortOptions={[]}
                     fallbackResults={[]}
                     searchData={searchTezosEntrypoints}
@@ -95,6 +96,8 @@ const TezosEntrypointsIndexPage = ({
 }
 
 export async function getServerSideProps(context) {
+    const initial_term = _.get(context, "query.search_term", "")
+
     var dataset = new S_Dataset()
     await dataset.from_identifier("the-stack-report--tezos-entrypoints-rich-statistics-index")
     var file = await dataset.load_file((data) => {
@@ -111,7 +114,8 @@ export async function getServerSideProps(context) {
     })
     return {
         props: {
-            entrypoints: file
+            entrypoints: file,
+            initial_search_term: initial_term
         }
     }
 }
