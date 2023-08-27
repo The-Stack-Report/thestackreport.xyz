@@ -45,7 +45,6 @@ const CategoriesPage = ({ categories }) => {
                     >
                     {categories.map((category) => {
                         const attrs = category.attributes
-                        console.log(category.articles.data)
                         var articles = _.get(attrs, "articles.data", []).map((article) => {
                             return {
                                 ...article,

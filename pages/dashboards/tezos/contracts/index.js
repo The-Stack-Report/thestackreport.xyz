@@ -70,19 +70,26 @@ const TezosContractsIndexPage = ({ top_contracts = [], initial_search_term = "" 
                     sortOptions={sortOptions}
                     fallbackResults={top_contracts}
                     renderResults={(results, searchTerm) => {
-                        if (results.length > 0) {
-                        return (
-                            <ContractsCardsTable
-                                contracts={results}
-                                highlightTerm={searchTerm}
-                                />
-                        )} else {
+                        if (_.isArray(results) && results.length > 0) {
+                            return (
+                                <ContractsCardsTable
+                                    contracts={results}
+                                    highlightTerm={searchTerm}
+                                    />
+                                )
+                        } else if(searchTerm == initial_search_term && _.isArray(top_contracts) && top_contracts.length > 0) {
+                            return (
+                                <ContractsCardsTable
+                                    contracts={top_contracts}
+                                    highlightTerm={searchTerm}
+                                    />
+                            )
+                        }
                         return (
                             <p>
                                 No contract dashboards found for term: {searchTerm}
                             </p>
                         )
-                        }
                     }}
                     />
                 

@@ -99,9 +99,12 @@ const ArticlePage = ({ article, error, errorMessage="Error" }) => {
                             loader={basicImgLoader}
                             src={bannerImgSrc}
                             alt={_.get(attrs, "Title", "")}
-                            layout="fill"
-                            objectFit="cover"
+                            fill={true}
+                            style={{
+                                objectFit: "cover"
+                            }}
                             unoptimized={true}
+                            priority={true}
                             />
                     </div>
                     <Container

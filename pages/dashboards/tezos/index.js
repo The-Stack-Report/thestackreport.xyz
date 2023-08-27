@@ -70,12 +70,18 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
                     fallbackResults={top_contracts}
                     renderResults={(results, searchTerm) => {
                         if (_.isArray(results) && results.length > 0) {
-                        console.log("renderResults: ", results, searchTerm)
-                        return (
-                            <ContractsCardsTable
-                                contracts={results}
-                                highlightTerm={searchTerm}
-                                />
+                            return (
+                                <ContractsCardsTable
+                                    contracts={results}
+                                    highlightTerm={searchTerm}
+                                    />
+                                )
+                        } else if(searchTerm == initial_search_term && _.isArray(top_contracts) && top_contracts.length > 0) {
+                            return (
+                                <ContractsCardsTable
+                                    contracts={top_contracts}
+                                    highlightTerm={searchTerm}
+                                    />
                             )
                         }
                         return (

@@ -10,7 +10,8 @@ import {
     Td,
     Tbody,
     Button,
-    SimpleGrid
+    SimpleGrid,
+    Highlight
 } from "@chakra-ui/react"
 import _ from "lodash"
 import dayjs from "dayjs"
@@ -24,6 +25,7 @@ const DataTable = ({
     rowLink = false,
     colLinks = {},
     rowProps = {},
+    highlightWords = [],
     maxRows = false
 }) => {
     const [showTopRows, setShowTopRows] = useState(maxRows)
@@ -114,6 +116,16 @@ const DataTable = ({
                                                 } else if(_.isObject(colContent)) {
                                                     colContent = JSON.stringify(colContent)
                                                 }
+                                                if (_.isString(colContent)) {
+                                                    colContent = (
+                                                        <Highlight
+                                                            query={highlightWords}
+                                                            styles={{bg: 'black', color: "white" }}
+                                                            >
+                                                        {colContent}
+                                                        </Highlight>
+                                                    )
+                                                }
                                                 if(_.has(colLinks, col)) {
                                                     var link = colLinks[col](row)
                                                     colContent = (
@@ -125,6 +137,7 @@ const DataTable = ({
                                                     )
                                                 }
                                                 return (
+                                                    
                                                     <Td
                                                         key={col_i}
                                                         fontSize="0.8rem"

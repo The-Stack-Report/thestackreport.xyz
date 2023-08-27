@@ -36,8 +36,6 @@ const ContractCard = React.memo(({
         recent_days_data = prepareContractDailyStats(_.get(contract, "past_14_days", false), contract)
     }
 
-    console.log(recent_days_data)
-
     return (
         <Box position="relative" paddingBottom="2rem">
             <Link

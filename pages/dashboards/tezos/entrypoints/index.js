@@ -27,7 +27,6 @@ const TezosEntrypointsIndexPage = ({
             var searchResults = entrypoints.filter((entrypoint) => {
                 return entrypoint.entrypoint.includes(searchTerm)
             })
-            console.log("Resolving: ", searchResults)
             resolve(searchResults)
         })
     }
@@ -57,16 +56,22 @@ const TezosEntrypointsIndexPage = ({
                     fallbackResults={[]}
                     searchData={searchTezosEntrypoints}
                     renderResults={(results, searchTerm) => {
-                        console.log("Rendering results: ", results)
+                        // console.log("Rendering results: ", results)
                         var showingResults = results.length > 0
                         var renderResults = results.length > 0 ? results : entrypoints
+                        if(searchTerm === initial_search_term   && entrypoints.length > 0) {
+                            renderResults = renderResults.filter(e => e.entrypoint.includes(searchTerm))
+                        }
                         return (
                             <SimpleGrid columns={[1, 1, 2]} spacing="2rem">
                                 <Box>
                                     <Text marginBottom="1rem" fontSize="0.7rem" fontWeight="bold" textTransform={"uppercase"}>
                                         Data preview
                                     </Text>
-                                    <TezosEntrypointsPreview providedData={renderResults.map(p => p.entrypoint)} />
+                                    <TezosEntrypointsPreview
+                                        providedData={renderResults.map(p => p.entrypoint)}
+                                        highlightWords={[searchTerm]}
+                                        />
                                 </Box>
                                 <Box
                                     maxWidth="40rem"
@@ -83,6 +88,7 @@ const TezosEntrypointsIndexPage = ({
                                             }
                                         }}
                                         maxRows={10}
+                                        highlightWords={[searchTerm]}
                                         />
                                 </Box>
                             </SimpleGrid>

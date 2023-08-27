@@ -66,7 +66,7 @@ const ForceDirectedNetwork = ({
             fgRef.current.zoom(1.1)
             setInitializedChart(true)
         }
-    }, [fgRef])
+    }, [fgRef, initializedChart, zoomTransform])
 
     // Add event listener to window for pointer up events to set dragging to false
     useEffect(() => {

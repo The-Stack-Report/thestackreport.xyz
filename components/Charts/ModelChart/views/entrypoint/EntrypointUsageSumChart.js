@@ -46,7 +46,7 @@ const EntrypointUsageSumChart = ({
             })
         }
         return false
-    }, [timeseries])
+    }, [timeseries, entrypoint])
     
     const HEIGHT = 300
 

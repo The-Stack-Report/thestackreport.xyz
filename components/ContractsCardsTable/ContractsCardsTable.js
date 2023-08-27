@@ -12,8 +12,6 @@ const ContractsCardsTable = ({
     contracts,
     highlightTerm
 }) => {
-    console.group("Contract cards table: ", contracts, highlightTerm)
-
     var highlight = ""
     if(_.isString(highlightTerm) && highlightTerm.length > 0) {
         highlight = highlightTerm
@@ -37,8 +35,6 @@ const ContractsCardsTable = ({
                             >
                             {contracts.map(contract => {
                                 const sortPosition = _.get(contract, "sort_positions.by_calls_past_14_days", 0)
-                                
-                                // return (<Text>Contract</Text>)
                                 return (
                                     <Box
                                         key={contract.address}

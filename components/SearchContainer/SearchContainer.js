@@ -84,7 +84,6 @@ const SearchContainer = ({
             )
 
             searchData(debouncedSearchTerm, sortKey).then((results) => {
-                console.log("search results", results)
                 if(_.isArray(results)) {
                     setSearchResults(results)
                 }
@@ -100,12 +99,9 @@ const SearchContainer = ({
     ])
 
     useEffect(() => {
-        console.log("render tezos index page")
-
         if(sortKey !== queriedSortKey) {
             setQueriedSortKey(sortKey)
             searchData(debouncedSearchTerm, sortKey).then((results) => {
-                console.log("search results", results)
                 if(_.isArray(results)) {
                     setSearchResults(results)
                 }
@@ -114,9 +110,7 @@ const SearchContainer = ({
         }
     }, [sortKey, queriedSortKey, debouncedSearchTerm, searchData])
 
-
     const resultsToShow = _.isArray(searchResults) ? searchResults : fallbackResults
-    console.log(searchResults, "resultsToShow", resultsToShow)
 
     return (
         <Box>

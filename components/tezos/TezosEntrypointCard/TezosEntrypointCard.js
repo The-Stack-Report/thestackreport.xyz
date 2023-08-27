@@ -3,7 +3,8 @@ import {
     Box,
     SimpleGrid,
     Text,
-    useBreakpointValue
+    useBreakpointValue,
+    Highlight
 } from "@chakra-ui/react"
 import { Link } from "@chakra-ui/next-js"
 import loadDataset from "utils/hooks/loadDataset"
@@ -15,7 +16,8 @@ var colorScale = chroma.scale(['#2A4858','#B8FAB1']).domain([0, 1]).mode('lch')
 const TezosEntrypointCard = ({
     entrypoint,
     cardWidth = {base: "12rem"},
-    loadDataDelay = 0
+    loadDataDelay = 0,
+    highlightWords = []
 }) => {
     var maxCardWidth = useBreakpointValue(cardWidth)
 
@@ -68,7 +70,12 @@ const TezosEntrypointCard = ({
                                 _groupHover={{ color: "black", textDecoration: "underline" }}
                                 noOfLines={1}
                                 >
-                                {entrypoint}
+                                <Highlight
+                                    query={highlightWords}
+                                    styles={{bg: 'black', color: "white" }}
+                                    >
+                                {_.toString(entrypoint)}
+                                </Highlight>
                             </Text>
                         </Box>
                         <Box>

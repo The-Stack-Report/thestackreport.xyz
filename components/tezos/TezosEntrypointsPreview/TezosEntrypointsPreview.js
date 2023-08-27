@@ -11,7 +11,8 @@ import * as d3 from "d3"
 import _ from "lodash"
 
 const TezosEntrypointsPreview = ({
-    providedData = false
+    providedData = false,
+    highlightWords = []
     }) => {
     const [showing, setShowing] = useState(1)
 
@@ -77,6 +78,7 @@ const TezosEntrypointsPreview = ({
                             entrypoint={entrypoint}
                             cardWidth={cardWidth}
                             loadDataDelay={i * 100}
+                            highlightWords={highlightWords}
                             />
                     )
                 })}
