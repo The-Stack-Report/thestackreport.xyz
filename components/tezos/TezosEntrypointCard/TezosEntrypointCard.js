@@ -15,6 +15,7 @@ var colorScale = chroma.scale(['#2A4858','#B8FAB1']).domain([0, 1]).mode('lch')
 
 const TezosEntrypointCard = ({
     entrypoint,
+    entrypointData = false,
     cardWidth = {base: "12rem"},
     loadDataDelay = 0,
     highlightWords = []
@@ -27,7 +28,10 @@ const TezosEntrypointCard = ({
         loadingError,
         dataset,
         data
-    } = loadDataset(DATASET_IDENTIFIER, (rawText) => {
+    } = loadDataset({
+        identifier:DATASET_IDENTIFIER,
+        shouldLoad: entrypointData === false
+    }, (rawText) => {
         try {
         var parsedData = JSON.parse(rawText)
         return parsedData
@@ -38,11 +42,16 @@ const TezosEntrypointCard = ({
         }
     })
     
-    var senders = _.get(data, "senders", 0)
-    var targets = _.get(data, "targets", 0)
-    var transactions = _.get(data, "transactions", 0)
-    var contract_senders = _.get(data, "contract_senders", 0)
-    var wallet_senders = _.get(data, "wallet_senders", 0)
+    var senders = _.get(data, "senders",
+        _.get(entrypointData, "senders", 0))
+    var targets = _.get(data, "targets",
+        _.get(entrypointData, "targets", 0))
+    var transactions = _.get(data, "transactions",
+        _.get(entrypointData, "transactions", 0))
+    var contract_senders = _.get(data, "contract_senders",
+        _.get(entrypointData, "contract_senders", 0))
+    var wallet_senders = _.get(data, "wallet_senders",
+        _.get(entrypointData, "wallet_senders", 0))
 
 
     var senders_and_targets = senders + targets

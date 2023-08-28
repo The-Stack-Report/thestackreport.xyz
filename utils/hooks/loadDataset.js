@@ -8,7 +8,7 @@ import Dataset from "models/Dataset"
 // [dataset successful, data error]
 // [dataset successful, data successful]
 
-function loadDataset(identifier, parser = (f) => f) {
+function loadDataset(params, parser = (f) => f) {
     const [dataset, setDataset] = useState(false)
     const [attemptedDatasetLoad, setAttemptedDatasetLoad] = useState(false)
     const [errorDatasetLoad, setErrorDatasetLoad] = useState(false)
@@ -17,8 +17,15 @@ function loadDataset(identifier, parser = (f) => f) {
     const [attemptedDataLoad, setAttemptedDataLoad] = useState(false)
     const [errorDataLoad, setErrorDataLoad] = useState(false)
     
+    var identifier = params
+    var shouldLoad = true
+    if(_.isObject(params)) {
+        identifier = params.identifier
+        shouldLoad = _.get(params, "shouldLoad", true)
+    }
+
     useEffect(() => {
-        if(attemptedDatasetLoad === false) {
+        if(attemptedDatasetLoad === false && shouldLoad === true) {
             setAttemptedDatasetLoad(true)
             fetch(`/api/dataset?identifier=${identifier}`)
                 .then(resp => {
@@ -37,7 +44,7 @@ function loadDataset(identifier, parser = (f) => f) {
     }, [identifier, dataset, attemptedDatasetLoad])
 
     useEffect(() => {
-        if(attemptedDataLoad === false && _.has(dataset, "url")) {
+        if(attemptedDataLoad === false && _.has(dataset, "url") && shouldLoad === true) {
             setAttemptedDataLoad(true)
             fetch(dataset.url)
                 .then(resp => resp.text())

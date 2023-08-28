@@ -16,14 +16,6 @@ const TezosEntrypointsPreview = ({
     }) => {
     const [showing, setShowing] = useState(1)
 
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setShowing(showing => showing + 1)
-        }, 50);
-        return () => clearInterval(interval);
-    }, []);
-
     const PREVIEW_COUNT = useBreakpointValue({
         base: 6,
         md: 6,
@@ -38,8 +30,20 @@ const TezosEntrypointsPreview = ({
         dataset,
         cardWidth = {base: "12rem"},
         data
-    } = loadDataset("the-stack-report--tezos-entrypoints-index", (rawText) => {
+    } = loadDataset("the-stack-report--tezos-entrypoints-rich-statistics-index", (rawText) => {
         var parsedData = d3.csvParse(rawText)
+        parsedData = parsedData.map((row) => {
+            row["transactions"] = _.toInteger(row.transactions)
+            row["senders"] = _.toInteger(row.senders)
+            row["targets"] = _.toInteger(row.targets)
+            row["wallet_senders"] = _.toInteger(row.wallet_senders)
+            row["contract_senders"] = _.toInteger(row.contract_senders)
+            if(row["transactions"] === 0) row["transactions"] = false
+            if(row["senders"] === 0) row["senders"] = false
+            if(row["targets"] === 0) row["targets"] = false
+            return row
+        })
+        parsedData = _.sortBy(parsedData, "transactions").reverse()
         return parsedData
     })
     
@@ -48,20 +52,17 @@ const TezosEntrypointsPreview = ({
         showData = providedData.slice(0, PREVIEW_COUNT)
     } else {
         if(_.isArray(data) && data.length > 10) {
-            showData = data.slice(0, PREVIEW_COUNT).map(p => p.Entrypoint)
+            showData = data.slice(0, PREVIEW_COUNT)
         } 
     }
     showData = showData.filter(p => p !== false)
     var showingValues = showing
-
     if (showingValues > PREVIEW_COUNT) {
         showingValues = PREVIEW_COUNT
     }
     if(showingValues > showData.length) {
         showingValues = showData.length
     }
-
-    
 
     return (
         <Box>
@@ -71,11 +72,12 @@ const TezosEntrypointsPreview = ({
                 flexWrap={"wrap"}
                 marginBottom="4rem"
                 >
-                {showData.slice(0, showingValues).map((entrypoint, i) => {
+                {showData.map((entrypoint, i) => {
                     return (
                         <TezosEntrypointCard
-                            key={entrypoint ? entrypoint : `i_${i}`}
-                            entrypoint={entrypoint}
+                            key={`i_${i}`}
+                            entrypoint={entrypoint.entrypoint}
+                            entrypointData={entrypoint}
                             cardWidth={cardWidth}
                             loadDataDelay={i * 100}
                             highlightWords={highlightWords}

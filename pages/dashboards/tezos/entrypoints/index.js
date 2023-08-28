@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import Head from "next/head"
 import PageLayout from "components/PageLayout"
 import {
@@ -15,12 +15,43 @@ import DataTable from "components/DataTable"
 import TezosEntrypointsPreview from "components/tezos/TezosEntrypointsPreview"
 import DashboardsCategoriesNavigation from "components/DashboardsCategoriesNavigation"
 import SearchContainer from "components/SearchContainer"
-
+import loadDataset from "utils/hooks/loadDataset"
+import * as d3 from "d3"
 
 const TezosEntrypointsIndexPage = ({
-    entrypoints=['test1', 'test2'],
+    previewEntrypoints=[],
     initial_search_term = ""
 }) => {
+    var {
+        loading,
+        loadingError,
+        dataset,
+        cardWidth = {base: "12rem"},
+        data
+    } = loadDataset("the-stack-report--tezos-entrypoints-rich-statistics-index", (rawText) => {
+        var parsedData = d3.csvParse(rawText)
+        parsedData = parsedData.map((row) => {
+            row["transactions"] = _.toInteger(row.transactions)
+            row["senders"] = _.toInteger(row.senders)
+            row["targets"] = _.toInteger(row.targets)
+            row["wallet_senders"] = _.toInteger(row.wallet_senders)
+            row["contract_senders"] = _.toInteger(row.contract_senders)
+            if(row["transactions"] === 0) row["transactions"] = false
+            if(row["senders"] === 0) row["senders"] = false
+            if(row["targets"] === 0) row["targets"] = false
+            return row
+        })
+        parsedData = _.sortBy(parsedData, "transactions").reverse()
+        return parsedData
+    })
+
+    var entrypoints = useMemo(() => {
+        if(_.isArray(data) && data.length > 10) {
+            return data
+        } else {
+            return previewEntrypoints
+        }
+    }, [data, previewEntrypoints])
 
     function searchTezosEntrypoints(searchTerm) {
         return new Promise((resolve) => {
@@ -30,6 +61,8 @@ const TezosEntrypointsIndexPage = ({
             resolve(searchResults)
         })
     }
+
+    
     return (
         <PageLayout>
             <Head>
@@ -69,7 +102,7 @@ const TezosEntrypointsIndexPage = ({
                                         Data preview
                                     </Text>
                                     <TezosEntrypointsPreview
-                                        providedData={renderResults.map(p => p.entrypoint)}
+                                        providedData={renderResults}
                                         highlightWords={[searchTerm]}
                                         />
                                 </Box>
@@ -107,20 +140,26 @@ export async function getServerSideProps(context) {
     var dataset = new S_Dataset()
     await dataset.from_identifier("the-stack-report--tezos-entrypoints-rich-statistics-index")
     var file = await dataset.load_file((data) => {
-        return data.map((row) => {
-            row["transactions"] = _.toNumber(row.transactions)
-            row["senders"] = _.toNumber(row.senders)
-            row["targets"] = _.toNumber(row.targets)
+        var entrypoints = data.map((row) => {
+            row["transactions"] = _.toInteger(row.transactions)
+            row["senders"] = _.toInteger(row.senders)
+            row["targets"] = _.toInteger(row.targets)
+            row["wallet_senders"] = _.toInteger(row.wallet_senders)
+            row["contract_senders"] = _.toInteger(row.contract_senders)
             if(row["transactions"] === 0) row["transactions"] = false
             if(row["senders"] === 0) row["senders"] = false
             if(row["targets"] === 0) row["targets"] = false
             
             return row
         })
-    })
+
+        entrypoints = _.sortBy(entrypoints, "transactions").reverse()
+
+        return entrypoints
+    }, false)
     return {
         props: {
-            entrypoints: file,
+            previewEntrypoints: file.slice(0, 25),
             initial_search_term: initial_term
         }
     }

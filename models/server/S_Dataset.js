@@ -3,6 +3,8 @@ import { connectToDatabase } from 'utils/mongo_db'
 import _ from "lodash"
 import * as d3 from "d3"
 
+var cachedDatasetFiles = {}
+
 class Dataset {
     constructor(params) {
         var schema_props = dataset_schema.properties
@@ -38,37 +40,59 @@ class Dataset {
         return JSON.parse(JSON.stringify(json))
     }
 
-    async load_file(prep_function=false) {
+    async load_file(prep_function=false, overrideCache=true) {
+
+        
 
         var fileUrl = this.url
+
+        if (overrideCache) {
+            _.set(cachedDatasetFiles, fileUrl, false)
+        }
 
         if (!_.isString(fileUrl)) {
             return false
         }
 
         var fileType = _.toLower(fileUrl.split('.').pop())
-        console.log(fileType)
 
         var data = false
-        // CSV loader
-        if (fileType == "csv") {
-            const response = await fetch(fileUrl)
-            const text = await response.text()
-            // Parse CSV text
-            data = d3.csvParse(text)
-        }
-        
 
-        // JSON loader
+        var cachedFileData = _.get(cachedDatasetFiles, fileUrl, false)
+        if(cachedFileData !== false) {
+            var cachedTimestamp = _.get(cachedFileData, "timestamp", 0)
+            var now = new Date().getTime()
+            var timeDiff = now - cachedTimestamp
+            if(timeDiff < 1000 * 60 * 60 * 24) {
+                console.log(`Loading cached file data with time diff from previous fetch: ${timeDiff} - `, fileUrl)
+                data = _.get(cachedFileData, "data", false)
+            }
+        } else {
+            // CSV loader
+            if (fileType == "csv") {
+                const response = await fetch(fileUrl)
+                const text = await response.text()
+                // Parse CSV text
+                data = d3.csvParse(text)
+            }
+            
 
-        if(fileType == "json") {
-            const response = await fetch(fileUrl)
-            data = await response.json()
-        }
+            // JSON loader
+
+            if(fileType == "json") {
+                const response = await fetch(fileUrl)
+                data = await response.json()
+            }
 
 
-        if(_.isFunction(prep_function)) {
-            data = prep_function(data)
+            if(_.isFunction(prep_function)) {
+                data = prep_function(data)
+            }
+            console.log("Storing cached file data: ", fileUrl)
+            _.set(cachedDatasetFiles, fileUrl, {
+                timestamp: new Date().getTime(),
+                data: data
+            })
         }
 
         return data
