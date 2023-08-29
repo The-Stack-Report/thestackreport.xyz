@@ -10,7 +10,7 @@ import ArticleCard from "components/ArticleCard"
 import { INTERPRETATION_LAYER_VISUAL_URL } from "constants/imageAssets"
 import { Link } from "@chakra-ui/next-js"
 
-const QuickLinksWidget = ({ latestWeeklies }) => {
+const QuickLinksWidget = ({ latestWeeklies = [] }) => {
     return (
         <>
         <Text
