@@ -20,6 +20,7 @@ import { Link } from '@chakra-ui/next-js'
 const DataTable = ({
     data,
     columns = false,
+    rowKey=false,
     columnNames = false,
     customColumns = {},
     rowLink = false,
@@ -41,6 +42,13 @@ const DataTable = ({
             return true
         }
         return false
+    }, [data.length, showTopRows])
+
+    const showingRows = useMemo(() => {
+        if(showTopRows && data.length > showTopRows) {
+            return showTopRows
+        }
+        return data.length
     }, [data.length, showTopRows])
 
     return (
@@ -71,10 +79,10 @@ const DataTable = ({
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                {data.map((row, row_i, rows) => {
-                                    if(showTopRows && row_i >= showTopRows) {
-                                        return null
-                                    }
+                                {data.slice(0, showingRows).map((row, row_i, rows) => {
+                                    // if(showTopRows && row_i >= showTopRows) {
+                                    //     return null
+                                    // }
 
                                     var _rowProps = rowProps
 
@@ -92,7 +100,7 @@ const DataTable = ({
 
                                     var colBody = (
                                         <Tr
-                                            key={row_i}
+                                            key={rowKey ? row[rowKey] : row_i}
                                             {..._rowProps}
                                             >
                                             {_columns.map((col, col_i, cols) => {

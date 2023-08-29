@@ -30,7 +30,10 @@ const TezosEntrypointsPreview = ({
         dataset,
         cardWidth = {base: "12rem"},
         data
-    } = loadDataset("the-stack-report--tezos-entrypoints-rich-statistics-index", (rawText) => {
+    } = loadDataset({
+        identifier: "the-stack-report--tezos-entrypoints-rich-statistics-index",
+        shouldLoad: providedData ? false : true
+    }, (rawText) => {
         var parsedData = d3.csvParse(rawText)
         parsedData = parsedData.map((row) => {
             row["transactions"] = _.toInteger(row.transactions)
@@ -63,7 +66,7 @@ const TezosEntrypointsPreview = ({
     if(showingValues > showData.length) {
         showingValues = showData.length
     }
-
+    showData = showData.slice(0, 100)
     return (
         <Box>
             <Box
@@ -75,7 +78,7 @@ const TezosEntrypointsPreview = ({
                 {showData.map((entrypoint, i) => {
                     return (
                         <TezosEntrypointCard
-                            key={`i_${i}`}
+                            key={entrypoint.entrypoint}
                             entrypoint={entrypoint.entrypoint}
                             entrypointData={entrypoint}
                             cardWidth={cardWidth}

@@ -90,10 +90,16 @@ const TezosEntrypointsIndexPage = ({
                     searchData={searchTezosEntrypoints}
                     renderResults={(results, searchTerm) => {
                         // console.log("Rendering results: ", results)
+                        console.log("Rerendering search results with term: ", searchTerm)
                         var showingResults = results.length > 0
                         var renderResults = results.length > 0 ? results : entrypoints
                         if(searchTerm === initial_search_term   && entrypoints.length > 0) {
-                            renderResults = renderResults.filter(e => e.entrypoint.includes(searchTerm))
+                            if(searchTerm === "") {
+                                renderResults = renderResults
+                            } else {
+                                renderResults = renderResults.filter(e => e.entrypoint.includes(searchTerm))
+                            }
+                            
                         }
                         return (
                             <SimpleGrid columns={[1, 1, 2]} spacing="2rem">
@@ -115,6 +121,7 @@ const TezosEntrypointsIndexPage = ({
                                     <DataTable
                                         data={renderResults}
                                         columns={["entrypoint", "transactions", "senders", "targets"]}
+                                        rowKey={"entrypoint"}
                                         colLinks={{
                                             "entrypoint": (row) => {
                                                 return `/dashboards/tezos/entrypoints/${row.entrypoint}`

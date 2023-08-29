@@ -271,7 +271,7 @@ const TezosEntrypointDashboard = ({
                         <Text as="i" fontWeight="normal">
                             {` ${entrypoint} `}
                         </Text>
-                        entrypoint targetted.
+                        entrypoint targeted.
                     </Text>
                     <DataTable
                         data={topContractsTargetedDf.slice(0, 10)}
