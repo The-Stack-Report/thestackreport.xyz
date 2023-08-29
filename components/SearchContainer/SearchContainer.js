@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import {
     Text,
     Button,
@@ -23,11 +23,13 @@ import {
 } from "utils/urlQueryParams"
 import { useRouter } from 'next/router'
 import _ from "lodash"
+import { logEvent } from "utils/interactionLogging"
 
 
 const SearchContainer = ({
     initialSearchTerm = "",
     searchBoxLabel = "Search",
+    searchConstruct = "construct-unspecified",
     searchBoxPlaceholder = "Search",
     sortOptions = [],
     fallbackResults = [],
@@ -47,7 +49,6 @@ const SearchContainer = ({
     const [searchTermInitialized, setSearchTermInitialized] = useState(false)
     const [sortKey, setSortKey] = useState(_.get(sortOptions, "[0].key", false))
     const [queriedSortKey, setQueriedSortKey] = useState(_.get(sortOptions, "[0].key", false))
-
     const router = useRouter()
 
 
@@ -83,7 +84,13 @@ const SearchContainer = ({
                 undefined,
                 { shallow: true}
             )
-
+            if(debouncedSearchTerm.length > 0) {
+                logEvent({
+                    category: "Search",
+                    action: `Search for ${searchConstruct}`,
+                    value: debouncedSearchTerm
+                })
+            }
             searchData(debouncedSearchTerm, sortKey).then((results) => {
                 if(_.isArray(results)) {
                     setSearchResults(results)
@@ -93,6 +100,7 @@ const SearchContainer = ({
         }
     }, [
         debouncedSearchTerm,
+        searchConstruct,
         queriedSearchTerm,
         sortKey,
         router,

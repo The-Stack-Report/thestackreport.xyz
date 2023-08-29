@@ -66,6 +66,7 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
                     searchBoxPlaceholder="Search by contract alias or address"
                     initialSearchTerm={initial_search_term}
                     searchData={searchTezosContractsApi}
+                    searchConstruct="tezos-contracts"
                     sortOptions={sortOptions}
                     fallbackResults={top_contracts}
                     renderResults={(results, searchParams) => {

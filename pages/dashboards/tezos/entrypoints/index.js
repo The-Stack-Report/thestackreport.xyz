@@ -88,6 +88,7 @@ const TezosEntrypointsIndexPage = ({
                     sortOptions={[]}
                     fallbackResults={[]}
                     searchData={searchTezosEntrypoints}
+                    searchConstruct="tezos-entrypoints"
                     debounceDelay={500}
                     renderResults={(results, searchParams, searching) => {
                         var showingResults = results.length > 0
