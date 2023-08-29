@@ -5,17 +5,22 @@ function useDebounce(value, delay) {
 
     useEffect(
         () => {
-            const handler = setTimeout(() => {
+            if(delay === 0) {
                 setDebouncedValue(value)
-            }, delay)
-
-            return () => {
-                clearTimeout(handler)
+            } else {
+                const handler = setTimeout(() => {
+                    setDebouncedValue(value)
+                }, delay)
+                return () => {
+                    clearTimeout(handler)
+                }
             }
         },
         [value, delay]
     )
-
+    if (delay === 0) {
+        return value
+    }
     return deboundedValue
 }
 

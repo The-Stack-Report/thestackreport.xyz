@@ -88,23 +88,26 @@ const TezosEntrypointsIndexPage = ({
                     sortOptions={[]}
                     fallbackResults={[]}
                     searchData={searchTezosEntrypoints}
-                    renderResults={(results, searchTerm) => {
+                    debounceDelay={500}
+                    renderResults={(results, searchParams, searching) => {
                         var showingResults = results.length > 0
                         var renderResults = results
+                        var searchTerm = _.get(searchParams, "searchTerm", "")
+                        var searchTermDebounced = _.get(searchParams, "searchTermDebounced", "")
                         if(searchTerm === initial_search_term   && entrypoints.length > 0) {
                             if(searchTerm === "") {
                                 renderResults = renderResults
                                 renderResults = entrypoints
                             } else {
                                 renderResults = entrypoints
-                                renderResults = renderResults.filter(e => e.entrypoint.includes(searchTerm))
+                                renderResults = renderResults.filter(e => e.entrypoint.includes(searchTermDebounced))
                             }
                         } else {
                             renderResults = results
                             if (searchTerm === "") {
                                 renderResults = entrypoints
                             } else {
-                                renderResults = renderResults.filter(e => e.entrypoint.includes(searchTerm))
+                                renderResults = renderResults.filter(e => e.entrypoint.includes(searchTermDebounced))
                             }
                         }
                         return (
@@ -120,7 +123,11 @@ const TezosEntrypointsIndexPage = ({
                                             />
                                     ): (
                                         <Text>
-                                            No results found for search term: <i>{searchTerm}</i>
+                                            {searching ? (
+                                                "Searching..."
+                                            ) : (
+                                                <>No results found for search term: <i>{searchTerm}</i></>
+                                            )}
                                         </Text>
                                     )}
                                     

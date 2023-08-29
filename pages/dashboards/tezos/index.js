@@ -68,7 +68,8 @@ const TezosIndexPage = ({ top_contracts = [], initial_search_term = "" }) => {
                     searchData={searchTezosContractsApi}
                     sortOptions={sortOptions}
                     fallbackResults={top_contracts}
-                    renderResults={(results, searchTerm) => {
+                    renderResults={(results, searchParams) => {
+                        var searchTerm = _.get(searchParams, "searchTerm", "")
                         if (_.isArray(results) && results.length > 0) {
                             return (
                                 <ContractsCardsTable

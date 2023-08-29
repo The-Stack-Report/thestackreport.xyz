@@ -31,6 +31,7 @@ const SearchContainer = ({
     searchBoxPlaceholder = "Search",
     sortOptions = [],
     fallbackResults = [],
+    debounceDelay = 500,
     searchData = (searchTerm) => {
         return []
     },
@@ -61,7 +62,7 @@ const SearchContainer = ({
         searchTerm
     ])
 
-    const debouncedSearchTerm = useDebounce(searchTerm, 500)
+    const debouncedSearchTerm = useDebounce(searchTerm, debounceDelay)
     
     useEffect(() => {
 
@@ -101,6 +102,7 @@ const SearchContainer = ({
     useEffect(() => {
         if(sortKey !== queriedSortKey) {
             setQueriedSortKey(sortKey)
+            setSearching(true)
             searchData(debouncedSearchTerm, sortKey).then((results) => {
                 if(_.isArray(results)) {
                     setSearchResults(results)
@@ -195,7 +197,10 @@ const SearchContainer = ({
 
         ) : (
             <Box>
-                {renderResults(resultsToShow, searchTerm)}
+                {renderResults(resultsToShow, {
+                    searchTerm: searchTerm,
+                    searchTermDebounced: debouncedSearchTerm,
+                }, searching)}
             </Box>
         )}
         </Box>
