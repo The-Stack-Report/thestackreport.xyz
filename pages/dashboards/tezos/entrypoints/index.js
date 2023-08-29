@@ -89,17 +89,23 @@ const TezosEntrypointsIndexPage = ({
                     fallbackResults={[]}
                     searchData={searchTezosEntrypoints}
                     renderResults={(results, searchTerm) => {
-                        // console.log("Rendering results: ", results)
-                        console.log("Rerendering search results with term: ", searchTerm)
                         var showingResults = results.length > 0
-                        var renderResults = results.length > 0 ? results : entrypoints
+                        var renderResults = results
                         if(searchTerm === initial_search_term   && entrypoints.length > 0) {
                             if(searchTerm === "") {
                                 renderResults = renderResults
+                                renderResults = entrypoints
+                            } else {
+                                renderResults = entrypoints
+                                renderResults = renderResults.filter(e => e.entrypoint.includes(searchTerm))
+                            }
+                        } else {
+                            renderResults = results
+                            if (searchTerm === "") {
+                                renderResults = entrypoints
                             } else {
                                 renderResults = renderResults.filter(e => e.entrypoint.includes(searchTerm))
                             }
-                            
                         }
                         return (
                             <SimpleGrid columns={[1, 1, 2]} spacing="2rem">
@@ -107,10 +113,17 @@ const TezosEntrypointsIndexPage = ({
                                     <Text marginBottom="1rem" fontSize="0.7rem" fontWeight="bold" textTransform={"uppercase"}>
                                         Data preview
                                     </Text>
-                                    <TezosEntrypointsPreview
-                                        providedData={renderResults}
-                                        highlightWords={[searchTerm]}
-                                        />
+                                    {renderResults.length > 0 ? (
+                                        <TezosEntrypointsPreview
+                                            providedData={renderResults}
+                                            highlightWords={[searchTerm]}
+                                            />
+                                    ): (
+                                        <Text>
+                                            No results found for search term: <i>{searchTerm}</i>
+                                        </Text>
+                                    )}
+                                    
                                 </Box>
                                 <Box
                                     maxWidth="40rem"
@@ -118,18 +131,20 @@ const TezosEntrypointsIndexPage = ({
                                     <Text marginBottom="1rem" fontSize="0.7rem" fontWeight="bold" textTransform={"uppercase"}>
                                         Table view
                                     </Text>
-                                    <DataTable
-                                        data={renderResults}
-                                        columns={["entrypoint", "transactions", "senders", "targets"]}
-                                        rowKey={"entrypoint"}
-                                        colLinks={{
-                                            "entrypoint": (row) => {
-                                                return `/dashboards/tezos/entrypoints/${row.entrypoint}`
-                                            }
-                                        }}
-                                        maxRows={10}
-                                        highlightWords={[searchTerm]}
-                                        />
+                                    {renderResults.length > 0 && (
+                                        <DataTable
+                                            data={renderResults}
+                                            columns={["entrypoint", "transactions", "senders", "targets"]}
+                                            rowKey={"entrypoint"}
+                                            colLinks={{
+                                                "entrypoint": (row) => {
+                                                    return `/dashboards/tezos/entrypoints/${row.entrypoint}`
+                                                }
+                                            }}
+                                            maxRows={10}
+                                            highlightWords={[searchTerm]}
+                                            />
+                                    )}
                                 </Box>
                             </SimpleGrid>
                         )
