@@ -187,9 +187,17 @@ export async function getServerSideProps(context) {
 
         return entrypoints
     }, false)
+
+    var previewedData = file
+    if (_.isArray(file) && file.length > 25) {
+        previewedData = file.slice(0, 25)
+    } else {
+        previewedData = []
+    }
+
     return {
         props: {
-            previewEntrypoints: file.slice(0, 25),
+            previewEntrypoints: previewedData,
             initial_search_term: initial_term
         }
     }
